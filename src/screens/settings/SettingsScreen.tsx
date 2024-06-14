@@ -6,6 +6,7 @@ import { useTheme } from '@hooks/persisted';
 
 import { getString } from '@strings/translations';
 import { SettingsScreenProps } from '@navigators/types';
+import Settings from './Settings';
 
 const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   const theme = useTheme();
@@ -18,6 +19,24 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         theme={theme}
       />
       <View style={{ flex: 1, backgroundColor: theme.background }}>
+        {Object.keys(Settings).map(k => {
+          const key = k as any as keyof typeof Settings;
+          const setting = Settings[key];
+
+          return (
+            <List.Item
+              title={setting.groupTitle}
+              icon={setting.icon}
+              onPress={() =>
+                //@ts-ignore
+                navigation.navigate('SettingsStack', {
+                  screen: setting.navigateParam,
+                })
+              }
+              theme={theme}
+            />
+          );
+        })}
         <List.Item
           title={getString('generalSettings')}
           icon="tune"

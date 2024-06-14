@@ -6,6 +6,7 @@ import {
 } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import {
+  DisplayModes,
   displayModesList,
   gridSizeList,
 } from '@screens/library/constants/constants';
@@ -25,39 +26,48 @@ type settingsGroupTypes =
 
 type ModalOptions = {
   label: string;
-  value: string | number;
+  value: number;
 };
 
-type SettingsTypeModes = 'single' | 'multiple' | 'order';
+export type SettingsTypeModes = 'single' | 'multiple' | 'order';
 
-interface SettingsType<
-  T extends keyof AppSettings | keyof LibrarySettings,
-  V extends SettingsTypeModes,
-> {
-  type: 'Modal';
-  mode: SettingsTypeModes;
-  value: V extends 'multiple' ? T[] : T;
-  options: ModalOptions[];
-  //   value: T extends keyof AppSettings ? AppSettings[T] : T extends keyof LibrarySettings ? LibrarySettings[T] : never;
-}
+export type SettingsType<T extends keyof AppSettings | keyof LibrarySettings> =
+  | {
+      mode: 'single' | 'order';
+      valueKey: T;
+      defaultValue: number | boolean;
+      options: ModalOptions[];
+      //   value: T extends keyof AppSettings ? AppSettings[T] : T extends keyof LibrarySettings ? LibrarySettings[T] : never;
+    }
+  | {
+      mode: 'multiple';
+      valueKey: T[];
+      defaultValue: Array<number | boolean>;
+      options: ModalOptions[];
+      //   value: T extends keyof AppSettings ? AppSettings[T] : T extends keyof LibrarySettings ? LibrarySettings[T] : never;
+    };
 
-interface Setting {
+type BaseModalSetting = {
   title: string;
   description?: string;
-
-  settingsType: SettingsType<
-    keyof AppSettings | keyof LibrarySettings,
-    SettingsTypeModes
-  >;
-}
+  type: 'Modal';
+};
+export type ModalSetting =
+  | (BaseModalSetting & { settingOrigin: 'App' } & SettingsType<
+        keyof AppSettings
+      >)
+  | (BaseModalSetting & { settingOrigin: 'Library' } & SettingsType<
+        keyof LibrarySettings
+      >);
 
 interface SettingSubGroup {
   subGroupTitle: string;
-  settings: Setting[];
+  settings: ModalSetting[];
 }
 
 interface SettingsGroup {
   groupTitle: string;
+  icon: string;
   navigateParam: settingsGroupTypes;
   subGroup: SettingSubGroup[];
 }
@@ -69,6 +79,7 @@ interface Settings {
 const settings: Settings = {
   general: {
     groupTitle: getString('generalSettings'),
+    icon: 'tune',
     navigateParam: 'GeneralSettings',
     subGroup: [
       {
@@ -77,47 +88,51 @@ const settings: Settings = {
           {
             title: getString('generalSettingsScreen.displayMode'),
             // description: () displayModesList[displayMode].label
-            settingsType: {
-              type: 'Modal',
-              mode: 'single',
-              value: 'displayMode',
-              options: displayModesList,
-              // value:
-            },
+            type: 'Modal',
+            settingOrigin: 'Library',
+
+            mode: 'single',
+            valueKey: 'displayMode',
+            defaultValue: DisplayModes.Comfortable,
+            options: displayModesList,
+            // valueKey:
           },
           {
             title: getString('generalSettingsScreen.itemsPerRowLibrary'),
-            settingsType: {
-              type: 'Modal',
-              mode: 'single',
-              value: 'novelsPerRow',
-              options: gridSizeList,
-              // value:
-            },
+            type: 'Modal',
+            settingOrigin: 'Library',
+
+            mode: 'single',
+            valueKey: 'novelsPerRow',
+            defaultValue: 3,
+            options: gridSizeList,
+            // valueKey:
           },
           {
             title: getString('generalSettingsScreen.novelBadges'),
-            settingsType: {
-              type: 'Modal',
-              mode: 'multiple',
-              value: [
-                'showDownloadBadges',
-                'showNumberOfNovels',
-                'showUnreadBadges',
-              ],
-              options: gridSizeList,
-              // value:
-            },
+            type: 'Modal',
+            settingOrigin: 'Library',
+
+            mode: 'multiple',
+            valueKey: [
+              'showDownloadBadges',
+              'showNumberOfNovels',
+              'showUnreadBadges',
+            ],
+            defaultValue: [true, false, true],
+            options: gridSizeList,
+            // valueKey:
           },
           {
             title: getString('generalSettingsScreen.novelSort'),
-            settingsType: {
-              type: 'Modal',
-              mode: 'order',
-              value: 'novelsPerRow',
-              options: gridSizeList,
-              // value:
-            },
+            type: 'Modal',
+            settingOrigin: 'Library',
+
+            mode: 'order',
+            valueKey: 'novelsPerRow',
+            defaultValue: 3,
+            options: gridSizeList,
+            // value:
           },
         ],
       },

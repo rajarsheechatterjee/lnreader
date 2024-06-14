@@ -103,7 +103,6 @@ export const displayModesList = [
 ];
 
 export enum GridSizes {
-  ZERO,
   XL,
   L,
   M,

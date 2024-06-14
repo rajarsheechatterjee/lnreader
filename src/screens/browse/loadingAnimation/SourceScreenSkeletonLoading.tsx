@@ -18,7 +18,7 @@ const SourceScreenSkeletonLoading: React.FC<Props> = ({
 }) => {
   const [highlightColor, backgroundColor] = getLoadingColors(theme);
 
-  const { displayMode = DisplayModes.Comfortable, novelsPerRow = 3 } =
+  const { displayMode = DisplayModes.Comfortable, novelsPerRow = 2 } =
     useLibrarySettings();
 
   const window = useWindowDimensions();
@@ -27,7 +27,7 @@ const SourceScreenSkeletonLoading: React.FC<Props> = ({
   const orientation = useDeviceOrientation();
 
   const numColumns = useMemo(
-    () => (orientation === 'landscape' ? 6 : novelsPerRow),
+    () => (orientation === 'landscape' ? 6 : novelsPerRow + 1),
     [orientation, novelsPerRow],
   );
 
