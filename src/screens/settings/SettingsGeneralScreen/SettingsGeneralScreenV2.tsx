@@ -25,6 +25,8 @@ import { getString } from '@strings/translations';
 import SettingSwitch from '../components/SettingSwitch';
 import S from '../Settings';
 import DefaultSettingModal from './modals/DefaultSettingModal';
+import useUpdateSettingsFn from './utils/useUpdateSettingsFn';
+import SettingSwitchV2 from '../components/SettingSwitchV2';
 
 interface GenralSettingsProps {
   navigation: NavigationState;
@@ -86,6 +88,7 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
    * Chapter Sort Modal
    */
   const defaultChapterSortModal = useBoolean();
+
   return (
     <>
       <Appbar
@@ -94,31 +97,39 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
         handleGoBack={navigation.goBack}
         theme={theme}
       />
-      <List.Section>
-        {Settings.subGroup.map(setting => {
-          return (
-            <>
-              <List.SubHeader theme={theme}>
-                {setting.subGroupTitle}
-              </List.SubHeader>
-              {setting.settings.map(settingOption => {
-                return (
-                  <DefaultSettingModal setting={settingOption} theme={theme} />
-                );
-              })}
-            </>
-          );
-        })}
-        <List.SubHeader theme={theme}>
-          {getString('common.display')}
-        </List.SubHeader>
-        <List.Item
-          title={getString('generalSettingsScreen.displayMode')}
-          // description={displayModesList[displayMode].label}
-          onPress={displayModalRef.setTrue}
-          theme={theme}
-        />
-      </List.Section>
+      <ScrollView contentContainerStyle={{ paddingBottom: 32 }}>
+        <List.Section>
+          {Settings.subGroup.map((setting, index) => {
+            return (
+              <>
+                {index === 0 ? null : <List.Divider theme={theme} />}
+                <List.SubHeader key={'subHeader' + index} theme={theme}>
+                  {setting.subGroupTitle}
+                </List.SubHeader>
+                {setting.settings.map((settingOption, i) => {
+                  if (settingOption.type === 'Modal') {
+                    return (
+                      <DefaultSettingModal
+                        key={'settingOption' + index + i}
+                        setting={settingOption}
+                        theme={theme}
+                      />
+                    );
+                  } else if (settingOption.type === 'Switch') {
+                    return (
+                      <SettingSwitchV2
+                        key={'settingOption' + index + i}
+                        setting={settingOption}
+                        theme={theme}
+                      />
+                    );
+                  }
+                })}
+              </>
+            );
+          })}
+        </List.Section>
+      </ScrollView>
     </>
   );
 };

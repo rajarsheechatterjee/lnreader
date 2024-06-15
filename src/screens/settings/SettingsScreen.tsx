@@ -37,16 +37,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
             />
           );
         })}
-        <List.Item
-          title={getString('generalSettings')}
-          icon="tune"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'GeneralSettings',
-            })
-          }
-          theme={theme}
-        />
+
         <List.Item
           title={getString('appearance')}
           icon="palette-outline"

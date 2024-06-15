@@ -76,6 +76,19 @@ export const librarySortOrderList = [
   },
 ];
 
+export enum ChapterSortOrder {
+  BySource_ASC = 'ORDER BY position ASC',
+  BySource_DESC = 'ORDER BY position DESC',
+}
+
+export const chapterSortOrderList = [
+  {
+    label: getString('generalSettingsScreen.bySource'),
+    ASC: ChapterSortOrder.BySource_ASC,
+    DESC: ChapterSortOrder.BySource_DESC,
+  },
+];
+
 export enum DisplayModes {
   Compact,
   Comfortable,
@@ -130,5 +143,17 @@ export const gridSizeList = [
   {
     label: 'XS',
     value: GridSizes.XS,
+  },
+];
+
+export const badgesList = [
+  {
+    label: getString('libraryScreen.bottomSheet.display.downloadBadges'),
+  },
+  {
+    label: getString('libraryScreen.bottomSheet.display.unreadBadges'),
+  },
+  {
+    label: getString('libraryScreen.bottomSheet.display.showNoOfItems'),
   },
 ];
