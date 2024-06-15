@@ -1,5 +1,7 @@
 import { AppSettings, LibrarySettings } from '@hooks/persisted/useSettings';
 import GeneralSettings from './settingsGroups/generalSettingsGroup';
+import AppearanceSettings from './settingsGroups/appearanceSettingsGroup';
+import { ThemeColors } from '@theme/types';
 
 type settingsGroupTypes =
   | 'GeneralSettings'
@@ -18,9 +20,17 @@ export type ValueKey<T extends SettingOrigin> = T extends 'App'
   ? keyof AppSettings
   : T extends 'Library'
   ? keyof LibrarySettings
-  : 'showLastUpdateTime';
+  : T extends 'lastUpdateTime'
+  ? 'showLastUpdateTime'
+  : T extends 'ColorPicker'
+  ? never
+  : never;
 
-export type SettingOrigin = 'App' | 'Library' | 'lastUpdateTime';
+export type SettingOrigin =
+  | 'App'
+  | 'Library'
+  | 'lastUpdateTime'
+  | 'ColorPicker';
 
 export type ModalSettingsType<T extends SettingOrigin> = {
   settingOrigin: T;
@@ -82,9 +92,15 @@ export type SwitchSetting =
   | (BaseSwitchSetting & SwitchSettingsType<'lastUpdateTime'>)
   | (BaseSwitchSetting & SwitchSettingsType<'Library'>);
 
+export type ThemePickerSetting = {
+  title: string;
+  type: 'ThemePicker';
+  options: Array<ThemeColors>;
+};
+
 export interface SettingSubGroup {
   subGroupTitle: string;
-  settings: Array<ModalSetting | SwitchSetting>;
+  settings: Array<ModalSetting | SwitchSetting | ThemePickerSetting>;
 }
 
 export interface SettingsGroup {
@@ -96,9 +112,11 @@ export interface SettingsGroup {
 
 interface Settings {
   general: SettingsGroup;
+  appearance: SettingsGroup;
 }
 
 const settings: Settings = {
   general: GeneralSettings,
+  appearance: AppearanceSettings,
 } as const;
 export default settings;

@@ -3,6 +3,7 @@ import { SettingSubGroup } from '../Settings';
 import DefaultSettingModal from '../SettingsGeneralScreen/modals/DefaultSettingModal';
 import SettingSwitchV2 from './SettingSwitchV2';
 import { useTheme } from '@hooks/persisted';
+import SettingsThemePicker from './SettingsThemePicker';
 
 export default function (setting: SettingSubGroup, index: number) {
   const theme = useTheme();
@@ -28,6 +29,14 @@ export default function (setting: SettingSubGroup, index: number) {
               key={'settingOption' + index + i}
               setting={settingOption}
               theme={theme}
+            />
+          );
+        } else if (settingOption.type === 'ThemePicker') {
+          return (
+            <SettingsThemePicker
+              settings={settingOption}
+              theme={theme}
+              key={'settingOption' + index + i}
             />
           );
         }
