@@ -115,6 +115,7 @@ const DefaultSettingModal: React.FC<
             ? setting.options.map((mode, i) => {
                 return (
                   <SortItem
+                    key={mode.label}
                     label={mode.label}
                     theme={theme}
                     status={

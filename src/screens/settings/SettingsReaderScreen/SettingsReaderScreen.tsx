@@ -1,4 +1,4 @@
-import { View, ScrollView, StatusBar } from 'react-native';
+import { View, ScrollView, StatusBar, Text } from 'react-native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { useNavigation } from '@react-navigation/native';
@@ -76,6 +76,7 @@ const SettingsReaderScreen = () => {
     'unread': 1,
     'updatedTime': null,
   };
+  const [webViewHeight, setWebViewHeight] = useState(280);
   const [hidden, setHidden] = useState(true);
   const batteryLevel = useBatteryLevel();
   const readerSettings = useChapterReaderSettings();
@@ -138,7 +139,7 @@ const SettingsReaderScreen = () => {
         theme={theme}
       />
 
-      <View style={{ height: READER_HEIGHT }}>
+      <View style={{ height: webViewHeight }}>
         <WebView
           ref={webViewRef}
           originWhitelist={['*']}
@@ -231,7 +232,31 @@ const SettingsReaderScreen = () => {
           }}
         />
       </View>
-
+      <View
+        style={{
+          width: '100%',
+          height: 11,
+          backgroundColor: readerBackgroundColor,
+          borderBottomColor: theme.outline,
+          borderBottomWidth: 2,
+          marginBottom: 9,
+        }}
+      >
+        <View
+          style={{
+            width: '10%',
+            height: 20,
+            marginHorizontal: '45%',
+            backgroundColor: theme.outline,
+            borderRadius: 10,
+          }}
+          onTouchMove={e => {
+            setWebViewHeight(e.nativeEvent.pageY - 84);
+          }}
+        >
+          <Text style={{ textAlign: 'center' }}>•••</Text>
+        </View>
+      </View>
       <ScrollView>
         <View style={{ paddingBottom: bottom }}>
           <GeneralSettings />

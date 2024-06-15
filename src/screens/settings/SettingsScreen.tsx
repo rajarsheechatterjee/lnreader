@@ -39,16 +39,6 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         })}
 
         <List.Item
-          title={getString('appearance')}
-          icon="palette-outline"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'AppearanceSettings',
-            })
-          }
-          theme={theme}
-        />
-        <List.Item
           title={getString('readerSettings.title')}
           icon="book-open-outline"
           onPress={() =>
