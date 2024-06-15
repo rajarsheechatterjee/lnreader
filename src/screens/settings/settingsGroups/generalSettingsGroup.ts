@@ -11,6 +11,15 @@ import {
 import { getString } from '@strings/translations';
 import { SettingsGroup } from '../Settings';
 
+const sortOrderNameMap = new Map<string, string>([
+  ['name', 'libraryScreen.bottomSheet.sortOrders.alphabetically'],
+  ['chaptersDownloaded', 'libraryScreen.bottomSheet.sortOrders.download'],
+  ['chaptersUnread', 'libraryScreen.bottomSheet.sortOrders.totalChapters'],
+  ['id', 'libraryScreen.bottomSheet.sortOrders.dateAdded'],
+  ['lastReadAt', 'libraryScreen.bottomSheet.sortOrders.lastRead'],
+  ['lastUpdatedAt', 'libraryScreen.bottomSheet.sortOrders.lastUpdated'],
+]);
+
 const GeneralSettings: SettingsGroup = {
   groupTitle: getString('generalSettings'),
   icon: 'tune',
@@ -21,7 +30,7 @@ const GeneralSettings: SettingsGroup = {
       settings: [
         {
           title: getString('generalSettingsScreen.displayMode'),
-          // description: () displayModesList[displayMode].label
+          description: val => displayModesList[val].label,
           type: 'Modal',
           settingOrigin: 'Library',
 
@@ -34,6 +43,10 @@ const GeneralSettings: SettingsGroup = {
           title: getString('generalSettingsScreen.itemsPerRowLibrary'),
           type: 'Modal',
           settingOrigin: 'Library',
+          description: val =>
+            ''.concat(
+              val + 1 + ' ' + getString('generalSettingsScreen.itemsPerRow'),
+            ),
 
           mode: 'single',
           valueKey: 'novelsPerRow',
@@ -44,6 +57,13 @@ const GeneralSettings: SettingsGroup = {
           title: getString('generalSettingsScreen.novelBadges'),
           type: 'Modal',
           settingOrigin: 'Library',
+          description: val =>
+            badgesList
+              .filter((v, i) => {
+                return val[i];
+              })
+              .map(v => v.label)
+              .join(', '),
 
           mode: 'multiple',
           valueKey: [
@@ -58,7 +78,11 @@ const GeneralSettings: SettingsGroup = {
           title: getString('generalSettingsScreen.novelSort'),
           type: 'Modal',
           settingOrigin: 'Library',
-
+          description: val => {
+            const v = val.split(' ');
+            //@ts-expect-error
+            return getString(sortOrderNameMap.get(v[0])) + ' ' + v[1];
+          },
           mode: 'order',
           valueKey: 'sortOrder',
           defaultValue: LibrarySortOrder.DateAdded_DESC,
@@ -93,7 +117,12 @@ const GeneralSettings: SettingsGroup = {
           title: getString('generalSettingsScreen.chapterSort'),
           type: 'Modal',
           settingOrigin: 'App',
-
+          description: val =>
+            `${getString('generalSettingsScreen.bySource')} ${
+              val === 'ORDER BY position ASC'
+                ? getString('generalSettingsScreen.asc')
+                : getString('generalSettingsScreen.desc')
+            }`,
           mode: 'order',
           valueKey: 'defaultChapterSort',
           defaultValue: ChapterSortOrder.BySource_DESC,
@@ -122,7 +151,13 @@ const GeneralSettings: SettingsGroup = {
           valueKey: 'refreshNovelMetadata',
           defaultValue: false,
         },
-        //TODO Add Show last update time
+        {
+          title: getString('generalSettingsScreen.updateTime'),
+          type: 'Switch',
+          settingOrigin: 'lastUpdateTime',
+          valueKey: 'showLastUpdateTime',
+          defaultValue: true,
+        },
       ],
     },
     {

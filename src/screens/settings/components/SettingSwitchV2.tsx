@@ -2,7 +2,11 @@ import { SwitchItem } from '@components';
 import { ThemeColors } from '@theme/types';
 import useUpdateSettingsFn from '../SettingsGeneralScreen/utils/useUpdateSettingsFn';
 import { SwitchSetting } from '../Settings';
-import { useAppSettings, useLibrarySettings } from '@hooks/persisted';
+import {
+  useAppSettings,
+  useLastUpdate,
+  useLibrarySettings,
+} from '@hooks/persisted';
 import { useMemo } from 'react';
 
 interface SettingSwitchProps {
@@ -14,17 +18,21 @@ export default function SettingSwitchV2({
   setting,
   theme,
 }: SettingSwitchProps) {
-  const update = useUpdateSettingsFn(setting.settingOrigin);
+  const update = useUpdateSettingsFn(setting.settingOrigin)!;
   const { setLibrarySettings, ...librarySettings } = useLibrarySettings();
   const { setAppSettings, ...appSettings } = useAppSettings();
+  const { showLastUpdateTime } = useLastUpdate();
+
   const currentValue = useMemo(() => {
     let res;
     if (setting.settingOrigin === 'Library') {
-      res = librarySettings[setting.valueKey] ?? setting.defaultValue;
-    } else {
-      res = appSettings[setting.valueKey] ?? setting.defaultValue;
+      res = librarySettings[setting.valueKey];
+    } else if (setting.settingOrigin === 'App') {
+      res = appSettings[setting.valueKey];
+    } else if (setting.settingOrigin === 'lastUpdateTime') {
+      res = showLastUpdateTime;
     }
-    return res as boolean;
+    return (res ?? setting.defaultValue) as boolean;
   }, [librarySettings, appSettings]);
 
   return (

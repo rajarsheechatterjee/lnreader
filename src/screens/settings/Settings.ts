@@ -12,18 +12,15 @@ type settingsGroupTypes =
   | 'RespositorySettings'
   | undefined;
 
-type ModalOptions = {
-  label: string;
-  value: number;
-};
-
 export type SettingsTypeModes = 'single' | 'multiple' | 'order';
 
-type ValueKey<T extends SettingOrigin> = T extends 'App'
+export type ValueKey<T extends SettingOrigin> = T extends 'App'
   ? keyof AppSettings
-  : keyof LibrarySettings;
+  : T extends 'Library'
+  ? keyof LibrarySettings
+  : 'showLastUpdateTime';
 
-type SettingOrigin = 'App' | 'Library';
+export type SettingOrigin = 'App' | 'Library' | 'lastUpdateTime';
 
 export type ModalSettingsType<T extends SettingOrigin> = {
   settingOrigin: T;
@@ -32,6 +29,7 @@ export type ModalSettingsType<T extends SettingOrigin> = {
       mode: 'single';
       valueKey: ValueKey<T>;
       defaultValue: number;
+      description?: (value: number) => string;
       options: Array<{
         label: string;
         value: number;
@@ -41,6 +39,7 @@ export type ModalSettingsType<T extends SettingOrigin> = {
       mode: 'multiple';
       valueKey: Array<ValueKey<T>>;
       defaultValue: Array<boolean>;
+      description?: (value: Array<boolean>) => string;
       options: Array<{
         label: string;
       }>;
@@ -49,6 +48,8 @@ export type ModalSettingsType<T extends SettingOrigin> = {
       mode: 'order';
       valueKey: ValueKey<T>;
       defaultValue: string;
+      description?: (value: string) => string;
+
       options: Array<{
         label: string;
         ASC: string;
@@ -59,7 +60,6 @@ export type ModalSettingsType<T extends SettingOrigin> = {
 
 type BaseModalSetting = {
   title: string;
-  description?: string;
   type: 'Modal';
 };
 export type ModalSetting =
@@ -79,9 +79,10 @@ type BaseSwitchSetting = {
 };
 export type SwitchSetting =
   | (BaseSwitchSetting & SwitchSettingsType<'App'>)
+  | (BaseSwitchSetting & SwitchSettingsType<'lastUpdateTime'>)
   | (BaseSwitchSetting & SwitchSettingsType<'Library'>);
 
-interface SettingSubGroup {
+export interface SettingSubGroup {
   subGroupTitle: string;
   settings: Array<ModalSetting | SwitchSetting>;
 }

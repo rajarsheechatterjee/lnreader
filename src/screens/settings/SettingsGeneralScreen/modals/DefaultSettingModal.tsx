@@ -20,6 +20,7 @@ import {
 import { options } from 'sanitize-html';
 import { SortItem } from '@components/Checkbox/Checkbox';
 import useUpdateSettingsFn from '../utils/useUpdateSettingsFn';
+import { badgesList } from '@screens/library/constants/constants';
 
 interface DisplayModeModalProps<
   T extends keyof AppSettings | keyof LibrarySettings,
@@ -80,15 +81,19 @@ const DefaultSettingModal: React.FC<
     return 0;
   }, [librarySettings, appSettings]);
 
+  function generateDescription() {
+    if (!setting.description) {
+      return;
+    }
+
+    return setting.description(currentValue);
+  }
+
   return (
     <>
       <List.Item
         title={setting.title}
-        description={
-          Number.isNaN(parseInt('' + currentValue))
-            ? currentValue //@ts-ignore
-            : setting.options[currentValue]?.label
-        }
+        description={generateDescription()}
         onPress={modalRef.setTrue}
         theme={theme}
       />
