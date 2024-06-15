@@ -85,7 +85,7 @@ const DefaultSettingModal: React.FC<
     if (!setting.description) {
       return;
     }
-
+    //@ts-expect-error
     return setting.description(currentValue);
   }
 

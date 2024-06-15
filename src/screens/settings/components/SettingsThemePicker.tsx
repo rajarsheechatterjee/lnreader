@@ -5,7 +5,13 @@ import { ThemePicker as TP } from '@components/ThemePicker/ThemePicker';
 
 import { ThemeColors } from '@theme/types';
 import { ThemePickerSetting } from '../Settings';
-import { useMMKVObject, useMMKVString } from 'react-native-mmkv';
+import {
+  useMMKVBoolean,
+  useMMKVObject,
+  useMMKVString,
+} from 'react-native-mmkv';
+import SettingSwitch from './SettingSwitch';
+import { getString } from '@strings/translations';
 
 interface ThemePicker {
   theme: ThemeColors;
@@ -15,6 +21,8 @@ interface ThemePicker {
 export default function SettingsThemePicker({ theme, settings }: ThemePicker) {
   const [, setTheme] = useMMKVObject('APP_THEME');
   const [, setCustomAccentColor] = useMMKVString('CUSTOM_ACCENT_COLOR');
+  const [isAmoledBlack = false, setAmoledBlack] =
+    useMMKVBoolean('AMOLED_BLACK');
   return (
     <>
       <Text
@@ -47,6 +55,14 @@ export default function SettingsThemePicker({ theme, settings }: ThemePicker) {
           />
         ))}
       </ScrollView>
+      {theme.isDark && settings.options[0].isDark ? (
+        <SettingSwitch
+          label={getString('appearanceScreen.pureBlackDarkMode')}
+          value={isAmoledBlack}
+          onPress={() => setAmoledBlack(prevVal => !prevVal)}
+          theme={theme}
+        />
+      ) : null}
     </>
   );
 }
