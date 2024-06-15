@@ -4,6 +4,7 @@ import DefaultSettingModal from '../SettingsGeneralScreen/modals/DefaultSettingM
 import SettingSwitchV2 from './SettingSwitchV2';
 import { useTheme } from '@hooks/persisted';
 import SettingsThemePicker from './SettingsThemePicker';
+import ColorPickerModal from '../SettingsGeneralScreen/modals/ColorPickerModal';
 
 export default function (setting: SettingSubGroup, index: number) {
   const theme = useTheme();
@@ -15,30 +16,40 @@ export default function (setting: SettingSubGroup, index: number) {
         {setting.subGroupTitle}
       </List.SubHeader>
       {setting.settings.map((settingOption, i) => {
-        if (settingOption.type === 'Modal') {
-          return (
-            <DefaultSettingModal
-              key={'settingOption' + index + i}
-              setting={settingOption}
-              theme={theme}
-            />
-          );
-        } else if (settingOption.type === 'Switch') {
-          return (
-            <SettingSwitchV2
-              key={'settingOption' + index + i}
-              setting={settingOption}
-              theme={theme}
-            />
-          );
-        } else if (settingOption.type === 'ThemePicker') {
-          return (
-            <SettingsThemePicker
-              settings={settingOption}
-              theme={theme}
-              key={'settingOption' + index + i}
-            />
-          );
+        switch (settingOption.type) {
+          case 'Modal':
+            return (
+              <DefaultSettingModal
+                key={'settingOption' + index + i}
+                setting={settingOption}
+                theme={theme}
+              />
+            );
+          case 'Switch':
+            return (
+              <SettingSwitchV2
+                key={'settingOption' + index + i}
+                setting={settingOption}
+                theme={theme}
+              />
+            );
+          case 'ThemePicker':
+            return (
+              <SettingsThemePicker
+                settings={settingOption}
+                theme={theme}
+                key={'settingOption' + index + i}
+              />
+            );
+          case 'ColorPicker':
+            return (
+              <ColorPickerModal
+                settings={settingOption}
+                theme={theme}
+                showAccentColors
+                key={'settingOption' + index + i}
+              />
+            );
         }
       })}
     </>

@@ -20,6 +20,12 @@ const AppearanceSettings: SettingsGroup = {
           type: 'ThemePicker',
           options: darkThemes,
         },
+        {
+          type: 'ColorPicker',
+          title: getString('appearanceScreen.accentColor'),
+          description: c => c.toUpperCase() ?? '',
+          settingOrigin: 'MMKV',
+        },
       ],
     },
   ],

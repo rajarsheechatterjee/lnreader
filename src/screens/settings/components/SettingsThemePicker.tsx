@@ -23,6 +23,7 @@ export default function SettingsThemePicker({ theme, settings }: ThemePicker) {
   const [, setCustomAccentColor] = useMMKVString('CUSTOM_ACCENT_COLOR');
   const [isAmoledBlack = false, setAmoledBlack] =
     useMMKVBoolean('AMOLED_BLACK');
+
   return (
     <>
       <Text

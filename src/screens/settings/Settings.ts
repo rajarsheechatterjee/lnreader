@@ -22,15 +22,11 @@ export type ValueKey<T extends SettingOrigin> = T extends 'App'
   ? keyof LibrarySettings
   : T extends 'lastUpdateTime'
   ? 'showLastUpdateTime'
-  : T extends 'ColorPicker'
-  ? never
+  : T extends 'MMKV'
+  ? 'isDark'
   : never;
 
-export type SettingOrigin =
-  | 'App'
-  | 'Library'
-  | 'lastUpdateTime'
-  | 'ColorPicker';
+export type SettingOrigin = 'App' | 'Library' | 'lastUpdateTime' | 'MMKV';
 
 export type ModalSettingsType<T extends SettingOrigin> = {
   settingOrigin: T;
@@ -98,9 +94,25 @@ export type ThemePickerSetting = {
   options: Array<ThemeColors>;
 };
 
+export type ColorPickerSettingsType<T extends SettingOrigin> = {
+  settingOrigin: T;
+  // valueKey: ValueKey<T>;
+  // defaultValue: boolean;
+};
+
+type BaseColorPickerSetting = {
+  title: string;
+  description?: (val: string) => string;
+  type: 'ColorPicker';
+};
+export type ColorPickerSetting =
+  | BaseColorPickerSetting & ColorPickerSettingsType<'MMKV'>;
+
 export interface SettingSubGroup {
   subGroupTitle: string;
-  settings: Array<ModalSetting | SwitchSetting | ThemePickerSetting>;
+  settings: Array<
+    ModalSetting | SwitchSetting | ThemePickerSetting | ColorPickerSetting
+  >;
 }
 
 export interface SettingsGroup {

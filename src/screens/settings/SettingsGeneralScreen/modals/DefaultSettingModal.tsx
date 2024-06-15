@@ -8,30 +8,20 @@ import { ThemeColors } from '@theme/types';
 import { useLibrarySettings } from '@hooks/persisted';
 import { Checkbox, List } from '@components';
 import { useBoolean } from '@hooks/index';
-import settings, {
-  ModalSetting,
-  SettingsTypeModes,
-} from '@screens/settings/Settings';
+import { ModalSetting, SettingsTypeModes } from '@screens/settings/Settings';
 import {
   AppSettings,
   LibrarySettings,
   useAppSettings,
 } from '@hooks/persisted/useSettings';
-import { options } from 'sanitize-html';
 import { SortItem } from '@components/Checkbox/Checkbox';
 import useUpdateSettingsFn from '../utils/useUpdateSettingsFn';
-import { badgesList } from '@screens/library/constants/constants';
 
 interface DisplayModeModalProps<
   T extends keyof AppSettings | keyof LibrarySettings,
   V extends SettingsTypeModes,
 > {
-  //   setting: SettingsType<
-  //     keyof AppSettings | keyof LibrarySettings,
-  //     SettingsTypeModes
-  //   >;
   setting: ModalSetting;
-  //   value: any;
   theme: ThemeColors;
 }
 
@@ -46,19 +36,6 @@ const DefaultSettingModal: React.FC<
   const { setLibrarySettings, ...librarySettings } = useLibrarySettings();
   const { setAppSettings, ...appSettings } = useAppSettings();
 
-  // const update = (value: unknown, key?: string) => {
-  //   if (setting.settingOrigin === 'Library') {
-  //     setLibrarySettings({
-  //       //@ts-expect-error
-  //       [key ?? setting.valueKey]: value,
-  //     });
-  //   } else {
-  //     setAppSettings({
-  //       //@ts-expect-error
-  //       [key ?? setting.valueKey]: value,
-  //     });
-  //   }
-  // };
   const update = useUpdateSettingsFn(setting.settingOrigin);
   const currentValue = useMemo(() => {
     if (setting.mode === 'single' || setting.mode === 'order') {
