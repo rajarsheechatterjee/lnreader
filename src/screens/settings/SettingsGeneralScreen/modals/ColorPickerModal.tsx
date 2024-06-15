@@ -22,7 +22,6 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
 }) => {
   const currentValue =
     settings.settingOrigin === 'MMKV' ? rgbToHex(theme.primary) : '';
-  console.log(currentValue);
 
   const [text, setText] = useState<string>(currentValue);
   const [error, setError] = useState<string | null>();
