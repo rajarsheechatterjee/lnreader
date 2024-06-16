@@ -3,25 +3,26 @@ import { ScrollView } from 'react-native';
 
 import { useTheme } from '@hooks/persisted';
 import { Appbar, List } from '@components';
-import { NavigationState } from '@react-navigation/native';
 import S from '../Settings';
 import RenderSettings from '../components/RenderSettings';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { StackScreenProps } from '@react-navigation/stack';
+import { SettingsStackParamList } from '@navigators/types';
 
-interface GenralSettingsProps {
-  navigation: NavigationState;
-}
+type Props = StackScreenProps<
+  SettingsStackParamList,
+  keyof Omit<SettingsStackParamList, 'Settings'>
+>;
 
-const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
+const SettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
   const theme = useTheme();
-  const Settings = S.general;
+  const Settings = S[route.params.settingsSource];
 
   return (
     <SafeAreaView>
       <ScrollView>
         <Appbar
           title={Settings.groupTitle}
-          // @ts-ignore
           handleGoBack={navigation.goBack}
           theme={theme}
         />
@@ -32,4 +33,4 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
   );
 };
 
-export default GenralSettings;
+export default SettingsSubScreen;

@@ -9,10 +9,10 @@ import TrackerSettings from '../screens/settings/SettingsTrackerScreen';
 import ReaderSettings from '../screens/settings/SettingsReaderScreen/SettingsReaderScreen';
 import BackupSettings from '../screens/settings/SettingsBackupScreen';
 import AdvancedSettings from '../screens/settings/SettingsAdvancedScreen';
-import GeneralSettings from '../screens/settings/settingsScreens/SettingsGeneralScreenV2';
+import SettingsSubScreen from '../screens/settings/settingsScreens/SettingsSubScreen';
 import TaskQueue from '../screens/more/TaskQueueScreen';
 import Downloads from '../screens/more/DownloadsScreen';
-import AppearanceSettings from '../screens/settings/settingsScreens/SettingsAppearanceScreenV2';
+
 import CategoriesScreen from '@screens/Categories/CategoriesScreen';
 import RespositorySettings from '@screens/settings/SettingsRepositoryScreen/SettingsRepositoryScreen';
 // import LibrarySettings from '@screens/settings/SettingsLibraryScreen/SettingsLibraryScreen';
@@ -20,7 +20,7 @@ import StatsScreen from '@screens/StatsScreen/StatsScreen';
 import { MoreStackParamList, SettingsStackParamList } from './types';
 
 const Stack = createStackNavigator<
-  MoreStackParamList & SettingsStackParamList
+  SettingsStackParamList & MoreStackParamList
 >();
 
 const stackNavigatorConfig = { headerShown: false };
@@ -28,11 +28,10 @@ const stackNavigatorConfig = { headerShown: false };
 const SettingsStack = () => (
   <Stack.Navigator screenOptions={stackNavigatorConfig}>
     <Stack.Screen name="Settings" component={Settings} />
-    <Stack.Screen name="GeneralSettings" component={GeneralSettings} />
+    <Stack.Screen name="SubScreen" component={SettingsSubScreen} />
     <Stack.Screen name="ReaderSettings" component={ReaderSettings} />
     <Stack.Screen name="TrackerSettings" component={TrackerSettings} />
     <Stack.Screen name="BackupSettings" component={BackupSettings} />
-    <Stack.Screen name="AppearanceSettings" component={AppearanceSettings} />
     <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />
     <Stack.Screen name="RespositorySettings" component={RespositorySettings} />
     {/* <Stack.Screen name="LibrarySettings" component={LibrarySettings} /> */}

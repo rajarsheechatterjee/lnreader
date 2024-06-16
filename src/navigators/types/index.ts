@@ -4,6 +4,7 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { Settings } from '@screens/settings/Settings';
 import { MaterialBottomTabScreenProps } from 'react-native-paper';
 
 export type RootStackParamList = {
@@ -71,16 +72,19 @@ export type MoreStackParamList = {
   Statistics: undefined;
 };
 
+type SettingsProps = {
+  settingsSource: keyof Settings;
+};
+
 export type SettingsStackParamList = {
   Settings: undefined;
-  GeneralSettings: undefined;
-  ReaderSettings: undefined;
-  TrackerSettings: undefined;
-  BackupSettings: undefined;
-  AppearanceSettings: undefined;
-  AdvancedSettings: undefined;
-  LibrarySettings: undefined;
-  RespositorySettings: undefined;
+  SubScreen: SettingsProps;
+  ReaderSettings: SettingsProps;
+  TrackerSettings: SettingsProps;
+  BackupSettings: SettingsProps;
+  AdvancedSettings: SettingsProps;
+  LibrarySettings: SettingsProps;
+  RespositorySettings: SettingsProps;
 };
 
 export type NovelScreenProps = StackScreenProps<RootStackParamList, 'Novel'>;
