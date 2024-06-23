@@ -19,18 +19,18 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         theme={theme}
       />
       <View style={{ flex: 1, backgroundColor: theme.background }}>
-        {Object.keys(Settings).map(k => {
-          const key = k as any as keyof typeof Settings;
+        {Object.typedKeys(Settings).map(key => {
           const setting = Settings[key];
 
           return (
             <List.Item
+              key={setting.navigateParam}
               title={setting.groupTitle}
               icon={setting.icon}
               onPress={() =>
-                //@ts-ignore
                 navigation.navigate('SettingsStack', {
-                  screen: setting.navigateParam,
+                  screen: key === 'reader' ? 'ReaderSettings' : 'SubScreen',
+                  params: { settingsSource: key },
                 })
               }
               theme={theme}
@@ -44,6 +44,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'ReaderSettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}
@@ -54,6 +55,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'RespositorySettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}
@@ -64,6 +66,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'TrackerSettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}
@@ -74,6 +77,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'BackupSettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}
@@ -84,6 +88,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'AdvancedSettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}

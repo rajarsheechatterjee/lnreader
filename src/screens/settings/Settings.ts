@@ -1,7 +1,13 @@
-import { AppSettings, LibrarySettings } from '@hooks/persisted/useSettings';
+import {
+  AppSettings,
+  ChapterGeneralSettings,
+  ChapterReaderSettings,
+  LibrarySettings,
+} from '@hooks/persisted/useSettings';
 import GeneralSettings from './settingsGroups/generalSettingsGroup';
 import AppearanceSettings from './settingsGroups/appearanceSettingsGroup';
 import { ThemeColors } from '@theme/types';
+import ReaderSettings from './settingsGroups/readerSettingsGroup';
 
 type settingsGroupTypes =
   | 'GeneralSettings'
@@ -24,9 +30,19 @@ export type ValueKey<T extends SettingOrigin> = T extends 'App'
   ? 'showLastUpdateTime'
   : T extends 'MMKV'
   ? 'isDark'
+  : T extends 'GeneralChapter'
+  ? keyof ChapterGeneralSettings
+  : T extends 'ReaderChapter'
+  ? keyof ChapterReaderSettings
   : never;
 
-export type SettingOrigin = 'App' | 'Library' | 'lastUpdateTime' | 'MMKV';
+export type SettingOrigin =
+  | 'App'
+  | 'Library'
+  | 'lastUpdateTime'
+  | 'MMKV'
+  | 'GeneralChapter'
+  | 'ReaderChapter';
 
 export type ModalSettingsType<T extends SettingOrigin> = {
   settingOrigin: T;
@@ -76,6 +92,7 @@ export type SwitchSettingsType<T extends SettingOrigin> = {
   settingOrigin: T;
   valueKey: ValueKey<T>;
   defaultValue: boolean;
+  dependents?: Array<SettingsSubGroupSettings>;
 };
 
 type BaseSwitchSetting = {
@@ -83,10 +100,33 @@ type BaseSwitchSetting = {
   description?: string;
   type: 'Switch';
 };
-export type SwitchSetting =
-  | (BaseSwitchSetting & SwitchSettingsType<'App'>)
-  | (BaseSwitchSetting & SwitchSettingsType<'lastUpdateTime'>)
-  | (BaseSwitchSetting & SwitchSettingsType<'Library'>);
+export type SwitchSetting = BaseSwitchSetting &
+  (
+    | SwitchSettingsType<'App'>
+    | SwitchSettingsType<'lastUpdateTime'>
+    | SwitchSettingsType<'Library'>
+    | SwitchSettingsType<'GeneralChapter'>
+    | SwitchSettingsType<'ReaderChapter'>
+  );
+
+export type NumberInputSettingsType<T extends SettingOrigin> = {
+  settingOrigin: T;
+  valueKey: ValueKey<T>;
+  defaultValue: string;
+};
+
+type BaseNumberInputSetting = {
+  title: string;
+  description?: string;
+  type: 'NumberInput';
+};
+export type NumberInputSetting = BaseNumberInputSetting &
+  (
+    | NumberInputSettingsType<'App'>
+    | NumberInputSettingsType<'lastUpdateTime'>
+    | NumberInputSettingsType<'Library'>
+    | NumberInputSettingsType<'GeneralChapter'>
+  );
 
 export type ThemePickerSetting = {
   title: string;
@@ -108,11 +148,16 @@ type BaseColorPickerSetting = {
 export type ColorPickerSetting =
   | BaseColorPickerSetting & ColorPickerSettingsType<'MMKV'>;
 
+export type SettingsSubGroupSettings =
+  | ModalSetting
+  | SwitchSetting
+  | ThemePickerSetting
+  | ColorPickerSetting
+  | NumberInputSetting;
+
 export interface SettingSubGroup {
   subGroupTitle: string;
-  settings: Array<
-    ModalSetting | SwitchSetting | ThemePickerSetting | ColorPickerSetting
-  >;
+  settings: Array<SettingsSubGroupSettings>;
 }
 
 export interface SettingsGroup {
@@ -122,13 +167,15 @@ export interface SettingsGroup {
   subGroup: SettingSubGroup[];
 }
 
-interface Settings {
+export interface Settings {
   general: SettingsGroup;
   appearance: SettingsGroup;
+  reader: SettingsGroup;
 }
 
 const settings: Settings = {
   general: GeneralSettings,
   appearance: AppearanceSettings,
+  reader: ReaderSettings,
 } as const;
 export default settings;

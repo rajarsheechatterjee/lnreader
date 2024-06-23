@@ -142,10 +142,6 @@ export type SettingsScreenProps = CompositeScreenProps<
   StackScreenProps<SettingsStackParamList, 'Settings'>,
   StackScreenProps<MoreStackParamList, 'SettingsStack'>
 >;
-export type AppearanceSettingsScreenProps = StackScreenProps<
-  SettingsStackParamList,
-  'AppearanceSettings'
->;
 export type TrackerSettingsScreenProps = StackScreenProps<
   SettingsStackParamList,
   'TrackerSettings'

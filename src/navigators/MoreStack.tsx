@@ -18,6 +18,7 @@ import RespositorySettings from '@screens/settings/SettingsRepositoryScreen/Sett
 // import LibrarySettings from '@screens/settings/SettingsLibraryScreen/SettingsLibraryScreen';
 import StatsScreen from '@screens/StatsScreen/StatsScreen';
 import { MoreStackParamList, SettingsStackParamList } from './types';
+import ReaderSettingsSubScreen from '@screens/settings/settingsScreens/ReaderSettingsSubScreen';
 
 const Stack = createStackNavigator<
   SettingsStackParamList & MoreStackParamList
@@ -29,7 +30,7 @@ const SettingsStack = () => (
   <Stack.Navigator screenOptions={stackNavigatorConfig}>
     <Stack.Screen name="Settings" component={Settings} />
     <Stack.Screen name="SubScreen" component={SettingsSubScreen} />
-    <Stack.Screen name="ReaderSettings" component={ReaderSettings} />
+    <Stack.Screen name="ReaderSettings" component={ReaderSettingsSubScreen} />
     <Stack.Screen name="TrackerSettings" component={TrackerSettings} />
     <Stack.Screen name="BackupSettings" component={BackupSettings} />
     <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />

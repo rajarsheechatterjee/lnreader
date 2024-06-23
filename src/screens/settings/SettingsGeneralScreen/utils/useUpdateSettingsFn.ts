@@ -3,7 +3,14 @@ import {
   useLastUpdate,
   useLibrarySettings,
 } from '@hooks/persisted';
-import { AppSettings, LibrarySettings } from '@hooks/persisted/useSettings';
+import {
+  AppSettings,
+  ChapterGeneralSettings,
+  ChapterReaderSettings,
+  LibrarySettings,
+  useChapterGeneralSettings,
+  useChapterReaderSettings,
+} from '@hooks/persisted/useSettings';
 import { SettingOrigin, ValueKey } from '@screens/settings/Settings';
 
 type UpdateFunction<T extends ValueKey<SettingOrigin>> = (
@@ -15,6 +22,9 @@ export default function useUpdateSettingsFn(settingOrigin: SettingOrigin) {
   const { setLibrarySettings } = useLibrarySettings();
   const { setAppSettings } = useAppSettings();
   const { setShowLastUpdateTime } = useLastUpdate();
+  const { setChapterGeneralSettings } = useChapterGeneralSettings();
+  const { setChapterReaderSettings } = useChapterReaderSettings();
+
   if (settingOrigin === 'Library') {
     const update: UpdateFunction<keyof LibrarySettings> = (value, key) =>
       setLibrarySettings({
@@ -30,6 +40,18 @@ export default function useUpdateSettingsFn(settingOrigin: SettingOrigin) {
   } else if (settingOrigin === 'lastUpdateTime') {
     const update: UpdateFunction<'showLastUpdateTime'> = (value, key) =>
       setShowLastUpdateTime(value as boolean);
+    return update;
+  } else if (settingOrigin === 'GeneralChapter') {
+    const update: UpdateFunction<keyof ChapterGeneralSettings> = (value, key) =>
+      setChapterGeneralSettings({
+        [key]: value,
+      });
+    return update;
+  } else if (settingOrigin === 'ReaderChapter') {
+    const update: UpdateFunction<keyof ChapterReaderSettings> = (value, key) =>
+      setChapterReaderSettings({
+        [key]: value,
+      });
     return update;
   } else {
     throw new Error(
