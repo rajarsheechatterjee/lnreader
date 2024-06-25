@@ -15,7 +15,7 @@ import {
   useAppSettings,
 } from '@hooks/persisted/useSettings';
 import { SortItem } from '@components/Checkbox/Checkbox';
-import useUpdateSettingsFn from '../utils/useUpdateSettingsFn';
+import useUpdateSettingsFn from '@screens/settings/SettingsGeneralScreen/utils/useUpdateSettingsFn';
 
 interface DisplayModeModalProps<
   T extends keyof AppSettings | keyof LibrarySettings,

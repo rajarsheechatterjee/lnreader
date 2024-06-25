@@ -285,7 +285,7 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
       </View>
       <View
         style={{
-          height: layoutHeight - 104 - webViewHeight,
+          height: layoutHeight - 98 - webViewHeight,
         }}
       >
         <SettingsSubScreen

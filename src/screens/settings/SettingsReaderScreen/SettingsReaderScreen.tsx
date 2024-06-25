@@ -38,9 +38,7 @@ type WebViewPostEvent = {
   data?: { [key: string]: string | number };
 };
 
-const SettingsReaderScreen = r => {
-  console.log(JSON.stringify(r, null, 2));
-
+const SettingsReaderScreen = () => {
   const theme = useTheme();
   const navigation = useNavigation();
   const webViewRef = useRef<WebView>(null);

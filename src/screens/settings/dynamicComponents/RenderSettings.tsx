@@ -1,10 +1,11 @@
 import { SettingsSubGroupSettings } from '../Settings';
-import DefaultSettingModal from '../SettingsGeneralScreen/modals/DefaultSettingModal';
 import SettingSwitchV2 from './SettingSwitchV2';
 import { useTheme } from '@hooks/persisted';
-import SettingsThemePicker from './SettingsThemePicker';
+import SettingsThemePicker from '../components/SettingsThemePicker';
 import ColorPickerModal from '../SettingsGeneralScreen/modals/ColorPickerModal';
 import SettingTextInput from './SettingTextInput';
+import DefaultSettingModal from './modals/DefaultSettingModal';
+import TextAreaModal from './modals/TextAreaModal';
 
 export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
   const theme = useTheme();
@@ -22,5 +23,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
       return (
         <ColorPickerModal settings={setting} theme={theme} showAccentColors />
       );
+    case 'TextArea':
+      return <TextAreaModal setting={setting} theme={theme} />;
   }
 }

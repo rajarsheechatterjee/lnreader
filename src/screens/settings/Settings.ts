@@ -126,6 +126,30 @@ export type NumberInputSetting = BaseNumberInputSetting &
     | NumberInputSettingsType<'lastUpdateTime'>
     | NumberInputSettingsType<'Library'>
     | NumberInputSettingsType<'GeneralChapter'>
+    | NumberInputSettingsType<'ReaderChapter'>
+  );
+
+export type TextAreaSettingsType<T extends SettingOrigin> = {
+  settingOrigin: T;
+  valueKey: ValueKey<T>;
+  defaultValue: string;
+};
+
+type BaseTextAreaSetting = {
+  title: string;
+  placeholder?: string;
+  description?: string;
+  openFileLabel: string;
+  clearDialog: string;
+  type: 'TextArea';
+};
+export type TextAreaSetting = BaseTextAreaSetting &
+  (
+    | TextAreaSettingsType<'App'>
+    | TextAreaSettingsType<'lastUpdateTime'>
+    | TextAreaSettingsType<'Library'>
+    | TextAreaSettingsType<'GeneralChapter'>
+    | TextAreaSettingsType<'ReaderChapter'>
   );
 
 export type ThemePickerSetting = {
@@ -153,7 +177,8 @@ export type SettingsSubGroupSettings =
   | SwitchSetting
   | ThemePickerSetting
   | ColorPickerSetting
-  | NumberInputSetting;
+  | NumberInputSetting
+  | TextAreaSetting;
 
 export interface SettingSubGroup {
   subGroupTitle: string;

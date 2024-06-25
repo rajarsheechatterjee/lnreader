@@ -3,7 +3,13 @@ import { SettingSubGroup } from '../Settings';
 import { useTheme } from '@hooks/persisted';
 import RenderSettings from './RenderSettings';
 
-export default function (setting: SettingSubGroup, index: number) {
+export default function ({
+  setting,
+  index,
+}: {
+  setting: SettingSubGroup;
+  index: number;
+}) {
   const theme = useTheme();
 
   return (

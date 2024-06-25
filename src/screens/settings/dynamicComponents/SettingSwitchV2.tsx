@@ -1,7 +1,7 @@
-import { StyleSheet, TextInput, View, Text } from 'react-native';
+import { SwitchItem } from '@components';
 import { ThemeColors } from '@theme/types';
 import useUpdateSettingsFn from '../SettingsGeneralScreen/utils/useUpdateSettingsFn';
-import { SettingOrigin, SwitchSetting } from '../Settings';
+import { SettingOrigin, SwitchSetting, ValueKey } from '../Settings';
 import {
   useAppSettings,
   useChapterGeneralSettings,
@@ -10,18 +10,25 @@ import {
   useLibrarySettings,
 } from '@hooks/persisted';
 import { useMemo } from 'react';
-import { defaultTo } from 'lodash-es';
+import RenderSettings from './RenderSettings';
+import Animated, {
+  Easing,
+  ReduceMotion,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 interface SettingSwitchProps {
   setting: SwitchSetting;
   theme: ThemeColors;
 }
 
-export default function SettingTextInput({
+export default function SettingSwitchV2({
   setting,
   theme,
 }: SettingSwitchProps) {
-  const update = useUpdateSettingsFn(setting.settingOrigin)!;
+  const up = useUpdateSettingsFn(setting.settingOrigin)!;
+
   const librarySettings = useLibrarySettings();
   const appSettings = useAppSettings();
   const { showLastUpdateTime } = useLastUpdate();
@@ -43,44 +50,40 @@ export default function SettingTextInput({
     }
     return (res ?? setting.defaultValue) as boolean;
   }, [librarySettings, appSettings, showLastUpdateTime, chapterSettings]);
-  const labelStyle = [styles.fontSizeL, { color: theme.onSurface }];
+
+  const maxHeight = useSharedValue(100);
+  const opacity = useSharedValue(1);
+  const update = (value: unknown, key: ValueKey<SettingOrigin>) => {
+    maxHeight.value = withTiming(
+      value ? 100 * (setting.dependents?.length ?? 0) : 0,
+    );
+    opacity.value = withTiming(value ? 1 : 0, {
+      easing: Easing.out(Easing.exp),
+      reduceMotion: ReduceMotion.System,
+    });
+    //@ts-ignore
+    up(value, key);
+  };
 
   return (
-    <View style={styles.autoScrollInterval}>
-      <Text style={[labelStyle, styles.paddingRightM]} numberOfLines={2}>
-        {setting.title}
-      </Text>
-      <TextInput
-        style={labelStyle}
-        defaultValue={defaultTo(currentValue, 10).toString()}
-        keyboardType="numeric"
-        onChangeText={text => {
-          if (text) {
-            //@ts-ignore
-            update(text, setting.valueKey);
-          }
-        }}
+    <>
+      <SwitchItem
+        value={currentValue}
+        label={setting.title}
+        description={setting.description}
+        onPress={() => update(!currentValue, setting.valueKey)}
+        theme={theme}
+        style={{ paddingHorizontal: 16 }}
       />
-    </View>
+      {!setting.dependents ? null : (
+        <Animated.View style={{ maxHeight, opacity }}>
+          {setting.dependents.map((dep, i) => {
+            return (
+              <RenderSettings key={'dep' + setting.title + i} setting={dep} />
+            );
+          })}
+        </Animated.View>
+      )}
+    </>
   );
 }
-const styles = StyleSheet.create({
-  fontSizeL: {
-    fontSize: 16,
-    width: 50,
-    height: 46,
-    textAlignVertical: 'center',
-  },
-  autoScrollInterval: {
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    //? overflow scroll because the animation looks better
-    overflow: 'scroll',
-  },
-  paddingRightM: {
-    paddingVertical: 12,
-    flex: 1,
-  },
-});

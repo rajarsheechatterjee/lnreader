@@ -1,10 +1,10 @@
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 import { useTheme } from '@hooks/persisted';
 import { Appbar, List } from '@components';
 import S from '../Settings';
-import RenderSettings from '../components/RenderSettingsGroup';
+import RenderSettings from '../dynamicComponents/RenderSettingsGroup';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SettingsStackParamList } from '@navigators/types';
@@ -29,7 +29,7 @@ const SettingsSubScreen: React.FC<Props> = ({
         height: '100%',
         paddingLeft: insets.left,
         paddingRight: insets.right,
-        paddingBottom: insets.bottom,
+        marginBottom: disableAppbar ? 0 : insets.bottom,
         paddingTop: disableAppbar ? 0 : insets.top,
       }}
     >
@@ -40,7 +40,16 @@ const SettingsSubScreen: React.FC<Props> = ({
           theme={theme}
         />
       )}
-      <List.Section>{Settings.subGroup.map(RenderSettings)}</List.Section>
+      <List.Section>
+        {Settings.subGroup.map((val, i) => (
+          <RenderSettings
+            setting={val}
+            index={i}
+            key={'subscreenSetting' + i}
+          />
+        ))}
+      </List.Section>
+      {!disableAppbar && <View style={{ height: insets.bottom }} />}
     </ScrollView>
   );
 };
