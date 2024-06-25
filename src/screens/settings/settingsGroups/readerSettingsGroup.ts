@@ -104,6 +104,32 @@ const ReaderSettings: SettingsGroup = {
         },
       ],
     },
+    {
+      subGroupTitle: getString('common.display'),
+      settings: [
+        {
+          title: getString('readerScreen.bottomSheet.fullscreen'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'fullScreenMode',
+          defaultValue: true,
+        },
+        {
+          title: getString('readerScreen.bottomSheet.showProgressPercentage'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'showScrollPercentage',
+          defaultValue: false,
+        },
+        {
+          title: getString('readerScreen.bottomSheet.showBatteryAndTime'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'showBatteryAndTime',
+          defaultValue: false,
+        },
+      ],
+    },
   ],
 };
 export default ReaderSettings;
