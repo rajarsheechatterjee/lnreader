@@ -97,12 +97,18 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
     novelName: 'novel name',
     chapterName: "chapter' name",
   };
+  console.log(
+    readerSettings.textSize,
+    readerSettings.lineHeight,
+    readerSettings.padding,
+  );
+
   const webViewCSS = `
   <style>
     :root {
       --StatusBar-currentHeight: ${StatusBar.currentHeight};
       --readerSettings-theme: ${readerSettings.theme};
-      --readerSettings-padding: ${readerSettings.padding}%;
+      --readerSettings-padding: ${readerSettings.padding}px;
       --readerSettings-textSize: ${readerSettings.textSize}px;
       --readerSettings-textColor: ${readerSettings.textColor};
       --readerSettings-textAlign: ${readerSettings.textAlign};
@@ -217,13 +223,13 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
                 </script>
               </head>
               <body>
-                <chapter 
+                <div id="LNReader-chapter" 
                   data-novel-id='${dummyChapterInfo.novelId}'
                   data-chapter-id='${dummyChapterInfo.chapterId}'
                   onclick="reader.post({type:'hide'})"
                 >
                   ${dummyHTML}
-                </chapter>
+                </div>
                 <div class="hidden" id="ToolWrapper">
                     <div id="TTS-Controller"></div>
                     <div id="ScrollBar"></div>

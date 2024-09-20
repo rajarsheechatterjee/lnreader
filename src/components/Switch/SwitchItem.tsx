@@ -18,6 +18,7 @@ interface SwitchItemProps {
   theme: ThemeColors;
   size?: number;
   style?: StyleProp<ViewStyle>;
+  endOfLine?: () => React.ReactNode;
 }
 
 const SwitchItem: React.FC<SwitchItemProps> = ({
@@ -28,6 +29,7 @@ const SwitchItem: React.FC<SwitchItemProps> = ({
   value,
   size,
   style,
+  endOfLine,
 }) => (
   <Pressable
     android_ripple={{ color: theme.rippleColor }}
@@ -49,6 +51,7 @@ const SwitchItem: React.FC<SwitchItemProps> = ({
       style={styles.switch}
       size={size}
     />
+    {endOfLine ? endOfLine() : null}
   </Pressable>
 );
 
@@ -56,6 +59,7 @@ export default SwitchItem;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 12,

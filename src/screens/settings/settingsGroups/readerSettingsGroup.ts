@@ -138,6 +138,14 @@ const ReaderSettings: SettingsGroup = {
         },
       ],
     },
+    {
+      subGroupTitle: 'TTS',
+      settings: [
+        {
+          type: 'TTS',
+        },
+      ],
+    },
   ],
 };
 export default ReaderSettings;

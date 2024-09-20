@@ -21,11 +21,13 @@ import Animated, {
 interface SettingSwitchProps {
   setting: SwitchSetting;
   theme: ThemeColors;
+  endOfLine?: () => React.ReactNode;
 }
 
 export default function SettingSwitchV2({
   setting,
   theme,
+  endOfLine,
 }: SettingSwitchProps) {
   const up = useUpdateSettingsFn(setting.settingOrigin)!;
 
@@ -74,6 +76,7 @@ export default function SettingSwitchV2({
         onPress={() => update(!currentValue, setting.valueKey)}
         theme={theme}
         style={{ paddingHorizontal: 16 }}
+        endOfLine={endOfLine}
       />
       {!setting.dependents ? null : (
         <Animated.View style={{ maxHeight, opacity }}>

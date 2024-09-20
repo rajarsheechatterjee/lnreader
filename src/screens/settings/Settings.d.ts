@@ -170,6 +170,7 @@ export type ColorPickerSetting =
   | BaseColorPickerSetting & ColorPickerSettingsType<'MMKV'>;
 
 export type ReaderThemeSetting = { type: 'ReaderTheme' };
+export type ReaderTTSSetting = { type: 'TTS' };
 
 export type SettingsSubGroupSettings =
   | ModalSetting
@@ -178,7 +179,8 @@ export type SettingsSubGroupSettings =
   | ColorPickerSetting
   | NumberInputSetting
   | TextAreaSetting
-  | ReaderThemeSetting;
+  | ReaderThemeSetting
+  | ReaderTTSSetting;
 
 export interface SettingSubGroup {
   subGroupTitle: string;

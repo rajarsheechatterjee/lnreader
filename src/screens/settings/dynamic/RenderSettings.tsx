@@ -7,6 +7,7 @@ import SettingTextInput from './components/SettingTextInput';
 import DefaultSettingModal from './modals/DefaultSettingModal';
 import TextAreaModal from './modals/TextAreaModal';
 import ReaderThemeSettings from './components/ReaderThemeSettings';
+import TextToSpeechSettings from './components/TextToSpeechSettings';
 
 export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
   const theme = useTheme();
@@ -28,5 +29,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
       return <TextAreaModal setting={setting} theme={theme} />;
     case 'ReaderTheme':
       return <ReaderThemeSettings />;
+    case 'TTS':
+      return <TextToSpeechSettings />;
   }
 }
