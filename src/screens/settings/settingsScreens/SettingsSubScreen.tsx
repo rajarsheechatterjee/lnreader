@@ -8,6 +8,7 @@ import RenderSettings from '../dynamicComponents/RenderSettingsGroup';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SettingsStackParamList } from '@navigators/types';
+import { Settings } from '../Settings.d';
 
 type Props = StackScreenProps<
   SettingsStackParamList,
@@ -20,7 +21,7 @@ const SettingsSubScreen: React.FC<Props> = ({
   disableAppbar,
 }) => {
   const theme = useTheme();
-  const Settings = S[route.params.settingsSource];
+  const Settings = S[route.params.settingsSource as keyof Settings];
   const insets = useSafeAreaInsets();
 
   return (

@@ -8,7 +8,7 @@ import { ThemeColors } from '@theme/types';
 import { useLibrarySettings } from '@hooks/persisted';
 import { Checkbox, List } from '@components';
 import { useBoolean } from '@hooks/index';
-import { ModalSetting, SettingsTypeModes } from '@screens/settings/Settings';
+import { ModalSetting, SettingsTypeModes } from '@screens/settings/Settings.d';
 import {
   AppSettings,
   LibrarySettings,

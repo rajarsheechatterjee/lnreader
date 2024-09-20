@@ -1,7 +1,7 @@
 import { SwitchItem } from '@components';
 import { ThemeColors } from '@theme/types';
 import useUpdateSettingsFn from '../SettingsGeneralScreen/utils/useUpdateSettingsFn';
-import { SettingOrigin, SwitchSetting, ValueKey } from '../Settings';
+import { SettingOrigin, SwitchSetting, ValueKey } from '../Settings.d';
 import {
   useAppSettings,
   useChapterGeneralSettings,

@@ -1,7 +1,11 @@
 import { StyleSheet, TextInput, View, Text } from 'react-native';
 import { ThemeColors } from '@theme/types';
 import useUpdateSettingsFn from '../SettingsGeneralScreen/utils/useUpdateSettingsFn';
-import { NumberInputSetting, SettingOrigin, SwitchSetting } from '../Settings';
+import {
+  NumberInputSetting,
+  SettingOrigin,
+  SwitchSetting,
+} from '../Settings.d';
 import {
   useAppSettings,
   useChapterGeneralSettings,

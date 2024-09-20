@@ -5,7 +5,7 @@ import { Modal, overlay, Portal, TextInput } from 'react-native-paper';
 import { List } from '@components';
 import { ThemeColors } from '@theme/types';
 import { useBoolean } from '@hooks/index';
-import { ColorPickerSetting } from '@screens/settings/Settings';
+import { ColorPickerSetting } from '@screens/settings/Settings.d';
 import { useMMKVString } from 'react-native-mmkv';
 import { useKeyboardHeight } from '@hooks/common/useKeyboardHeight';
 

@@ -1,4 +1,4 @@
-import { SettingsSubGroupSettings } from '../Settings';
+import { SettingsSubGroupSettings } from '../Settings.d';
 import SettingSwitchV2 from './SettingSwitchV2';
 import { useTheme } from '@hooks/persisted';
 import SettingsThemePicker from '../components/SettingsThemePicker';
