@@ -1,5 +1,5 @@
 import { getString } from '@strings/translations';
-import { SettingsGroup } from '../Settings';
+import { SettingsGroup } from '../Settings.d';
 
 const ReaderSettings: SettingsGroup = {
   groupTitle: getString('readerSettings.title'),
@@ -127,6 +127,14 @@ const ReaderSettings: SettingsGroup = {
           settingOrigin: 'GeneralChapter',
           valueKey: 'showBatteryAndTime',
           defaultValue: false,
+        },
+      ],
+    },
+    {
+      subGroupTitle: getString('readerSettings.readerTheme'),
+      settings: [
+        {
+          type: 'ReaderTheme',
         },
       ],
     },

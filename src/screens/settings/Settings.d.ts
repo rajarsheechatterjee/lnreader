@@ -169,13 +169,16 @@ type BaseColorPickerSetting = {
 export type ColorPickerSetting =
   | BaseColorPickerSetting & ColorPickerSettingsType<'MMKV'>;
 
+export type ReaderThemeSetting = { type: 'ReaderTheme' };
+
 export type SettingsSubGroupSettings =
   | ModalSetting
   | SwitchSetting
   | ThemePickerSetting
   | ColorPickerSetting
   | NumberInputSetting
-  | TextAreaSetting;
+  | TextAreaSetting
+  | ReaderThemeSetting;
 
 export interface SettingSubGroup {
   subGroupTitle: string;

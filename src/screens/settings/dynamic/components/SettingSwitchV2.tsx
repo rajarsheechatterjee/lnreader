@@ -1,7 +1,7 @@
 import { SwitchItem } from '@components';
 import { ThemeColors } from '@theme/types';
-import useUpdateSettingsFn from '../SettingsGeneralScreen/utils/useUpdateSettingsFn';
-import { SettingOrigin, SwitchSetting, ValueKey } from '../Settings.d';
+import useUpdateSettingsFn from '../../SettingsGeneralScreen/utils/useUpdateSettingsFn';
+import { SettingOrigin, SwitchSetting, ValueKey } from '../../Settings.d';
 import {
   useAppSettings,
   useChapterGeneralSettings,
@@ -10,7 +10,7 @@ import {
   useLibrarySettings,
 } from '@hooks/persisted';
 import { useMemo } from 'react';
-import RenderSettings from './RenderSettings';
+import RenderSettings from '../RenderSettings';
 import Animated, {
   Easing,
   ReduceMotion,
@@ -31,9 +31,9 @@ export default function SettingSwitchV2({
 
   const librarySettings = useLibrarySettings();
   const appSettings = useAppSettings();
-  const { showLastUpdateTime } = useLastUpdate();
   const chapterSettings = useChapterGeneralSettings();
   const chapterReaderSettings = useChapterReaderSettings();
+  const { showLastUpdateTime } = useLastUpdate();
 
   const currentValue = useMemo(() => {
     let res;

@@ -1,11 +1,12 @@
 import { SettingsSubGroupSettings } from '../Settings.d';
-import SettingSwitchV2 from './SettingSwitchV2';
+import SettingSwitchV2 from './components/SettingSwitchV2';
 import { useTheme } from '@hooks/persisted';
 import SettingsThemePicker from '../components/SettingsThemePicker';
 import ColorPickerModal from '../SettingsGeneralScreen/modals/ColorPickerModal';
-import SettingTextInput from './SettingTextInput';
+import SettingTextInput from './components/SettingTextInput';
 import DefaultSettingModal from './modals/DefaultSettingModal';
 import TextAreaModal from './modals/TextAreaModal';
+import ReaderThemeSettings from './components/ReaderThemeSettings';
 
 export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
   const theme = useTheme();
@@ -25,5 +26,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
       );
     case 'TextArea':
       return <TextAreaModal setting={setting} theme={theme} />;
+    case 'ReaderTheme':
+      return <ReaderThemeSettings />;
   }
 }

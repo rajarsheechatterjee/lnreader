@@ -4,7 +4,7 @@ import { ScrollView, View } from 'react-native';
 import { useTheme } from '@hooks/persisted';
 import { Appbar, List } from '@components';
 import S from '../Settings';
-import RenderSettings from '../dynamicComponents/RenderSettingsGroup';
+import RenderSettings from '../dynamic/RenderSettingsGroup';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SettingsStackParamList } from '@navigators/types';
