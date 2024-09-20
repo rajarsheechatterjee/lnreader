@@ -8,6 +8,7 @@ import DefaultSettingModal from './modals/DefaultSettingModal';
 import TextAreaModal from './modals/TextAreaModal';
 import ReaderThemeSettings from './components/ReaderThemeSettings';
 import TextToSpeechSettings from './components/TextToSpeechSettings';
+import RepoSettings from './components/RepoSettings';
 
 export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
   const theme = useTheme();
@@ -31,5 +32,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
       return <ReaderThemeSettings />;
     case 'TTS':
       return <TextToSpeechSettings />;
+    case 'Repo':
+      return <RepoSettings />;
   }
 }

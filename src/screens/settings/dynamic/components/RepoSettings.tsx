@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { FAB, Portal } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
@@ -11,12 +11,12 @@ import { useBoolean } from '@hooks/index';
 import { useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 
-import AddRepositoryModal from '../dynamic/modals/AddRepositoryModal';
+import AddRepositoryModal from '../modals/AddRepositoryModal';
 import CategorySkeletonLoading from '@screens/Categories/components/CategorySkeletonLoading';
-import RepositoryCard from '../dynamic/components/RepositoryCard';
+import RepositoryCard from './RepositoryCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const SettingsBrowseScreen = () => {
+const RepoSettings = () => {
   const navigation = useNavigation();
   const theme = useTheme();
   const { bottom } = useSafeAreaInsets();
@@ -44,33 +44,7 @@ const SettingsBrowseScreen = () => {
   } = useBoolean();
 
   return (
-    <>
-      <Appbar
-        title={'Repositories'}
-        handleGoBack={navigation.goBack}
-        theme={theme}
-      />
-      {isLoading ? (
-        <CategorySkeletonLoading width={360.7} height={89.5} theme={theme} />
-      ) : (
-        <FlatList
-          data={repositories}
-          contentContainerStyle={styles.contentCtn}
-          renderItem={({ item }) => (
-            <RepositoryCard
-              repository={item}
-              refetchRepositories={getRepositories}
-            />
-          )}
-          ListEmptyComponent={
-            <EmptyView
-              icon="Σ(ಠ_ಠ)"
-              description={getString('repositories.emptyMsg')}
-              theme={theme}
-            />
-          }
-        />
-      )}
+    <View style={[styles.full]}>
       <FAB
         style={[styles.fab, { backgroundColor: theme.primary, bottom: bottom }]}
         color={theme.onPrimary}
@@ -79,6 +53,26 @@ const SettingsBrowseScreen = () => {
         onPress={showAddRepositoryModal}
         icon={'plus'}
       />
+      {isLoading ? (
+        <CategorySkeletonLoading width={360.7} height={89.5} theme={theme} />
+      ) : !repositories || repositories.length === 0 ? (
+        <EmptyView
+          icon="Σ(ಠ_ಠ)"
+          description={getString('repositories.emptyMsg')}
+          theme={theme}
+        />
+      ) : (
+        repositories.map(item => {
+          return (
+            <RepositoryCard
+              key={item.id}
+              repository={item}
+              refetchRepositories={getRepositories}
+            />
+          );
+        })
+      )}
+
       <Portal>
         <AddRepositoryModal
           visible={addRepositoryModalVisible}
@@ -86,21 +80,24 @@ const SettingsBrowseScreen = () => {
           onSuccess={getRepositories}
         />
       </Portal>
-    </>
+    </View>
   );
 };
 
-export default SettingsBrowseScreen;
+export default RepoSettings;
 
 const styles = StyleSheet.create({
   fab: {
-    position: 'absolute',
-    margin: 16,
+    // position: 'absolute',
+    marginHorizontal: 16,
     right: 0,
   },
   contentCtn: {
     flexGrow: 1,
     paddingVertical: 16,
     paddingBottom: 100,
+  },
+  full: {
+    flexGrow: 1,
   },
 });

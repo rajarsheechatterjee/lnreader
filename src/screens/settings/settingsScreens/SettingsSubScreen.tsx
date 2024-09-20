@@ -27,11 +27,12 @@ const SettingsSubScreen: React.FC<Props> = ({
   return (
     <ScrollView
       style={{
-        height: '100%',
+        flex: 1,
+        position: 'relative',
         paddingLeft: insets.left,
         paddingRight: insets.right,
         marginBottom: disableAppbar ? 0 : insets.bottom,
-        paddingTop: disableAppbar ? 0 : insets.top,
+        // paddingTop: disableAppbar ? 0 : insets.top,
       }}
     >
       {disableAppbar ? null : (

@@ -97,11 +97,6 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
     novelName: 'novel name',
     chapterName: "chapter' name",
   };
-  console.log(
-    readerSettings.textSize,
-    readerSettings.lineHeight,
-    readerSettings.padding,
-  );
 
   const webViewCSS = `
   <style>

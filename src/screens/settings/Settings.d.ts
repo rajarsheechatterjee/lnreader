@@ -15,6 +15,7 @@ type settingsGroupTypes =
   | 'AdvancedSettings'
   | 'LibrarySettings'
   | 'RespositorySettings'
+  | 'RepoSettings'
   | undefined;
 
 export type SettingsTypeModes = 'single' | 'multiple' | 'order';
@@ -171,6 +172,7 @@ export type ColorPickerSetting =
 
 export type ReaderThemeSetting = { type: 'ReaderTheme' };
 export type ReaderTTSSetting = { type: 'TTS' };
+export type RepoSetting = { type: 'Repo' };
 
 export type SettingsSubGroupSettings =
   | ModalSetting
@@ -180,7 +182,8 @@ export type SettingsSubGroupSettings =
   | NumberInputSetting
   | TextAreaSetting
   | ReaderThemeSetting
-  | ReaderTTSSetting;
+  | ReaderTTSSetting
+  | RepoSetting;
 
 export interface SettingSubGroup {
   subGroupTitle: string;
@@ -198,4 +201,5 @@ export interface Settings {
   general: SettingsGroup;
   appearance: SettingsGroup;
   reader: SettingsGroup;
+  repo: SettingsGroup;
 }
