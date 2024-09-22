@@ -12,7 +12,7 @@ import { showToast } from '@utils/showToast';
 import { getString } from '@strings/translations';
 import { Portal } from 'react-native-paper';
 import AddRepositoryModal from '../modals/AddRepositoryModal';
-import DeleteRepositoryModal from '../../SettingsRepositoryScreen/components/DeleteRepositoryModal';
+import DeleteRepositoryModal from '../modals/DeleteRepositoryModal';
 
 interface RepositoryCardProps {
   repository: Repository;

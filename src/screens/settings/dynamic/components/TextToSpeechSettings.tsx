@@ -11,7 +11,6 @@ import { Portal } from 'react-native-paper';
 import { StyleSheet, View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
 import { getAvailableVoicesAsync, Voice } from 'expo-speech';
-import Switch from '@components/Switch/Switch';
 import SettingSwitchV2 from './SettingSwitchV2';
 
 export default function TextToSpeechSettings() {
@@ -25,8 +24,7 @@ export default function TextToSpeechSettings() {
   }, []);
 
   const { tts, setChapterReaderSettings } = useChapterReaderSettings();
-  const { TTSEnable = true, setChapterGeneralSettings } =
-    useChapterGeneralSettings();
+  const { TTSEnable = true } = useChapterGeneralSettings();
   const {
     value: voiceModalVisible,
     setTrue: showVoiceModal,

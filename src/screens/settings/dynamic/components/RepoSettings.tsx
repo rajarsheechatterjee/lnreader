@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { FAB, Portal } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 
-import { Appbar, EmptyView } from '@components';
+import { EmptyView } from '@components';
 
 import { getRepositoriesFromDb } from '@database/queries/RepositoryQueries';
 import { Repository } from '@database/types';
@@ -17,7 +16,6 @@ import RepositoryCard from './RepositoryCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const RepoSettings = () => {
-  const navigation = useNavigation();
   const theme = useTheme();
   const { bottom } = useSafeAreaInsets();
 
