@@ -25,7 +25,7 @@ interface DisplayModeModalProps<
   theme: ThemeColors;
 }
 
-const DefaultSettingModal: React.FC<
+const SelectionSettingModal: React.FC<
   DisplayModeModalProps<
     keyof AppSettings | keyof LibrarySettings,
     SettingsTypeModes
@@ -141,7 +141,7 @@ const DefaultSettingModal: React.FC<
   );
 };
 
-export default React.memo(DefaultSettingModal);
+export default React.memo(SelectionSettingModal);
 
 const styles = StyleSheet.create({
   containerStyle: {

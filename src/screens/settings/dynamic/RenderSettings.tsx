@@ -4,7 +4,7 @@ import { useTheme } from '@hooks/persisted';
 import SettingsThemePicker from '../components/SettingsThemePicker';
 import ColorPickerModal from '../SettingsGeneralScreen/modals/ColorPickerModal';
 import SettingTextInput from './components/SettingTextInput';
-import DefaultSettingModal from './modals/DefaultSettingModal';
+import SelectionSettingModal from './modals/SelectionSettingModal';
 import TextAreaModal from './modals/TextAreaModal';
 import ReaderThemeSettings from './components/ReaderThemeSettings';
 import TextToSpeechSettings from './components/TextToSpeechSettings';
@@ -17,7 +17,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
 
   switch (setting.type) {
     case 'Modal':
-      return <DefaultSettingModal setting={setting} theme={theme} />;
+      return <SelectionSettingModal setting={setting} theme={theme} />;
     case 'Switch':
       return <SettingSwitchV2 setting={setting} theme={theme} />;
     case 'ThemePicker':
