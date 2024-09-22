@@ -9,6 +9,7 @@ import TextAreaModal from './modals/TextAreaModal';
 import ReaderThemeSettings from './components/ReaderThemeSettings';
 import TextToSpeechSettings from './components/TextToSpeechSettings';
 import RepoSettings from './components/RepoSettings';
+import TrackerButton from './components/TrackerButton';
 
 export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
   const theme = useTheme();
@@ -34,5 +35,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
       return <TextToSpeechSettings />;
     case 'Repo':
       return <RepoSettings />;
+    case 'Tracker':
+      return <TrackerButton trackerName={setting.trackerName} />;
   }
 }

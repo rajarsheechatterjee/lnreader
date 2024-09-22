@@ -9,7 +9,7 @@ import {
   librarySortOrderList,
 } from '@screens/library/constants/constants';
 import { getString } from '@strings/translations';
-import { SettingsGroup } from '../Settings';
+import { SettingsGroup } from '../Settings.d';
 
 const sortOrderNameMap = new Map<string, string>([
   ['name', 'libraryScreen.bottomSheet.sortOrders.alphabetically'],

@@ -173,6 +173,10 @@ export type ColorPickerSetting =
 export type ReaderThemeSetting = { type: 'ReaderTheme' };
 export type ReaderTTSSetting = { type: 'TTS' };
 export type RepoSetting = { type: 'Repo' };
+export type TrackerSetting = {
+  type: 'Tracker';
+  trackerName: 'AniList' | 'MyAnimeList';
+};
 
 export type SettingsSubGroupSettings =
   | ModalSetting
@@ -183,7 +187,8 @@ export type SettingsSubGroupSettings =
   | TextAreaSetting
   | ReaderThemeSetting
   | ReaderTTSSetting
-  | RepoSetting;
+  | RepoSetting
+  | TrackerSetting;
 
 export interface SettingSubGroup {
   subGroupTitle: string;
@@ -202,4 +207,5 @@ export interface Settings {
   appearance: SettingsGroup;
   reader: SettingsGroup;
   repo: SettingsGroup;
+  tracker: SettingsGroup;
 }
