@@ -10,6 +10,7 @@ import ReaderThemeSettings from './components/ReaderThemeSettings';
 import TextToSpeechSettings from './components/TextToSpeechSettings';
 import RepoSettings from './components/RepoSettings';
 import TrackerButton from './components/TrackerButton';
+import InfoItem from './components/InfoItem';
 
 export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
   const theme = useTheme();
@@ -37,5 +38,7 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
       return <RepoSettings />;
     case 'Tracker':
       return <TrackerButton trackerName={setting.trackerName} />;
+    case 'InfoItem':
+      return <InfoItem title={setting.title} />;
   }
 }

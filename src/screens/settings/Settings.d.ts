@@ -5,6 +5,7 @@ import type {
   LibrarySettings,
 } from '@hooks/persisted/useSettings';
 import type { ThemeColors } from '@theme/types';
+import InfoItem from './dynamic/components/InfoItem';
 
 type settingsGroupTypes =
   | 'GeneralSettings'
@@ -177,6 +178,7 @@ export type TrackerSetting = {
   type: 'Tracker';
   trackerName: 'AniList' | 'MyAnimeList';
 };
+export type InfoItem = { type: 'InfoItem'; title: string };
 
 export type SettingsSubGroupSettings =
   | ModalSetting
@@ -188,7 +190,8 @@ export type SettingsSubGroupSettings =
   | ReaderThemeSetting
   | ReaderTTSSetting
   | RepoSetting
-  | TrackerSetting;
+  | TrackerSetting
+  | InfoItem;
 
 export interface SettingSubGroup {
   subGroupTitle: string;
