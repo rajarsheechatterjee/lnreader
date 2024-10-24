@@ -30,7 +30,6 @@ export default function TextToSpeechSettings() {
     setTrue: showVoiceModal,
     setFalse: hideVoiceModal,
   } = useBoolean();
-  console.log(TTSEnable);
 
   return (
     <>

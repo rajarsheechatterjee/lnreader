@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { Modal, overlay, TextInput } from 'react-native-paper';
 import { StorageAccessFramework } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -38,6 +38,24 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
   const [text, setText] = useState('');
   const keyboardHeight = useKeyboardHeight();
 
+  const modalAnim = useRef(new Animated.Value(30)).current;
+
+  const animK = (num: number) => {
+    Animated.timing(modalAnim, {
+      toValue: num,
+      duration: 100,
+      useNativeDriver: false,
+    }).start();
+  };
+
+  useEffect(() => {
+    if (keyboardHeight) {
+      animK(0);
+    } else {
+      animK(30);
+    }
+  }, [keyboardHeight]);
+
   const openDocumentPicker = async () => {
     try {
       const file = await DocumentPicker.getDocumentAsync({
@@ -63,54 +81,68 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
       visible={visible}
       onDismiss={onDismiss}
       contentContainerStyle={[
-        styles.modalContainer,
-        {
-          backgroundColor: overlay(2, theme.surface),
-        },
         keyboardHeight
           ? {
               position: 'absolute',
               bottom: 0,
               left: 0,
               right: 0,
-              width: '100%',
-              margin: 0,
-              marginBottom: keyboardHeight - 14,
+              marginBottom: keyboardHeight - 12,
             }
           : {},
       ]}
     >
-      <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-        {title}
-      </Text>
-      <Text style={[{ color: theme.onSurfaceVariant }]}>{description}</Text>
-      <TextInput
-        multiline
-        mode="outlined"
-        defaultValue={defaultValue}
-        onChangeText={setText}
-        placeholder={placeholder}
-        placeholderTextColor={theme.onSurfaceDisabled}
-        underlineColor={theme.outline}
-        style={[{ color: theme.onSurface }, styles.textInput]}
-        theme={{ colors: { ...theme } }}
-      />
-      <View style={styles.customCSSButtons}>
-        <Button
-          onPress={() => {
-            onSave(text.trim());
-            onDismiss();
-          }}
-          style={styles.button}
-          title={getString('common.save')}
-          mode="contained"
+      <Animated.View
+        style={[
+          styles.modalContainer,
+          {
+            backgroundColor: overlay(2, theme.surface),
+            marginHorizontal: modalAnim,
+          },
+        ]}
+      >
+        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
+          {title}
+        </Text>
+        <Text
+          style={[
+            {
+              color: theme.onSurfaceVariant,
+              minHeight: 50,
+              textAlignVertical: 'center',
+            },
+          ]}
+        >
+          {description}
+        </Text>
+        <TextInput
+          multiline
+          mode="outlined"
+          defaultValue={defaultValue}
+          onChangeText={setText}
+          placeholder={placeholder}
+          placeholderTextColor={theme.onSurfaceDisabled}
+          underlineColor={theme.outline}
+          style={[{ color: theme.onSurface }, styles.textInput]}
+          theme={{ colors: { ...theme } }}
         />
-        <Button
-          style={styles.button}
-          onPress={openDocumentPicker}
-          title={openFileLabel}
-        />
-      </View>
+        <View style={styles.customCSSButtons}>
+          <Button
+            onPress={() => {
+              onSave(text.trim());
+              onDismiss();
+            }}
+            style={styles.button}
+            title={getString('common.save')}
+            mode="contained"
+          />
+          <Button
+            style={styles.button}
+            onPress={openDocumentPicker}
+            title={openFileLabel}
+          />
+        </View>
+      </Animated.View>
     </Modal>
   );
 };
@@ -119,7 +151,6 @@ export default CustomFileModal;
 
 const styles = StyleSheet.create({
   modalContainer: {
-    margin: 30,
     padding: 24,
     borderRadius: 28,
   },
