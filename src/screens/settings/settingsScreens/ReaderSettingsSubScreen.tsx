@@ -2,7 +2,7 @@ import { View, StatusBar, Dimensions, Text } from 'react-native';
 import React, { useMemo, useRef, useState } from 'react';
 
 import WebView from 'react-native-webview';
-import { dummyHTML } from '../SettingsReaderScreen/utils';
+import { dummyHTML } from './utils';
 
 import { Appbar } from '@components/index';
 
