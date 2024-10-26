@@ -21,12 +21,14 @@ import Animated, {
 interface SettingSwitchProps {
   setting: SwitchSetting;
   theme: ThemeColors;
+  quickSettings?: boolean;
   endOfLine?: () => React.ReactNode;
 }
 
 export default function containerSettingSwitchV2({
   setting,
   theme,
+  quickSettings,
   endOfLine,
 }: SettingSwitchProps) {
   const up = useUpdateSettingsFn(setting.settingOrigin)!;
@@ -53,12 +55,16 @@ export default function containerSettingSwitchV2({
     return (res ?? setting.defaultValue) as boolean;
   }, [librarySettings, appSettings, showLastUpdateTime, chapterSettings]);
 
-  const maxHeight = useSharedValue(100);
+  const dependents = useMemo(() => {
+    return setting.dependents?.filter(d => d.quickSettings);
+  }, [setting.dependents]);
+
+  const maxHeight = useSharedValue(
+    currentValue ? 100 * (dependents?.length ?? 0) : 0,
+  );
   const opacity = useSharedValue(1);
   const update = (value: unknown, key: ValueKey<SettingOrigin>) => {
-    maxHeight.value = withTiming(
-      value ? 100 * (setting.dependents?.length ?? 0) : 0,
-    );
+    maxHeight.value = withTiming(value ? 100 * (dependents?.length ?? 0) : 0);
     opacity.value = withTiming(value ? 1 : 0, {
       easing: Easing.out(Easing.exp),
       reduceMotion: ReduceMotion.System,

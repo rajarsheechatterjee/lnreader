@@ -13,14 +13,26 @@ import TrackerButton from './components/TrackerButton';
 import InfoItem from './components/InfoItem';
 import { memo } from 'react';
 
-const renderSettings = ({ setting }: { setting: SettingsSubGroupSettings }) => {
+const renderSettings = ({
+  setting,
+  quickSettings,
+}: {
+  setting: SettingsSubGroupSettings;
+  quickSettings?: boolean;
+}) => {
   const theme = useTheme();
 
   switch (setting.type) {
     case 'Modal':
       return <SelectionSettingModal setting={setting} theme={theme} />;
     case 'Switch':
-      return <SettingSwitchV2 setting={setting} theme={theme} />;
+      return (
+        <SettingSwitchV2
+          setting={setting}
+          theme={theme}
+          quickSettings={quickSettings}
+        />
+      );
     case 'ThemePicker':
       return <SettingsThemePicker settings={setting} theme={theme} />;
     case 'NumberInput':
