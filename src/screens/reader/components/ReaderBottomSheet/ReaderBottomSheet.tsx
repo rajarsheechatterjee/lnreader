@@ -39,20 +39,6 @@ const ReaderBottomSheetV2: React.FC<ReaderBottomSheetV2Props> = ({
   const tabHeaderColor = overlay(2, theme.surface);
   const backgroundColor = tabHeaderColor;
 
-  // const settingsReaderTab = ReaderSettings.subGroup.filter(
-  //   v => v.id === 'readerTheme',
-  // )[0].settings;
-  // const settingsGeneralTab = ReaderSettings.subGroup
-  //   .filter(v => ['autoScroll', 'general', 'tts'].includes(v.id))
-  //   .map(v => v.settings)
-  //   .flat()
-  //   .filter(v => v.quickSettings);
-  // const settingsDisplayTab = ReaderSettings.subGroup
-  //   .filter(v => ['display'].includes(v.id))
-  //   .map(v => v.settings)
-  //   .flat()
-  //   .filter(v => v.quickSettings);
-
   const [settingsReaderTab, settingsGeneralTab, settingsDisplayTab] =
     useMemo(() => {
       return [

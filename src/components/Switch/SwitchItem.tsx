@@ -58,34 +58,6 @@ const SwitchItem: React.FC<SwitchItemProps> = ({
 export default SwitchItem;
 
 const styles = StyleSheet.create({
-  // wrapper: { height: 'auto' },
-  // container: {
-  //   flex: 1,
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   paddingVertical: 12,
-  //   alignItems: 'center',
-  //   // minHeight: 48,
-  //   // height: 'auto',
-  //   flexShrink: 1,
-  //   // flexBasis: 'auto',
-  //   // alignSelf: 'center',
-  //   content: 'fill',
-  // },
-  // labelContainer: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  // },
-  // label: {
-  //   fontSize: 16,
-  // },
-  // description: {
-  //   fontSize: 12,
-  //   lineHeight: 20,
-  // },
-  // switch: {
-  //   marginLeft: 8,
-  // },
   container: {
     flexDirection: 'row',
     alignItems: 'center',
