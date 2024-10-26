@@ -1,13 +1,14 @@
 import { getString } from '@strings/translations';
-import { SettingsGroup } from '../Settings.d';
+import { SettingsGroup, trackerIds } from '../Settings.d';
 
-const TrackerSettings: SettingsGroup = {
+const TrackerSettings: SettingsGroup<trackerIds> = {
   groupTitle: getString('tracking'),
   icon: 'sync',
   navigateParam: 'TrackerSettings',
   subGroup: [
     {
       subGroupTitle: getString('trackingScreen.services'),
+      id: 'services',
       settings: [
         {
           type: 'Tracker',

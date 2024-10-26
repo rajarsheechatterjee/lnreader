@@ -1,14 +1,15 @@
 import { getString } from '@strings/translations';
-import { SettingsGroup } from '../Settings';
+import { appearanceIds, SettingsGroup } from '../Settings.d';
 import { darkThemes, lightThemes } from '@theme/md3';
 
-const AppearanceSettings: SettingsGroup = {
+const AppearanceSettings: SettingsGroup<appearanceIds> = {
   groupTitle: getString('appearance'),
   icon: 'palette-outline',
   navigateParam: 'AppearanceSettings',
   subGroup: [
     {
       subGroupTitle: getString('appearanceScreen.appTheme'),
+      id: 'appTheme',
       settings: [
         {
           title: getString('appearanceScreen.lightTheme'),
@@ -30,6 +31,7 @@ const AppearanceSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('appearanceScreen.novelInfo'),
+      id: 'novelInfo',
       settings: [
         {
           title: getString('appearanceScreen.hideBackdrop'),
@@ -49,6 +51,7 @@ const AppearanceSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('appearanceScreen.navbar'),
+      id: 'navbar',
       settings: [
         {
           title: getString('appearanceScreen.showUpdatesInTheNav'),

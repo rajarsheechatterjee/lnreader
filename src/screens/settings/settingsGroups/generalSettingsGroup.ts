@@ -9,7 +9,7 @@ import {
   librarySortOrderList,
 } from '@screens/library/constants/constants';
 import { getString } from '@strings/translations';
-import { SettingsGroup } from '../Settings.d';
+import { generalIds, SettingsGroup } from '../Settings.d';
 
 const sortOrderNameMap = new Map<string, string>([
   ['name', 'libraryScreen.bottomSheet.sortOrders.alphabetically'],
@@ -20,13 +20,14 @@ const sortOrderNameMap = new Map<string, string>([
   ['lastUpdatedAt', 'libraryScreen.bottomSheet.sortOrders.lastUpdated'],
 ]);
 
-const GeneralSettings: SettingsGroup = {
+const GeneralSettings: SettingsGroup<generalIds> = {
   groupTitle: getString('generalSettings'),
   icon: 'tune',
   navigateParam: 'GeneralSettings',
   subGroup: [
     {
       subGroupTitle: getString('common.display'),
+      id: 'display',
       settings: [
         {
           title: getString('generalSettingsScreen.displayMode'),
@@ -92,6 +93,7 @@ const GeneralSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('library'),
+      id: 'library',
       settings: [
         {
           title: getString('generalSettingsScreen.updateLibrary'),
@@ -112,6 +114,7 @@ const GeneralSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('generalSettingsScreen.novel'),
+      id: 'novel',
       settings: [
         {
           title: getString('generalSettingsScreen.chapterSort'),
@@ -132,6 +135,7 @@ const GeneralSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('generalSettingsScreen.globalUpdate'),
+      id: 'globalUpdate',
       settings: [
         {
           title: getString('generalSettingsScreen.updateOngoing'),
@@ -162,6 +166,7 @@ const GeneralSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('generalSettingsScreen.autoDownload'),
+      id: 'autoDownload',
       settings: [
         {
           title: getString('generalSettingsScreen.downloadNewChapters'),
@@ -175,6 +180,7 @@ const GeneralSettings: SettingsGroup = {
     },
     {
       subGroupTitle: getString('generalSettings'),
+      id: 'general',
       settings: [
         {
           title: getString('generalSettingsScreen.disableHapticFeedback'),

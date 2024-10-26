@@ -180,7 +180,7 @@ export type TrackerSetting = {
 };
 export type InfoItem = { type: 'InfoItem'; title: string };
 
-export type SettingsSubGroupSettings =
+export type SettingsSubGroupSettings = { quickSettings?: boolean } & (
   | ModalSetting
   | SwitchSetting
   | ThemePickerSetting
@@ -191,24 +191,45 @@ export type SettingsSubGroupSettings =
   | ReaderTTSSetting
   | RepoSetting
   | TrackerSetting
-  | InfoItem;
+  | InfoItem
+);
 
-export interface SettingSubGroup {
+export interface SettingSubGroup<T extends string> {
   subGroupTitle: string;
+  id: T;
   settings: Array<SettingsSubGroupSettings>;
 }
 
-export interface SettingsGroup {
+export interface SettingsGroup<T extends string> {
   groupTitle: string;
   icon: string;
   navigateParam: settingsGroupTypes;
-  subGroup: SettingSubGroup[];
+  subGroup: SettingSubGroup<T>[];
 }
 
+type generalIds =
+  | 'display'
+  | 'library'
+  | 'novel'
+  | 'globalUpdate'
+  | 'autoDownload'
+  | 'general';
+type appearanceIds = 'appTheme' | 'novelInfo' | 'navbar';
+type readerIds =
+  | 'readerTheme'
+  | 'customCSS'
+  | 'customJS'
+  | 'readerSettings'
+  | 'tts'
+  | 'general'
+  | 'autoScroll'
+  | 'display';
+type repoIds = '';
+type trackerIds = 'services';
 export interface Settings {
-  general: SettingsGroup;
-  appearance: SettingsGroup;
-  reader: SettingsGroup;
-  repo: SettingsGroup;
-  tracker: SettingsGroup;
+  general: SettingsGroup<generalIds>;
+  appearance: SettingsGroup<appearanceIds>;
+  reader: SettingsGroup<readerIds>;
+  repo: SettingsGroup<repoIds>;
+  tracker: SettingsGroup<trackerIds>;
 }
