@@ -2,7 +2,7 @@ import { SettingsSubGroupSettings } from '../Settings.d';
 import SettingSwitchV2 from './components/SettingSwitchV2';
 import { useTheme } from '@hooks/persisted';
 import SettingsThemePicker from '../components/SettingsThemePicker';
-import ColorPickerModal from '../SettingsGeneralScreen/modals/ColorPickerModal';
+import ColorPickerModal from './modals/ColorPickerModal';
 import SettingTextInput from './components/SettingTextInput';
 import SelectionSettingModal from './modals/SelectionSettingModal';
 import TextAreaModal from './modals/TextAreaModal';

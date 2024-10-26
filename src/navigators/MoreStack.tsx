@@ -6,7 +6,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import About from '../screens/more/About';
 import Settings from '../screens/settings/SettingsScreen';
 import TrackerSettings from '../screens/settings/SettingsTrackerScreen';
-import ReaderSettings from '../screens/settings/SettingsReaderScreen/SettingsReaderScreen';
 import BackupSettings from '../screens/settings/SettingsBackupScreen';
 import AdvancedSettings from '../screens/settings/SettingsAdvancedScreen';
 import SettingsSubScreen from '../screens/settings/settingsScreens/SettingsSubScreen';
@@ -14,7 +13,7 @@ import TaskQueue from '../screens/more/TaskQueueScreen';
 import Downloads from '../screens/more/DownloadsScreen';
 
 import CategoriesScreen from '@screens/Categories/CategoriesScreen';
-import RespositorySettings from '@screens/settings/SettingsRepositoryScreen/SettingsRepositoryScreen';
+// import RespositorySettings from '@screens/settings/SettingsRepositoryScreen/SettingsRepositoryScreen';
 // import LibrarySettings from '@screens/settings/SettingsLibraryScreen/SettingsLibraryScreen';
 import StatsScreen from '@screens/StatsScreen/StatsScreen';
 import { MoreStackParamList, SettingsStackParamList } from './types';
@@ -34,7 +33,7 @@ const SettingsStack = () => (
     <Stack.Screen name="TrackerSettings" component={TrackerSettings} />
     <Stack.Screen name="BackupSettings" component={BackupSettings} />
     <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />
-    <Stack.Screen name="RespositorySettings" component={RespositorySettings} />
+    {/* <Stack.Screen name="RespositorySettings" component={RespositorySettings} /> */}
     {/* <Stack.Screen name="LibrarySettings" component={LibrarySettings} /> */}
   </Stack.Navigator>
 );

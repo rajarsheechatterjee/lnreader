@@ -15,23 +15,18 @@ import {
   useAppSettings,
 } from '@hooks/persisted/useSettings';
 import { SortItem } from '@components/Checkbox/Checkbox';
-import useUpdateSettingsFn from '@screens/settings/SettingsGeneralScreen/utils/useUpdateSettingsFn';
+import useUpdateSettingsFn from '../functions/useUpdateSettingsFn';
 
-interface DisplayModeModalProps<
-  T extends keyof AppSettings | keyof LibrarySettings,
-  V extends SettingsTypeModes,
-> {
+interface DisplayModeModalProps {
   setting: ModalSetting;
   theme: ThemeColors;
   quickSettings?: boolean;
 }
-
-const SelectionSettingModal: React.FC<
-  DisplayModeModalProps<
-    keyof AppSettings | keyof LibrarySettings,
-    SettingsTypeModes
-  >
-> = ({ theme, setting, quickSettings }) => {
+const SelectionSettingModal: React.FC<DisplayModeModalProps> = ({
+  theme,
+  setting,
+  quickSettings,
+}) => {
   const modalRef = useBoolean();
 
   const { setLibrarySettings, ...librarySettings } = useLibrarySettings();

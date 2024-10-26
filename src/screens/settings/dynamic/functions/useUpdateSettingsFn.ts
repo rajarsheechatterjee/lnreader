@@ -38,7 +38,7 @@ export default function useUpdateSettingsFn(settingOrigin: SettingOrigin) {
       });
     return update;
   } else if (settingOrigin === 'lastUpdateTime') {
-    const update: UpdateFunction<'showLastUpdateTime'> = (value, key) =>
+    const update: UpdateFunction<'showLastUpdateTime'> = value =>
       setShowLastUpdateTime(value as boolean);
     return update;
   } else if (settingOrigin === 'GeneralChapter') {

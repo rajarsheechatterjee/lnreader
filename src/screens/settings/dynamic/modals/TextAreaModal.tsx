@@ -16,8 +16,8 @@ import { getString } from '@strings/translations';
 
 import CustomFileModal from './CustomFileModal';
 import { TextAreaSetting } from '@screens/settings/Settings.d';
-import useUpdateSettingsFn from '@screens/settings/SettingsGeneralScreen/utils/useUpdateSettingsFn';
 import { ThemeColors } from '@theme/types';
+import useUpdateSettingsFn from '../functions/useUpdateSettingsFn';
 
 const TextAreaModal = ({
   setting,
