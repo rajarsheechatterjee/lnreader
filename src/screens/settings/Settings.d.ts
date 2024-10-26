@@ -219,7 +219,6 @@ type readerIds =
   | 'readerTheme'
   | 'customCSS'
   | 'customJS'
-  | 'readerSettings'
   | 'tts'
   | 'general'
   | 'autoScroll'

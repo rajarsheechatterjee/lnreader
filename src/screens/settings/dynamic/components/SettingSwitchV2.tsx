@@ -24,7 +24,7 @@ interface SettingSwitchProps {
   endOfLine?: () => React.ReactNode;
 }
 
-export default function SettingSwitchV2({
+export default function containerSettingSwitchV2({
   setting,
   theme,
   endOfLine,

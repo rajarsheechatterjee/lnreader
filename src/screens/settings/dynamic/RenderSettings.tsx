@@ -11,8 +11,9 @@ import TextToSpeechSettings from './components/TextToSpeechSettings';
 import RepoSettings from './components/RepoSettings';
 import TrackerButton from './components/TrackerButton';
 import InfoItem from './components/InfoItem';
+import { memo } from 'react';
 
-export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
+const renderSettings = ({ setting }: { setting: SettingsSubGroupSettings }) => {
   const theme = useTheme();
 
   switch (setting.type) {
@@ -41,4 +42,5 @@ export default function ({ setting }: { setting: SettingsSubGroupSettings }) {
     case 'InfoItem':
       return <InfoItem title={setting.title} />;
   }
-}
+};
+export default memo(renderSettings, () => true);

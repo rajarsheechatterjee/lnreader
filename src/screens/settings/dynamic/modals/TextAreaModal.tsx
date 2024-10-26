@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { Portal } from 'react-native-paper';
 
-import { Button, List, ConfirmationDialog } from '@components';
+import { Button, ConfirmationDialog } from '@components';
 
 import { useBoolean } from '@hooks';
 import {

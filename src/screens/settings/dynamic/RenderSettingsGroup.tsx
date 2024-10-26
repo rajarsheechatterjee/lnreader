@@ -7,7 +7,7 @@ export default function ({
   setting,
   index,
 }: {
-  setting: SettingSubGroup;
+  setting: SettingSubGroup<string>;
   index: number;
 }) {
   const theme = useTheme();
