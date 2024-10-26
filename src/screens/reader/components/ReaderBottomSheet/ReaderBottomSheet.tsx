@@ -59,7 +59,6 @@ const ReaderBottomSheetV2: React.FC<ReaderBottomSheetV2Props> = ({
           .filter(v => v.quickSettings),
       ];
     }, []);
-  console.log(settingsReaderTab);
 
   const renderScene = SceneMap({
     'readerTab': () => renderTab(settingsReaderTab, 'readerTab'),
