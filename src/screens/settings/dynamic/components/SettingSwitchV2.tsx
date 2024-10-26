@@ -56,7 +56,9 @@ export default function containerSettingSwitchV2({
   }, [librarySettings, appSettings, showLastUpdateTime, chapterSettings]);
 
   const dependents = useMemo(() => {
-    return setting.dependents?.filter(d => d.quickSettings);
+    return setting.dependents?.filter(d => {
+      quickSettings ? d.quickSettings : true;
+    });
   }, [setting.dependents]);
 
   const maxHeight = useSharedValue(
@@ -78,15 +80,15 @@ export default function containerSettingSwitchV2({
       <SwitchItem
         value={currentValue}
         label={setting.title}
-        description={setting.description}
+        description={quickSettings ? setting.description : undefined}
         onPress={() => update(!currentValue, setting.valueKey)}
         theme={theme}
         style={{ paddingHorizontal: 16 }}
         endOfLine={endOfLine}
       />
-      {!setting.dependents ? null : (
+      {!dependents ? null : (
         <Animated.View style={{ maxHeight, opacity }}>
-          {setting.dependents.map((dep, i) => {
+          {dependents.map((dep, i) => {
             return (
               <RenderSettings key={'dep' + setting.title + i} setting={dep} />
             );

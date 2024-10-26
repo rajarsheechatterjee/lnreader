@@ -24,7 +24,13 @@ const renderSettings = ({
 
   switch (setting.type) {
     case 'Modal':
-      return <SelectionSettingModal setting={setting} theme={theme} />;
+      return (
+        <SelectionSettingModal
+          setting={setting}
+          theme={theme}
+          quickSettings={quickSettings}
+        />
+      );
     case 'Switch':
       return (
         <SettingSwitchV2
@@ -34,15 +40,38 @@ const renderSettings = ({
         />
       );
     case 'ThemePicker':
-      return <SettingsThemePicker settings={setting} theme={theme} />;
+      return (
+        <SettingsThemePicker
+          settings={setting}
+          theme={theme}
+          quickSettings={quickSettings}
+        />
+      );
     case 'NumberInput':
-      return <SettingTextInput setting={setting} theme={theme} />;
+      return (
+        <SettingTextInput
+          setting={setting}
+          theme={theme}
+          quickSettings={quickSettings}
+        />
+      );
     case 'ColorPicker':
       return (
-        <ColorPickerModal settings={setting} theme={theme} showAccentColors />
+        <ColorPickerModal
+          settings={setting}
+          theme={theme}
+          showAccentColors
+          quickSettings={quickSettings}
+        />
       );
     case 'TextArea':
-      return <TextAreaModal setting={setting} theme={theme} />;
+      return (
+        <TextAreaModal
+          setting={setting}
+          theme={theme}
+          quickSettings={quickSettings}
+        />
+      );
     case 'ReaderTheme':
       return <ReaderThemeSettings />;
     case 'TTS':

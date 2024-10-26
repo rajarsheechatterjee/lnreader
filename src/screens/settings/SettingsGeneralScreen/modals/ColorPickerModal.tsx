@@ -13,12 +13,14 @@ interface ColorPickerModalProps {
   settings: ColorPickerSetting;
   theme: ThemeColors;
   showAccentColors?: boolean;
+  quickSettings?: boolean;
 }
 
 const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
   theme,
   settings,
   showAccentColors,
+  quickSettings,
 }) => {
   const currentValue =
     settings.settingOrigin === 'MMKV' ? rgbToHex(theme.primary) : '';
@@ -92,7 +94,9 @@ const ColorPickerModal: React.FC<ColorPickerModalProps> = ({
     <>
       <List.ColorItem
         title={settings.title}
-        description={settings.description?.(currentValue) ?? ''}
+        description={
+          quickSettings ? undefined : settings.description?.(currentValue) ?? ''
+        }
         onPress={onOpen}
         theme={theme}
       />

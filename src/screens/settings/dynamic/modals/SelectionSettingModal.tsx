@@ -23,6 +23,7 @@ interface DisplayModeModalProps<
 > {
   setting: ModalSetting;
   theme: ThemeColors;
+  quickSettings?: boolean;
 }
 
 const SelectionSettingModal: React.FC<
@@ -30,7 +31,7 @@ const SelectionSettingModal: React.FC<
     keyof AppSettings | keyof LibrarySettings,
     SettingsTypeModes
   >
-> = ({ theme, setting }) => {
+> = ({ theme, setting, quickSettings }) => {
   const modalRef = useBoolean();
 
   const { setLibrarySettings, ...librarySettings } = useLibrarySettings();
@@ -59,7 +60,7 @@ const SelectionSettingModal: React.FC<
   }, [librarySettings, appSettings]);
 
   function generateDescription() {
-    if (!setting.description) {
+    if (!setting.description || quickSettings) {
       return;
     }
     //@ts-expect-error

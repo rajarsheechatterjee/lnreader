@@ -114,7 +114,7 @@ const Icon = ({ icon, theme }: { icon: string; theme: ThemeColors }) => (
 
 interface ColorItemProps {
   title: string;
-  description: string;
+  description?: string;
   theme: ThemeColors;
   onPress: () => void;
 }
@@ -132,7 +132,9 @@ const ColorItem = ({ title, description, theme, onPress }: ColorItemProps) => (
   >
     <View>
       <Text style={{ color: theme.onSurface, fontSize: 16 }}>{title}</Text>
-      <Text style={{ color: theme.onSurfaceVariant }}>{description}</Text>
+      {description ? (
+        <Text style={{ color: theme.onSurfaceVariant }}>{description}</Text>
+      ) : null}
     </View>
     <View
       style={{

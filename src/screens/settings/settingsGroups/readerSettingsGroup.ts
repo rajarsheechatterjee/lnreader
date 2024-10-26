@@ -11,14 +11,32 @@ const ReaderSettings: SettingsGroup<readerIds> = {
       id: 'general',
       settings: [
         {
-          title: getString('readerScreen.bottomSheet.verticalSeekbar'),
-          description: getString('readerSettings.verticalSeekbarDesc'),
+          title: getString('readerScreen.bottomSheet.keepScreenOn'),
           type: 'Switch',
           settingOrigin: 'GeneralChapter',
-          valueKey: 'verticalSeekbar',
+          valueKey: 'keepScreenOn',
           defaultValue: true,
           quickSettings: true,
         },
+
+        {
+          title: getString('readerScreen.bottomSheet.swipeGestures'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'swipeGestures',
+          defaultValue: false,
+          quickSettings: true,
+        },
+
+        {
+          title: getString('readerScreen.bottomSheet.pageReader'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'pageReader',
+          defaultValue: false,
+          quickSettings: true,
+        },
+
         {
           title: getString('readerScreen.bottomSheet.volumeButtonsScroll'),
           type: 'Switch',
@@ -28,18 +46,18 @@ const ReaderSettings: SettingsGroup<readerIds> = {
           quickSettings: true,
         },
         {
-          title: getString('readerScreen.bottomSheet.swipeGestures'),
+          title: getString('readerScreen.bottomSheet.tapToScroll'),
           type: 'Switch',
           settingOrigin: 'GeneralChapter',
-          valueKey: 'swipeGestures',
+          valueKey: 'tapToScroll',
           defaultValue: false,
           quickSettings: true,
         },
         {
-          title: getString('readerScreen.bottomSheet.bionicReading'),
+          title: getString('readerScreen.bottomSheet.removeExtraSpacing'),
           type: 'Switch',
           settingOrigin: 'GeneralChapter',
-          valueKey: 'bionicReading',
+          valueKey: 'removeExtraParagraphSpacing',
           defaultValue: false,
           quickSettings: true,
         },
@@ -124,6 +142,23 @@ const ReaderSettings: SettingsGroup<readerIds> = {
           settingOrigin: 'GeneralChapter',
           valueKey: 'fullScreenMode',
           defaultValue: true,
+          quickSettings: true,
+        },
+        {
+          title: getString('readerScreen.bottomSheet.verticalSeekbar'),
+          description: getString('readerSettings.verticalSeekbarDesc'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'verticalSeekbar',
+          defaultValue: true,
+          quickSettings: true,
+        },
+        {
+          title: getString('readerScreen.bottomSheet.bionicReading'),
+          type: 'Switch',
+          settingOrigin: 'GeneralChapter',
+          valueKey: 'bionicReading',
+          defaultValue: false,
           quickSettings: true,
         },
         {

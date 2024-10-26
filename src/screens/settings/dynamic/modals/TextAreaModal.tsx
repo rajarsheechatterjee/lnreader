@@ -22,9 +22,11 @@ import { ThemeColors } from '@theme/types';
 const TextAreaModal = ({
   setting,
   theme,
+  quickSettings,
 }: {
   setting: TextAreaSetting;
   theme: ThemeColors;
+  quickSettings?: boolean;
 }) => {
   const showModal = useBoolean();
   const clearModal = useBoolean();
