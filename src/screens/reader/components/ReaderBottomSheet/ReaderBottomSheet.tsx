@@ -2,18 +2,12 @@ import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import React, { Ref, useMemo, useState } from 'react';
 import color from 'color';
 
-import { BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetModal } from '@gorhom/bottom-sheet';
 import BottomSheet from '@components/BottomSheet/BottomSheet';
-import { useChapterGeneralSettings, useTheme } from '@hooks/persisted';
+import { useTheme } from '@hooks/persisted';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import { getString } from '@strings/translations';
 
-import ReaderSheetPreferenceItem from './ReaderSheetPreferenceItem';
-import TextSizeSlider from './TextSizeSlider';
-import ReaderThemeSelector from './ReaderThemeSelector';
-import ReaderTextAlignSelector from './ReaderTextAlignSelector';
-import ReaderValueChange from './ReaderValueChange';
-import ReaderFontPicker from './ReaderFontPicker';
 import { overlay } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import ReaderSettings from '@screens/settings/settingsGroups/readerSettingsGroup';
@@ -21,12 +15,12 @@ import RenderSettings from '@screens/settings/dynamic/RenderSettings';
 import { SettingsSubGroupSettings } from '@screens/settings/Settings.d';
 import { List } from '@components';
 
-const renderTab = (settings: SettingsSubGroupSettings[]) => {
+const renderTab = (settings: SettingsSubGroupSettings[], tab: string) => {
   return (
     <View style={styles.readerTab}>
       <List.Section>
         {settings.map((v, i) => (
-          <RenderSettings key={'readerTab' + i} setting={v} />
+          <RenderSettings key={tab + i} setting={v} />
         ))}
       </List.Section>
     </View>
@@ -41,29 +35,50 @@ const ReaderBottomSheetV2: React.FC<ReaderBottomSheetV2Props> = ({
   bottomSheetRef,
 }) => {
   const theme = useTheme();
-  console.log('d');
 
   const tabHeaderColor = overlay(2, theme.surface);
   const backgroundColor = tabHeaderColor;
 
-  const settingsReaderTab = ReaderSettings.subGroup.filter(
-    v => v.id === 'readerTheme',
-  )[0].settings;
-  const settingsGeneralTab = ReaderSettings.subGroup
-    .filter(v => ['autoScroll', 'general', 'tts'].includes(v.id))
-    .map(v => v.settings)
-    .flat()
-    .filter(v => v.quickSettings);
-  const settingsDisplayTab = ReaderSettings.subGroup
-    .filter(v => ['display'].includes(v.id))
-    .map(v => v.settings)
-    .flat()
-    .filter(v => v.quickSettings);
+  // const settingsReaderTab = ReaderSettings.subGroup.filter(
+  //   v => v.id === 'readerTheme',
+  // )[0].settings;
+  // const settingsGeneralTab = ReaderSettings.subGroup
+  //   .filter(v => ['autoScroll', 'general', 'tts'].includes(v.id))
+  //   .map(v => v.settings)
+  //   .flat()
+  //   .filter(v => v.quickSettings);
+  // const settingsDisplayTab = ReaderSettings.subGroup
+  //   .filter(v => ['display'].includes(v.id))
+  //   .map(v => v.settings)
+  //   .flat()
+  //   .filter(v => v.quickSettings);
+
+  const [settingsReaderTab, settingsGeneralTab, settingsDisplayTab] =
+    useMemo(() => {
+      return [
+        ReaderSettings.subGroup
+          .filter(v => ['readerTheme'].includes(v.id))
+          .map(v => v.settings)
+          .flat()
+          .filter(v => v.quickSettings),
+        ReaderSettings.subGroup
+          .filter(v => ['autoScroll', 'general', 'tts'].includes(v.id))
+          .map(v => v.settings)
+          .flat()
+          .filter(v => v.quickSettings),
+        ReaderSettings.subGroup
+          .filter(v => ['display'].includes(v.id))
+          .map(v => v.settings)
+          .flat()
+          .filter(v => v.quickSettings),
+      ];
+    }, []);
+  console.log(settingsReaderTab);
 
   const renderScene = SceneMap({
-    'readerTab': () => renderTab(settingsReaderTab),
-    'generalTab': () => renderTab(settingsGeneralTab),
-    'displayTab': () => renderTab(settingsDisplayTab),
+    'readerTab': () => renderTab(settingsReaderTab, 'readerTab'),
+    'generalTab': () => renderTab(settingsGeneralTab, 'generalTab'),
+    'displayTab': () => renderTab(settingsDisplayTab, 'displayTab'),
   });
 
   const layout = useWindowDimensions();

@@ -1,5 +1,6 @@
 import { getString } from '@strings/translations';
 import { readerIds, SettingsGroup } from '../Settings.d';
+import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
 
 const ReaderSettings: SettingsGroup<readerIds> = {
   groupTitle: getString('readerSettings.title'),
@@ -88,11 +89,7 @@ const ReaderSettings: SettingsGroup<readerIds> = {
               type: 'NumberInput',
               settingOrigin: 'GeneralChapter',
               valueKey: 'autoScrollOffset',
-              defaultValue: '',
-              // defaultValue: defaultTo(
-              //   autoScrollOffset,
-              //   Math.round(screenHeight),
-              // ).toString(),
+              defaultValue: WINDOW_HEIGHT.toString(),
             },
           ],
         },
@@ -185,6 +182,7 @@ const ReaderSettings: SettingsGroup<readerIds> = {
       settings: [
         {
           type: 'ReaderTheme',
+          quickSettings: true,
         },
       ],
     },
