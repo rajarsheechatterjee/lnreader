@@ -8,12 +8,8 @@ import { ThemeColors } from '@theme/types';
 import { useLibrarySettings } from '@hooks/persisted';
 import { Checkbox, List } from '@components';
 import { useBoolean } from '@hooks/index';
-import { ModalSetting, SettingsTypeModes } from '@screens/settings/Settings.d';
-import {
-  AppSettings,
-  LibrarySettings,
-  useAppSettings,
-} from '@hooks/persisted/useSettings';
+import { ModalSetting } from '@screens/settings/Settings.d';
+import { useAppSettings } from '@hooks/persisted/useSettings';
 import { SortItem } from '@components/Checkbox/Checkbox';
 import useUpdateSettingsFn from '../functions/useUpdateSettingsFn';
 
@@ -29,8 +25,8 @@ const SelectionSettingModal: React.FC<DisplayModeModalProps> = ({
 }) => {
   const modalRef = useBoolean();
 
-  const { setLibrarySettings, ...librarySettings } = useLibrarySettings();
-  const { setAppSettings, ...appSettings } = useAppSettings();
+  const librarySettings = useLibrarySettings();
+  const appSettings = useAppSettings();
 
   const update = useUpdateSettingsFn(setting.settingOrigin);
   const currentValue = useMemo(() => {
@@ -108,7 +104,7 @@ const SelectionSettingModal: React.FC<DisplayModeModalProps> = ({
                 );
               })
             : setting.mode === 'order'
-            ? setting.options.map((mode, i) => {
+            ? setting.options.map(mode => {
                 return (
                   <SortItem
                     key={mode.label}

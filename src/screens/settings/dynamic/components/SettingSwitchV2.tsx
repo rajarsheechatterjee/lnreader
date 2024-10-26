@@ -25,12 +25,12 @@ interface SettingSwitchProps {
   endOfLine?: () => React.ReactNode;
 }
 
-export default function containerSettingSwitchV2({
+export default function SettingSwitchV2({
   setting,
   theme,
   quickSettings,
   endOfLine,
-}: SettingSwitchProps) {
+}: SettingSwitchProps): React.ReactElement {
   const up = useUpdateSettingsFn(setting.settingOrigin)!;
 
   const librarySettings = useLibrarySettings();

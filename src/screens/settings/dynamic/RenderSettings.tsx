@@ -13,7 +13,7 @@ import TrackerButton from './components/TrackerButton';
 import InfoItem from './components/InfoItem';
 import { memo } from 'react';
 
-const renderSettings = ({
+const RenderSettings = ({
   setting,
   quickSettings,
 }: {
@@ -48,13 +48,7 @@ const renderSettings = ({
         />
       );
     case 'NumberInput':
-      return (
-        <SettingTextInput
-          setting={setting}
-          theme={theme}
-          quickSettings={quickSettings}
-        />
-      );
+      return <SettingTextInput setting={setting} theme={theme} />;
     case 'ColorPicker':
       return (
         <ColorPickerModal
@@ -65,13 +59,7 @@ const renderSettings = ({
         />
       );
     case 'TextArea':
-      return (
-        <TextAreaModal
-          setting={setting}
-          theme={theme}
-          quickSettings={quickSettings}
-        />
-      );
+      return <TextAreaModal setting={setting} theme={theme} />;
     case 'ReaderTheme':
       return <ReaderThemeSettings />;
     case 'TTS':
@@ -84,4 +72,4 @@ const renderSettings = ({
       return <InfoItem title={setting.title} />;
   }
 };
-export default memo(renderSettings, () => true);
+export default memo(RenderSettings, () => true);

@@ -15,13 +15,11 @@ import { defaultTo } from 'lodash-es';
 interface SettingSwitchProps {
   setting: NumberInputSetting;
   theme: ThemeColors;
-  quickSettings?: boolean;
 }
 
 export default function SettingTextInput({
   setting,
   theme,
-  quickSettings,
 }: SettingSwitchProps) {
   const librarySettings = useLibrarySettings();
   const appSettings = useAppSettings();

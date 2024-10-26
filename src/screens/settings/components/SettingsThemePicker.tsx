@@ -16,14 +16,9 @@ import { getString } from '@strings/translations';
 interface ThemePicker {
   theme: ThemeColors;
   settings: ThemePickerSetting;
-  quickSettings?: boolean;
 }
 
-export default function SettingsThemePicker({
-  theme,
-  settings,
-  quickSettings,
-}: ThemePicker) {
+export default function SettingsThemePicker({ theme, settings }: ThemePicker) {
   const [, setTheme] = useMMKVObject('APP_THEME');
   const [, setCustomAccentColor] = useMMKVString('CUSTOM_ACCENT_COLOR');
   const [isAmoledBlack = false, setAmoledBlack] =
