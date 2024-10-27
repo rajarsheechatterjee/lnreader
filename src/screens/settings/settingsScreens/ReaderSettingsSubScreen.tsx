@@ -249,7 +249,7 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
                     let sourceId =${dummyChapterInfo.sourceId};
                     let chapterId =${dummyChapterInfo.chapterId};
                     let novelId =${dummyChapterInfo.novelId};
-                    let html = document.getElementsByTagName("chapter")[0].innerHTML;
+                    let html = document.getElementById("LNReader-chapter").innerHTML;
                     ${readerSettings.customJS}
                   }
                   document.addEventListener("DOMContentLoaded", fn);
