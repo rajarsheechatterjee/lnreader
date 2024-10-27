@@ -5,7 +5,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 // Screens
 import About from '../screens/more/About';
 import Settings from '../screens/settings/SettingsScreen';
-import TrackerSettings from '../screens/settings/SettingsTrackerScreen';
 import BackupSettings from '../screens/settings/SettingsBackupScreen';
 import AdvancedSettings from '../screens/settings/SettingsAdvancedScreen';
 import SettingsSubScreen from '../screens/settings/settingsScreens/SettingsSubScreen';
@@ -28,7 +27,6 @@ const SettingsStack = () => (
     <Stack.Screen name="Settings" component={Settings} />
     <Stack.Screen name="SubScreen" component={SettingsSubScreen} />
     <Stack.Screen name="ReaderSettings" component={ReaderSettingsSubScreen} />
-    <Stack.Screen name="TrackerSettings" component={TrackerSettings} />
     <Stack.Screen name="BackupSettings" component={BackupSettings} />
     <Stack.Screen name="AdvancedSettings" component={AdvancedSettings} />
   </Stack.Navigator>
