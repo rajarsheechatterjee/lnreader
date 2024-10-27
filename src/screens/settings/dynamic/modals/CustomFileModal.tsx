@@ -1,12 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-  Touchable,
-  View,
-} from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Modal, overlay, TextInput } from 'react-native-paper';
 import { StorageAccessFramework } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
