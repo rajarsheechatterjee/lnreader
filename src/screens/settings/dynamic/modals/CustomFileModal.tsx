@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated,
+  Pressable,
+  StyleSheet,
+  Text,
+  Touchable,
+  View,
+} from 'react-native';
 import { Modal, overlay, TextInput } from 'react-native-paper';
 import { StorageAccessFramework } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -10,6 +17,7 @@ import { showToast } from '@utils/showToast';
 import { useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import { useKeyboardHeight } from '@hooks/common/useKeyboardHeight';
+import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
 
 interface CustomFileModal {
   visible: boolean;
@@ -39,9 +47,12 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
   const keyboardHeight = useKeyboardHeight();
 
   const modalAnim = useRef(new Animated.Value(30)).current;
+  const modalMB = useRef(new Animated.Value(WINDOW_HEIGHT * 0.25)).current;
+  const modalH = useRef(new Animated.Value(WINDOW_HEIGHT * 0.55)).current;
+  const modalBR = useRef(new Animated.Value(14)).current;
 
-  const animK = (num: number) => {
-    Animated.timing(modalAnim, {
+  const animate = (anim: Animated.Value, num: number) => {
+    Animated.timing(anim, {
       toValue: num,
       duration: 100,
       useNativeDriver: false,
@@ -50,9 +61,15 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
 
   useEffect(() => {
     if (keyboardHeight) {
-      animK(0);
+      animate(modalAnim, 0);
+      animate(modalBR, 0);
+      animate(modalMB, keyboardHeight + -12);
+      animate(modalH, WINDOW_HEIGHT - keyboardHeight - 72);
     } else {
-      animK(30);
+      animate(modalAnim, 30);
+      animate(modalBR, 14);
+      animate(modalMB, WINDOW_HEIGHT * 0.225);
+      animate(modalH, WINDOW_HEIGHT * 0.55);
     }
   }, [keyboardHeight]);
 
@@ -80,69 +97,64 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
     <Modal
       visible={visible}
       onDismiss={onDismiss}
-      contentContainerStyle={[
-        keyboardHeight
-          ? {
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-              right: 0,
-              marginBottom: keyboardHeight - 12,
-            }
-          : {},
-      ]}
+      contentContainerStyle={styles.contentContainer}
     >
-      <Animated.View
-        style={[
-          styles.modalContainer,
-          {
-            backgroundColor: overlay(2, theme.surface),
-            marginHorizontal: modalAnim,
-          },
-        ]}
-      >
-        <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {title}
-        </Text>
-        <Text
+      <Pressable style={{ flex: 1, width: '100%' }} onPress={onDismiss}>
+        <Animated.View
           style={[
+            styles.modalContainer,
             {
-              color: theme.onSurfaceVariant,
-              minHeight: 50,
-              textAlignVertical: 'center',
+              backgroundColor: overlay(2, theme.surface),
+              marginHorizontal: modalAnim,
+              marginBottom: modalMB,
+              height: modalH,
+              borderRadius: modalBR,
             },
           ]}
         >
-          {description}
-        </Text>
-        <TextInput
-          multiline
-          mode="outlined"
-          defaultValue={defaultValue}
-          onChangeText={setText}
-          placeholder={placeholder}
-          placeholderTextColor={theme.onSurfaceDisabled}
-          underlineColor={theme.outline}
-          style={[{ color: theme.onSurface }, styles.textInput]}
-          theme={{ colors: { ...theme } }}
-        />
-        <View style={styles.customCSSButtons}>
-          <Button
-            onPress={() => {
-              onSave(text.trim());
-              onDismiss();
-            }}
-            style={styles.button}
-            title={getString('common.save')}
-            mode="contained"
+          <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
+            {title}
+          </Text>
+          <Text
+            style={[
+              {
+                color: theme.onSurfaceVariant,
+                minHeight: 50,
+                textAlignVertical: 'center',
+              },
+            ]}
+          >
+            {description}
+          </Text>
+          <TextInput
+            multiline
+            mode="outlined"
+            defaultValue={defaultValue}
+            onChangeText={setText}
+            placeholder={placeholder}
+            placeholderTextColor={theme.onSurfaceDisabled}
+            underlineColor={theme.outline}
+            style={[{ color: theme.onSurface }, styles.textInput]}
+            theme={{ colors: { ...theme } }}
           />
-          <Button
-            style={styles.button}
-            onPress={openDocumentPicker}
-            title={openFileLabel}
-          />
-        </View>
-      </Animated.View>
+          <View style={styles.customCSSButtons}>
+            <Button
+              onPress={() => {
+                onSave(text.trim());
+                onDismiss();
+              }}
+              style={styles.button}
+              title={getString('common.save')}
+              mode="contained"
+            />
+            <Button
+              style={styles.button}
+              onPress={openDocumentPicker}
+              title={openFileLabel}
+            />
+          </View>
+        </Animated.View>
+      </Pressable>
     </Modal>
   );
 };
@@ -150,13 +162,14 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
 export default CustomFileModal;
 
 const styles = StyleSheet.create({
+  contentContainer: { position: 'absolute', bottom: 0, left: 0, right: 0 },
   modalContainer: {
     padding: 24,
     borderRadius: 28,
   },
   textInput: {
-    height: 220,
-    borderRadius: 14,
+    flex: 1,
+    paddingVertical: 12,
     marginTop: 16,
     marginBottom: 8,
     fontSize: 16,

@@ -40,13 +40,7 @@ const RenderSettings = ({
         />
       );
     case 'ThemePicker':
-      return (
-        <SettingsThemePicker
-          settings={setting}
-          theme={theme}
-          quickSettings={quickSettings}
-        />
-      );
+      return <SettingsThemePicker settings={setting} theme={theme} />;
     case 'NumberInput':
       return <SettingTextInput setting={setting} theme={theme} />;
     case 'ColorPicker':
