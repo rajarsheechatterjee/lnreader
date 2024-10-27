@@ -21,6 +21,7 @@ import { showToast } from '@utils/showToast';
 import SettingsSubScreen from './SettingsSubScreen';
 import { StackScreenProps } from '@react-navigation/stack';
 import { SettingsStackParamList } from '@navigators/types';
+import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
 
 export type TextAlignments =
   | 'left'
@@ -278,7 +279,10 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
             borderRadius: 10,
           }}
           onTouchMove={e => {
-            setWebViewHeight(e.nativeEvent.pageY - 10 - 84);
+            const newHeight = e.nativeEvent.pageY - 10 - 84;
+            if (newHeight < WINDOW_HEIGHT * 0.7) {
+              setWebViewHeight(newHeight);
+            }
           }}
         >
           <Text style={{ textAlign: 'center' }}>•••</Text>
