@@ -56,10 +56,10 @@ export default function SettingSwitchV2({
   }, [librarySettings, appSettings, showLastUpdateTime, chapterSettings]);
 
   const dependents = useMemo(() => {
-    return setting.dependents?.filter(d => {
-      quickSettings ? d.quickSettings : true;
-    });
-  }, [setting.dependents]);
+    return setting.dependents?.filter(d =>
+      quickSettings ? d.quickSettings : true,
+    );
+  }, [setting.dependents?.length]);
 
   const maxHeight = useSharedValue(
     currentValue ? 100 * (dependents?.length ?? 0) : 0,
@@ -90,7 +90,11 @@ export default function SettingSwitchV2({
         <Animated.View style={{ maxHeight, opacity }}>
           {dependents.map((dep, i) => {
             return (
-              <RenderSettings key={'dep' + setting.title + i} setting={dep} />
+              <RenderSettings
+                key={'dep' + setting.title + i}
+                setting={dep}
+                quickSettings={quickSettings}
+              />
             );
           })}
         </Animated.View>

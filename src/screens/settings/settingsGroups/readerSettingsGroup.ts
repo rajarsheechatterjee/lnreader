@@ -89,7 +89,7 @@ const ReaderSettings: SettingsGroup<readerIds> = {
               type: 'NumberInput',
               settingOrigin: 'GeneralChapter',
               valueKey: 'autoScrollOffset',
-              defaultValue: WINDOW_HEIGHT.toString(),
+              defaultValue: WINDOW_HEIGHT.toFixed(),
             },
           ],
         },
