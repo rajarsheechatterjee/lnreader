@@ -15,17 +15,25 @@ import RenderSettings from '@screens/settings/dynamic/RenderSettings';
 import { SettingsSubGroupSettings } from '@screens/settings/Settings.d';
 import { List } from '@components';
 
-const renderTab = (settings: SettingsSubGroupSettings[], tab: string) => {
-  return (
-    <View style={styles.readerTab}>
-      <List.Section>
-        {settings.map((v, i) => (
-          <RenderSettings key={tab + i} setting={v} />
-        ))}
-      </List.Section>
-    </View>
-  );
-};
+const RenderTab = React.memo(
+  ({
+    settings,
+    tab,
+  }: {
+    settings: SettingsSubGroupSettings[];
+    tab: string;
+  }) => {
+    return (
+      <View style={styles.readerTab}>
+        <List.Section>
+          {settings.map((v, i) => (
+            <RenderSettings key={tab + i} setting={v} quickSettings />
+          ))}
+        </List.Section>
+      </View>
+    );
+  },
+);
 
 interface ReaderBottomSheetV2Props {
   bottomSheetRef: Ref<BottomSheetModal> | null;
@@ -61,9 +69,15 @@ const ReaderBottomSheetV2: React.FC<ReaderBottomSheetV2Props> = ({
     }, []);
 
   const renderScene = SceneMap({
-    'readerTab': () => renderTab(settingsReaderTab, 'readerTab'),
-    'generalTab': () => renderTab(settingsGeneralTab, 'generalTab'),
-    'displayTab': () => renderTab(settingsDisplayTab, 'displayTab'),
+    'readerTab': () => (
+      <RenderTab settings={settingsReaderTab} tab="readerTab" />
+    ),
+    'generalTab': () => (
+      <RenderTab settings={settingsGeneralTab} tab="generalTab" />
+    ),
+    'displayTab': () => (
+      <RenderTab settings={settingsDisplayTab} tab="displayTab" />
+    ),
   });
 
   const layout = useWindowDimensions();

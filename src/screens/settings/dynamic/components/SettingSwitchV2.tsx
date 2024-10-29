@@ -9,11 +9,11 @@ import {
   useLastUpdate,
   useLibrarySettings,
 } from '@hooks/persisted';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import RenderSettings from '../RenderSettings';
 import Animated, {
   Easing,
-  ReduceMotion,
+  useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -25,12 +25,12 @@ interface SettingSwitchProps {
   endOfLine?: () => React.ReactNode;
 }
 
-export default function SettingSwitchV2({
+const SettingSwitchV2 = ({
   setting,
   theme,
   quickSettings,
   endOfLine,
-}: SettingSwitchProps): React.ReactElement {
+}: SettingSwitchProps): React.ReactElement => {
   const up = useUpdateSettingsFn(setting.settingOrigin)!;
 
   const librarySettings = useLibrarySettings();
@@ -61,19 +61,28 @@ export default function SettingSwitchV2({
     );
   }, [setting.dependents?.length]);
 
+  console.log(quickSettings);
   const maxHeight = useSharedValue(
-    currentValue ? 100 * (dependents?.length ?? 0) : 0,
+    currentValue && dependents?.length ? 60 * (dependents?.length ?? 0) : 0,
   );
   const opacity = useSharedValue(1);
   const update = (value: unknown, key: ValueKey<SettingOrigin>) => {
-    maxHeight.value = withTiming(value ? 100 * (dependents?.length ?? 0) : 0);
-    opacity.value = withTiming(value ? 1 : 0, {
-      easing: Easing.out(Easing.exp),
-      reduceMotion: ReduceMotion.System,
-    });
+    maxHeight.value = value ? 60 * (dependents?.length ?? 0) : 0;
+    opacity.value = value ? 1 : 0;
+
     //@ts-ignore
     up(value, key);
   };
+  const duration = 250;
+  const hideDependents = useAnimatedStyle(() => {
+    return {
+      maxHeight: withTiming(maxHeight.value, { duration }),
+      opacity: withTiming(opacity.value, {
+        duration,
+        easing: Easing.out(Easing.exp),
+      }),
+    };
+  });
 
   return (
     <>
@@ -87,7 +96,7 @@ export default function SettingSwitchV2({
         endOfLine={endOfLine}
       />
       {!dependents ? null : (
-        <Animated.View style={{ maxHeight, opacity }}>
+        <Animated.View style={hideDependents}>
           {dependents.map((dep, i) => {
             return (
               <RenderSettings
@@ -101,4 +110,5 @@ export default function SettingSwitchV2({
       )}
     </>
   );
-}
+};
+export default React.memo(SettingSwitchV2);
