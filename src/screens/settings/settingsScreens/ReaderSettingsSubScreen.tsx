@@ -260,34 +260,23 @@ const ReaderSettingsSubScreen: React.FC<Props> = ({ navigation, route }) => {
           }}
         />
       </View>
+
       <View
         style={{
           width: '100%',
-          height: 11,
-          backgroundColor: readerBackgroundColor,
-          borderBottomColor: theme.outline,
-          borderBottomWidth: 2,
-          zIndex: 100,
+          height: 14,
+          backgroundColor: theme.outline,
+        }}
+        onTouchMove={e => {
+          const newHeight = e.nativeEvent.pageY - 10 - 84;
+          if (newHeight < WINDOW_HEIGHT * 0.7) {
+            setWebViewHeight(newHeight);
+          }
         }}
       >
-        <View
-          style={{
-            width: '10%',
-            height: 20,
-            marginHorizontal: '45%',
-            backgroundColor: theme.outline,
-            borderRadius: 10,
-          }}
-          onTouchMove={e => {
-            const newHeight = e.nativeEvent.pageY - 10 - 84;
-            if (newHeight < WINDOW_HEIGHT * 0.7) {
-              setWebViewHeight(newHeight);
-            }
-          }}
-        >
-          <Text style={{ textAlign: 'center' }}>•••</Text>
-        </View>
+        <Text style={{ textAlign: 'center', lineHeight: 16 }}>••••</Text>
       </View>
+
       <View
         style={{
           height: layoutHeight - 98 - webViewHeight,
