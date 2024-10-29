@@ -93,6 +93,7 @@ const SettingSwitchV2 = ({
         theme={theme}
         style={{ paddingHorizontal: 16 }}
         endOfLine={endOfLine}
+        quickSettingsItem={quickSettings}
       />
       {!dependents ? null : (
         <Animated.View style={hideDependents}>

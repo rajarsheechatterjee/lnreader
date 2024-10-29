@@ -55,7 +55,7 @@ const RenderSettings = ({
     case 'TextArea':
       return <TextAreaModal setting={setting} theme={theme} />;
     case 'ReaderTheme':
-      return <ReaderThemeSettings />;
+      return <ReaderThemeSettings quickSettings={quickSettings} />;
     case 'TTS':
       return <TextToSpeechSettings />;
     case 'Repo':

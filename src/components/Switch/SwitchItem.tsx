@@ -19,6 +19,7 @@ interface SwitchItemProps {
   size?: number;
   style?: StyleProp<ViewStyle>;
   endOfLine?: () => React.ReactNode;
+  quickSettingsItem?: boolean;
 }
 
 const SwitchItem: React.FC<SwitchItemProps> = ({
@@ -30,6 +31,7 @@ const SwitchItem: React.FC<SwitchItemProps> = ({
   size,
   style,
   endOfLine,
+  quickSettingsItem,
 }) => (
   <Pressable
     android_ripple={{ color: theme.rippleColor }}
@@ -37,8 +39,15 @@ const SwitchItem: React.FC<SwitchItemProps> = ({
     style={[styles.container, style]}
   >
     <View style={styles.labelContainer}>
-      <Text style={[{ color: theme.onSurface }, styles.label]}>{label}</Text>
-      {description ? (
+      <Text
+        style={{
+          color: quickSettingsItem ? theme.onSurfaceVariant : theme.onSurface,
+          fontSize: quickSettingsItem ? 14 : 16,
+        }}
+      >
+        {label}
+      </Text>
+      {description && !quickSettingsItem ? (
         <Text style={[styles.description, { color: theme.onSurfaceVariant }]}>
           {description}
         </Text>
@@ -66,9 +75,6 @@ const styles = StyleSheet.create({
   labelContainer: {
     flex: 1,
     flexDirection: 'column',
-  },
-  label: {
-    fontSize: 16,
   },
   description: {
     fontSize: 12,
