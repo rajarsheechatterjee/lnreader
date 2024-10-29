@@ -61,7 +61,6 @@ const SettingSwitchV2 = ({
     );
   }, [setting.dependents?.length]);
 
-  console.log(quickSettings);
   const maxHeight = useSharedValue(
     currentValue && dependents?.length ? 60 * (dependents?.length ?? 0) : 0,
   );

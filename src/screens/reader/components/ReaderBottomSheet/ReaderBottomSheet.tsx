@@ -24,7 +24,7 @@ const RenderTab = React.memo(
     tab: string;
   }) => {
     return (
-      <View style={styles.readerTab}>
+      <View style={[styles.readerTab]}>
         <List.Section>
           {settings.map((v, i) => (
             <RenderSettings key={tab + i} setting={v} quickSettings />
