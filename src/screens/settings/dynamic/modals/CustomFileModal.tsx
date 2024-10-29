@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { Modal, overlay, TextInput } from 'react-native-paper';
 import { StorageAccessFramework } from 'expo-file-system';
 import * as DocumentPicker from 'expo-document-picker';
@@ -11,6 +11,12 @@ import { useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import { useKeyboardHeight } from '@hooks/common/useKeyboardHeight';
 import { WINDOW_HEIGHT } from '@gorhom/bottom-sheet';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface CustomFileModal {
   visible: boolean;
@@ -38,33 +44,7 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
   const theme = useTheme();
   const [text, setText] = useState('');
   const keyboardHeight = useKeyboardHeight();
-
-  const modalAnim = useRef(new Animated.Value(30)).current;
-  const modalMB = useRef(new Animated.Value(WINDOW_HEIGHT * 0.15 - 24)).current;
-  const modalH = useRef(new Animated.Value(WINDOW_HEIGHT * 0.7)).current;
-  const modalBR = useRef(new Animated.Value(14)).current;
-
-  const animate = (anim: Animated.Value, num: number) => {
-    Animated.timing(anim, {
-      toValue: num,
-      duration: 100,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  useEffect(() => {
-    if (keyboardHeight) {
-      animate(modalAnim, 0);
-      animate(modalBR, 0);
-      animate(modalMB, keyboardHeight + -12);
-      animate(modalH, WINDOW_HEIGHT - keyboardHeight - 72);
-    } else {
-      animate(modalAnim, 30);
-      animate(modalBR, 14);
-      animate(modalMB, WINDOW_HEIGHT * 0.15 - 24);
-      animate(modalH, WINDOW_HEIGHT * 0.7);
-    }
-  }, [keyboardHeight]);
+  const { top } = useSafeAreaInsets();
 
   const openDocumentPicker = async () => {
     try {
@@ -85,6 +65,50 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
       showToast(error.message);
     }
   };
+  const marginHorizontal = useSharedValue(30);
+  const marginBottom = useSharedValue(WINDOW_HEIGHT * 0.2 - 24);
+  const height = useSharedValue(WINDOW_HEIGHT * 0.6);
+  const borderRadius = useSharedValue(14);
+  const padding = useSharedValue(24);
+
+  const maxHeight = useSharedValue(100);
+
+  const buttonMargin = useSharedValue(16);
+
+  useEffect(() => {
+    if (keyboardHeight) {
+      marginHorizontal.value = 0;
+      borderRadius.value = 0;
+      marginBottom.value = keyboardHeight - 4;
+      height.value = WINDOW_HEIGHT - keyboardHeight - top;
+      maxHeight.value = 0;
+      buttonMargin.value = 0;
+      padding.value = 12;
+    } else {
+      marginHorizontal.value = 30;
+      borderRadius.value = 14;
+      marginBottom.value = WINDOW_HEIGHT * 0.2 - 24;
+      height.value = WINDOW_HEIGHT * 0.6;
+      maxHeight.value = 100;
+      buttonMargin.value = 16;
+      padding.value = 24;
+    }
+  }, [keyboardHeight]);
+
+  const duration = 150;
+  const animatedStyles = useAnimatedStyle(() => ({
+    marginHorizontal: withTiming(marginHorizontal.value, { duration }),
+    marginBottom: withTiming(marginBottom.value, { duration: 75 }),
+    height: withTiming(height.value, { duration }),
+    borderRadius: withTiming(borderRadius.value, { duration }),
+    padding: withTiming(padding.value, { duration }),
+  }));
+  const hideView = useAnimatedStyle(() => ({
+    maxHeight: withTiming(maxHeight.value, { duration }),
+  }));
+  const hideMargin = useAnimatedStyle(() => ({
+    marginTop: withTiming(buttonMargin.value, { duration }),
+  }));
 
   return (
     <Modal
@@ -98,27 +122,26 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
             styles.modalContainer,
             {
               backgroundColor: overlay(2, theme.surface),
-              marginHorizontal: modalAnim,
-              marginBottom: modalMB,
-              height: modalH,
-              borderRadius: modalBR,
             },
+            animatedStyles,
           ]}
         >
-          <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-            {title}
-          </Text>
-          <Text
-            style={[
-              {
-                color: theme.onSurfaceVariant,
-                minHeight: 50,
-                textAlignVertical: 'center',
-              },
-            ]}
-          >
-            {description}
-          </Text>
+          <Animated.View style={hideView}>
+            <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
+              {title}
+            </Text>
+            <Text
+              style={[
+                {
+                  color: theme.onSurfaceVariant,
+                  minHeight: 50,
+                  textAlignVertical: 'center',
+                },
+              ]}
+            >
+              {description}
+            </Text>
+          </Animated.View>
           <TextInput
             multiline
             mode="outlined"
@@ -130,7 +153,7 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
             style={[{ color: theme.onSurface }, styles.textInput]}
             theme={{ colors: { ...theme } }}
           />
-          <View style={styles.customCSSButtons}>
+          <Animated.View style={[styles.customCSSButtons, hideMargin]}>
             <Button
               onPress={() => {
                 onSave(text.trim());
@@ -145,7 +168,7 @@ const CustomFileModal: React.FC<CustomFileModal> = ({
               onPress={openDocumentPicker}
               title={openFileLabel}
             />
-          </View>
+          </Animated.View>
         </Animated.View>
       </Pressable>
     </Modal>
@@ -175,7 +198,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row-reverse',
   },
   button: {
-    marginTop: 16,
     flex: 1,
     marginHorizontal: 8,
   },
