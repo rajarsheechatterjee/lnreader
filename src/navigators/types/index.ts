@@ -4,7 +4,7 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
-import { Settings } from '@screens/settings/Settings';
+import { Settings } from '@screens/settings/Settings.d';
 import { MaterialBottomTabScreenProps } from 'react-native-paper';
 
 export type RootStackParamList = {

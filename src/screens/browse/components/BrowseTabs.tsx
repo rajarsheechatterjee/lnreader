@@ -427,7 +427,8 @@ export const AvailableTab = memo(({ searchText, theme }: AvailableTabProps) => {
                   navigation.navigate('MoreStack', {
                     screen: 'SettingsStack',
                     params: {
-                      screen: 'RespositorySettings',
+                      screen: 'SubScreen',
+                      params: { settingsSource: 'repo' },
                     },
                   }),
               },
