@@ -248,7 +248,16 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
               <script src="${assetsUriPrefix}/js/index.js"></script>
               <script src="${pluginCustomJS}"></script>
               <script>
-                ${readerSettings.customJS}
+                async function fn(){
+                    let novelName = "${novel.name}";
+                    let chapterName = "${chapter.name}";
+                    let sourceId = "${novel.pluginId}"; 
+                    let chapterId =${chapter.id};
+                    let novelId =${chapter.novelId};
+                    let html = document.getElementById("LNReader-chapter").innerHTML;
+                    ${readerSettings.customJS}
+                  }
+                  document.addEventListener("DOMContentLoaded", fn);
               </script>
           </html>
           `,

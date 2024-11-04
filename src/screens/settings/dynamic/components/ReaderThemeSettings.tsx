@@ -6,7 +6,7 @@ import { Button, ColorPreferenceItem, List } from '@components/index';
 import { useChapterReaderSettings, useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import ReaderTextAlignSelector from '@screens/reader/components/ReaderBottomSheet/ReaderTextAlignSelector';
-import ReaderTextSize from '../ReaderTextSize';
+import ReaderTextSize from './ReaderTextSize';
 import ReaderValueChange from '@screens/reader/components/ReaderBottomSheet/ReaderValueChange';
 import ReaderThemeSelector from '@screens/reader/components/ReaderBottomSheet/ReaderThemeSelector';
 import {
@@ -16,13 +16,23 @@ import {
 import { useBoolean } from '@hooks';
 import { Portal } from 'react-native-paper';
 import ColorPickerModal from '@components/ColorPickerModal/ColorPickerModal';
-import FontPickerModal from '../Modals/FontPickerModal';
+import FontPickerModal from '../modals/FontPickerModal';
+import ReaderFontPicker from '@screens/reader/components/ReaderBottomSheet/ReaderFontPicker';
 
-const ReaderThemeSettings = () => {
+const ReaderThemeSettings = ({
+  quickSettings,
+}: {
+  quickSettings?: boolean;
+}) => {
   const theme = useTheme();
   const readerSettings = useChapterReaderSettings();
 
-  const labelStyle = [styles.fontSizeL, { color: theme.onSurface }];
+  const labelStyle = [
+    {
+      color: quickSettings ? theme.onSurfaceVariant : theme.onSurface,
+      fontSize: quickSettings ? 14 : 16,
+    },
+  ];
   const readerFontPickerModal = useBoolean();
   const readerBackgroundModal = useBoolean();
   const readerTextColorModal = useBoolean();
@@ -45,25 +55,26 @@ const ReaderThemeSettings = () => {
 
   return (
     <>
-      <List.SubHeader theme={theme}>
-        {getString('readerSettings.readerTheme')}
-      </List.SubHeader>
       <ReaderThemeSelector
         label={getString('readerSettings.preset')}
         labelStyle={labelStyle}
       />
-      <ColorPreferenceItem
-        label={getString('readerSettings.backgroundColor')}
-        description={readerSettings.theme}
-        onPress={readerBackgroundModal.setTrue}
-        theme={theme}
-      />
-      <ColorPreferenceItem
-        label={getString('readerSettings.textColor')}
-        description={readerSettings.textColor}
-        onPress={readerTextColorModal.setTrue}
-        theme={theme}
-      />
+      {!quickSettings ? (
+        <>
+          <ColorPreferenceItem
+            label={getString('readerSettings.backgroundColor')}
+            description={readerSettings.theme}
+            onPress={readerBackgroundModal.setTrue}
+            theme={theme}
+          />
+          <ColorPreferenceItem
+            label={getString('readerSettings.textColor')}
+            description={readerSettings.textColor}
+            onPress={readerTextColorModal.setTrue}
+            theme={theme}
+          />
+        </>
+      ) : null}
       {isCurrentThemeCustom ? (
         <View style={styles.customCSSButtons}>
           <Button
@@ -108,12 +119,16 @@ const ReaderThemeSettings = () => {
         decimals={0}
         unit="px"
       />
-      <List.Item
-        title={getString('readerScreen.bottomSheet.fontStyle')}
-        description={currentFontName}
-        onPress={readerFontPickerModal.setTrue}
-        theme={theme}
-      />
+      {!quickSettings ? (
+        <List.Item
+          title={getString('readerScreen.bottomSheet.fontStyle')}
+          description={currentFontName}
+          onPress={readerFontPickerModal.setTrue}
+          theme={theme}
+        />
+      ) : (
+        <ReaderFontPicker />
+      )}
       {/*
             Modals
         */}
@@ -155,9 +170,6 @@ const styles = StyleSheet.create({
   },
   bottomInset: {
     paddingBottom: 40,
-  },
-  fontSizeL: {
-    fontSize: 16,
   },
   customCSSContainer: {
     marginHorizontal: 16,

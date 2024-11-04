@@ -24,7 +24,7 @@ interface NovelListProps extends FlatListProps<LibraryNovelInfo | NovelItem> {
 }
 
 const NovelList: React.FC<NovelListProps> = props => {
-  const { displayMode = DisplayModes.Comfortable, novelsPerRow = 3 } =
+  const { displayMode = DisplayModes.Comfortable, novelsPerRow = 2 } =
     useLibrarySettings();
   const orientation = useDeviceOrientation();
 
@@ -38,7 +38,7 @@ const NovelList: React.FC<NovelListProps> = props => {
     if (orientation === 'landscape') {
       return 6;
     } else {
-      return novelsPerRow;
+      return novelsPerRow + 1;
     }
   }, [isListView, orientation, novelsPerRow]);
 

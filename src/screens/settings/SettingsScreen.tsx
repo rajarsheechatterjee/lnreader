@@ -6,6 +6,7 @@ import { useTheme } from '@hooks/persisted';
 
 import { getString } from '@strings/translations';
 import { SettingsScreenProps } from '@navigators/types';
+import Settings from './Settings';
 
 const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
   const theme = useTheme();
@@ -18,62 +19,32 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
         theme={theme}
       />
       <View style={{ flex: 1, backgroundColor: theme.background }}>
-        <List.Item
-          title={getString('generalSettings')}
-          icon="tune"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'GeneralSettings',
-            })
-          }
-          theme={theme}
-        />
-        <List.Item
-          title={getString('appearance')}
-          icon="palette-outline"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'AppearanceSettings',
-            })
-          }
-          theme={theme}
-        />
-        <List.Item
-          title={getString('readerSettings.title')}
-          icon="book-open-outline"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'ReaderSettings',
-            })
-          }
-          theme={theme}
-        />
-        <List.Item
-          title="Repositories"
-          icon="github"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'RespositorySettings',
-            })
-          }
-          theme={theme}
-        />
-        <List.Item
-          title={getString('tracking')}
-          icon="sync"
-          onPress={() =>
-            navigation.navigate('SettingsStack', {
-              screen: 'TrackerSettings',
-            })
-          }
-          theme={theme}
-        />
+        {Object.typedKeys(Settings).map(key => {
+          const setting = Settings[key];
+
+          return (
+            <List.Item
+              key={setting.navigateParam}
+              title={setting.groupTitle}
+              icon={setting.icon}
+              onPress={() =>
+                navigation.navigate('SettingsStack', {
+                  screen: key === 'reader' ? 'ReaderSettings' : 'SubScreen',
+                  params: { settingsSource: key },
+                })
+              }
+              theme={theme}
+            />
+          );
+        })}
+
         <List.Item
           title={getString('common.backup')}
           icon="cloud-upload-outline"
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'BackupSettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}
@@ -84,6 +55,7 @@ const SettingsScreen = ({ navigation }: SettingsScreenProps) => {
           onPress={() =>
             navigation.navigate('SettingsStack', {
               screen: 'AdvancedSettings',
+              params: { settingsSource: 'general' },
             })
           }
           theme={theme}

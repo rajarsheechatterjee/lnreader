@@ -11,8 +11,8 @@ import { useTheme } from '@hooks/persisted';
 import { showToast } from '@utils/showToast';
 import { getString } from '@strings/translations';
 import { Portal } from 'react-native-paper';
-import AddRepositoryModal from './AddRepositoryModal';
-import DeleteRepositoryModal from './DeleteRepositoryModal';
+import AddRepositoryModal from '../modals/AddRepositoryModal';
+import DeleteRepositoryModal from '../modals/DeleteRepositoryModal';
 
 interface RepositoryCardProps {
   repository: Repository;
@@ -42,7 +42,7 @@ const RepositoryCard: FC<RepositoryCardProps> = ({
       style={[
         styles.cardCtn,
         {
-          backgroundColor: theme.secondaryContainer,
+          backgroundColor: theme.surface2,
         },
       ]}
     >

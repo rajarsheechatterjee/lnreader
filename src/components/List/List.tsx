@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { List as PaperList, Divider as PaperDivider } from 'react-native-paper';
@@ -15,8 +15,16 @@ interface ListItemProps {
   right?: string;
 }
 
-const Section = ({ children }: { children: ReactNode }) => (
-  <PaperList.Section style={styles.listSection}>{children}</PaperList.Section>
+const Section = ({
+  children,
+  style,
+}: {
+  style?: ViewStyle;
+  children: ReactNode;
+}) => (
+  <PaperList.Section style={[styles.listSection, style]}>
+    {children}
+  </PaperList.Section>
 );
 
 const SubHeader = ({
@@ -106,7 +114,7 @@ const Icon = ({ icon, theme }: { icon: string; theme: ThemeColors }) => (
 
 interface ColorItemProps {
   title: string;
-  description: string;
+  description?: string;
   theme: ThemeColors;
   onPress: () => void;
 }
@@ -124,7 +132,9 @@ const ColorItem = ({ title, description, theme, onPress }: ColorItemProps) => (
   >
     <View>
       <Text style={{ color: theme.onSurface, fontSize: 16 }}>{title}</Text>
-      <Text style={{ color: theme.onSurfaceVariant }}>{description}</Text>
+      {description ? (
+        <Text style={{ color: theme.onSurfaceVariant }}>{description}</Text>
+      ) : null}
     </View>
     <View
       style={{

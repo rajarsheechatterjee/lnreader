@@ -54,6 +54,7 @@ const ReaderThemeSelector: React.FC<ReaderThemeSelectorProps> = ({
         keyExtractor={(item, index) => item.textColor + '_' + index}
         horizontal={true}
         showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ justifyContent: 'flex-end', flex: 1 }}
       />
     </View>
   );
