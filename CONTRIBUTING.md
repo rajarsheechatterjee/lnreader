@@ -1,63 +1,87 @@
 # Contributing Guide
 
-Contributions are welcome and are greatly appreciated!
+Thank you for your interest in contributing to LNReader! This guide will help you get started with development.
 
-## Setting up your environment
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Development Setup](#development-setup)
+- [Development Workflow](#development-workflow)
+- [Code Style & Standards](#code-style--standards)
+- [Database Schema](#database-schema)
+- [Making Contributions](#making-contributions)
+- [Troubleshooting](#troubleshooting)
 
-After forking to your own github org or account, do the following steps to get started:
+## Prerequisites
 
+Before you begin, ensure you have the following installed:
+
+- Node.js (≤ 16.13.1)
+  - [nvm](https://github.com/nvm-sh/nvm) is recommended for version management
+- Java SDK (≤ 11)
+  - [jenv](https://www.jenv.be/) is recommended for version management
+- [Android SDK](https://developer.android.com/studio)
+- [Android Debug Bridge (adb)](https://developer.android.com/studio/command-line/adb)
+- Git
+- A code editor (VS Code recommended)
+
+## Development Setup
+
+1. Fork the repository to your GitHub account
+
+2. Clone your fork:
 ```bash
-# prerequisites
-node --version <= 16.13.1   (for version management, get nvm [recommended])
-java sdk --version <= 11    (for version management, get jenv [optional])
-android sdk                 (https://developer.android.com/studio)
-
-# clone your fork to your local machine
-git clone https://github.com/<your-account-name>/lnreader.git
-
-# step into local repo
+git clone https://github.com/<your-username>/lnreader.git
 cd lnreader
-
-# install dependencies
-npm install
-
-# build the apk (the built apk will be found in ~/lnreader/android/app/build/outputs/apk/release/)
-npm run buildRelease
 ```
 
-### Developing on Android
-
-You will need an Android device or emulator connected to your computer as well as an IDE of your choice. (eg: vscode)
-
+3. Set up the development environment:
 ```bash
-# prerequisites
-adb                         (https://developer.android.com/studio/command-line/adb)
-IDE
+# Install dependencies
+npm install
 
-# check if android device/emulator is connected
-adb devices
-
-# run metro for development
+# Start Metro bundler
 npm start
 
-# then to view on your android device (new terminal)
+# In a new terminal, deploy to Android
 npm run android
 ```
 
-To view any changes to the app with new code, save your code and press "r" on the metro terminal to
-reload it. The app on the android device/emulator will reload shortly.
+4. For building release APK:
+```bash
+npm run buildRelease
+# The APK will be available at: ~/lnreader/android/app/build/outputs/apk/release/
+```
 
-### Style & Linting
+## Development Workflow
 
-This codebase's linting rules are enforced using [ESLint](http://eslint.org/).
+1. Create a new branch for your feature/fix:
+```bash
+git checkout -b feature/your-feature-name
+```
 
-It is recommended that you install an eslint plugin for your editor of choice when working on this
-codebase, however you can always check to see if the source code is compliant by running:
+2. Development Tips:
+   - To view changes, save your code and press "r" in the Metro terminal
+   - Use `adb devices` to verify connected Android devices/emulators
+
+## Code Style & Standards
+
+We use ESLint for code consistency. To check your code:
 
 ```bash
 npm run lint
 ```
-# Database
+
+Key Style Guidelines:
+- Use TypeScript for new files
+- Follow existing file structure
+- Add comments for complex logic
+- Include JSDoc for public functions
+- Use meaningful variable/function names
+
+## Database Schema
+
+The application uses SQLite with the following schema:
+
 ```mermaid
 erDiagram
     Category ||--|{ NovelCategory : contains
@@ -100,3 +124,46 @@ erDiagram
       TEXT chapterNumber
     }
 ```
+
+## Making Contributions
+
+1. Commit your changes:
+```bash
+git add .
+git commit -m "Description of changes"
+```
+
+2. Keep your fork updated:
+```bash
+git remote add upstream https://github.com/LNReader/lnreader.git
+git fetch upstream
+git rebase upstream/main
+```
+
+3. Push your changes:
+```bash
+git push origin feature/your-feature-name
+```
+
+4. Create a Pull Request:
+   - Use a clear PR title and description
+   - Reference any related issues
+   - Include screenshots for UI changes
+   - List any new dependencies
+
+## Troubleshooting
+
+Common Issues:
+1. Build Errors
+   - Ensure all prerequisites are correctly installed
+   - Try cleaning the project: `cd android && ./gradlew clean`
+   - Check Android SDK versions match
+
+2. Metro Bundler Issues
+   - Clear Metro cache: `npm start -- --reset-cache`
+   - Ensure no other Metro instances are running
+
+For additional help:
+- Check existing issues on GitHub
+- Join our community chat
+- Create a new issue with detailed information about your problem
