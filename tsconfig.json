@@ -1,36 +1,60 @@
 {
   "compilerOptions": {
-    "module": "esnext",
     "baseUrl": ".",
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "react-native",
-    "lib": ["es2019"],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "strict": true,
-    "target": "esnext",
     "noUnusedLocals": true,
-    "resolveJsonModule": true,
+    "module": "ES2022",
     "paths": {
-      "@components": ["src/components/index"],
-      "@components/*": ["src/components/*"],
-      "@database/*": ["src/database/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@hooks": ["src/hooks/index"],
-      "@screens/*": ["src/screens/*"],
-      "@strings/*": ["strings/*"],
-      "@redux/*": ["src/redux/*"],
-      "@theme/*": ["src/theme/*"],
-      "@utils/*": ["src/utils/*"],
-      "@plugins/*": ["src/plugins/*"],
-      "@services/*": ["src/services/*"],
-      "@navigators/*": ["src/navigators/*"],
-      "@native/*": ["src/native/*"],
-      "@api/*": ["src/api/*"]
+      "@components": [
+        "src/components/index"
+      ],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@database/*": [
+        "src/database/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ],
+      "@hooks": [
+        "src/hooks/index"
+      ],
+      "@screens/*": [
+        "src/screens/*"
+      ],
+      "@strings/*": [
+        "strings/*"
+      ],
+      "@redux/*": [
+        "src/redux/*"
+      ],
+      "@theme/*": [
+        "src/theme/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@plugins/*": [
+        "src/plugins/*"
+      ],
+      "@services/*": [
+        "src/services/*"
+      ],
+      "@navigators/*": [
+        "src/navigators/*"
+      ],
+      "@native/*": [
+        "src/native/*"
+      ],
+      "@api/*": [
+        "src/api/*"
+      ]
     }
   },
-  "exclude": ["node_modules", "babel.config.js", "metro.config.js"]
+  "exclude": [
+    "node_modules",
+    "babel.config.js",
+    "metro.config.js"
+  ],
+  "extends": "@react-native/typescript-config/tsconfig.json"
 }
