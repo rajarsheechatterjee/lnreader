@@ -7,7 +7,7 @@ import {
 } from './Chapter/ChapterDownloadButtons';
 import { ThemeColors } from '@theme/types';
 import { ChapterInfo } from '@database/types';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { getString } from '@strings/translations';
 import { useBoolean } from '@hooks';
 

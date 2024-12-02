@@ -4,7 +4,7 @@ import color from 'color';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 
 import { getString } from '@strings/translations';
 import { useTheme } from '@hooks/persisted';

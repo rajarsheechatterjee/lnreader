@@ -40,7 +40,7 @@ const BottomNavigator = () => {
         component={Library}
         options={{
           title: getString('library'),
-          tabBarIcon: 'book-variant-multiple',
+          tabBarIcon: 'bookmark-box-multiple',
         }}
       />
       {showUpdatesTab ? (

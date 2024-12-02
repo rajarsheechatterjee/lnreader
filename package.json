@@ -12,7 +12,8 @@
     "buildRelease": "node scripts/setEnvFile.cjs Release && cd android && ./gradlew clean && ./gradlew assembleRelease",
     "open": "open ./android/app/build/outputs/apk/release/",
     "strings": "node scripts/stringTypes.cjs",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "postinstall": "node scripts/patch.dependencies.cjs"
   },
   "dependencies": {
     "@cd-z/react-native-epub-creator": "^2.0.4",
@@ -20,6 +21,8 @@
     "@react-native-community/slider": "^4.4.2",
     "@react-native-cookies/cookies": "^6.2.1",
     "@react-native-google-signin/google-signin": "^11.0.0",
+    "@react-native-vector-icons/common": "^11.0.0",
+    "@react-native-vector-icons/material-design-icons": "^7.4.47",
     "@react-navigation/native": "^7.0.12",
     "@react-navigation/stack": "^7.0.17",
     "@shopify/flash-list": "1.7.1",
@@ -62,7 +65,6 @@
     "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-tab-view": "^4.0.5",
     "react-native-url-polyfill": "^2.0.0",
-    "react-native-vector-icons": "^9.0.0",
     "react-native-webview": "13.12.2",
     "react-native-zip-archive": "^7.0.0",
     "sanitize-html": "^2.13.0",

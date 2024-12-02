@@ -8,7 +8,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { Checkbox as PaperCheckbox } from 'react-native-paper';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 
 import { ThemeColors } from '../../theme/types';
 

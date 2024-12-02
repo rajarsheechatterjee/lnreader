@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Image, ActivityIndicator } from 'react-native';
 import { Modal, overlay, TextInput, TouchableRipple } from 'react-native-paper';
 import { ScrollView } from 'react-native-gesture-handler';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import color from 'color';
 import { Button } from '@components';
 import { getTracker } from '@hooks/persisted';

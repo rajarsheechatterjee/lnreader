@@ -22,7 +22,7 @@ import {
 } from '@plugins/types/filterTypes';
 import { Button } from '@components/index';
 import { Checkbox } from '@components/Checkbox/Checkbox';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { useBoolean } from '@hooks';
 import { Menu, TextInput, overlay } from 'react-native-paper';
 import { getValueFor } from './filterUtils';

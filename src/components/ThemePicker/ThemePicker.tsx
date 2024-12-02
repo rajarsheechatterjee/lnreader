@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, /* StyleSheet, */ Pressable } from 'react-native';
 import { overlay } from 'react-native-paper';
 import color from 'color';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { ThemeColors } from '@theme/types';
 
 interface ThemePickerProps {
