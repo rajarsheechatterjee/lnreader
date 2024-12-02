@@ -1,7 +1,9 @@
-import { countBy } from 'lodash-es';
-import { LibraryStats } from '../types';
-import { txnErrorCallback } from '../utils/helpers';
-import { db } from '@database/db';
+import * as SQLite from 'expo-sqlite';
+import {countBy} from 'lodash-es';
+import {LibraryStats} from '../types';
+import {getAllTransaction, getFirstTransaction} from '../utils/helpers';
+
+const db = SQLite.openDatabaseSync('lnreader.db');
 
 const getLibraryStatsQuery = `
   SELECT COUNT(*) as novelsCount, COUNT(DISTINCT pluginId) as sourcesCount
@@ -54,123 +56,58 @@ const getNovelStatusQuery = `
   `;
 
 export const getLibraryStatsFromDb = async (): Promise<LibraryStats> => {
-  return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getLibraryStatsQuery,
-        undefined,
-        (txObj, { rows }) => {
-          resolve((rows as any)._array[0]);
-        },
-        txnErrorCallback,
-      );
-    });
-  });
+  return getFirstTransaction(db, [[getLibraryStatsQuery]]) as any;
 };
 
 export const getChaptersTotalCountFromDb = async (): Promise<LibraryStats> => {
-  return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getChaptersTotalCountQuery,
-        undefined,
-        (txObj, { rows }) => {
-          resolve((rows as any)._array[0]);
-        },
-        txnErrorCallback,
-      );
-    });
-  });
+  return getFirstTransaction(db, [[getChaptersTotalCountQuery]]) as any;
 };
 
 export const getChaptersReadCountFromDb = async (): Promise<LibraryStats> => {
-  return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getChaptersReadCountQuery,
-        undefined,
-        (txObj, { rows }) => {
-          resolve((rows as any)._array[0]);
-        },
-        txnErrorCallback,
-      );
-    });
-  });
+  return getFirstTransaction(db, [[getChaptersReadCountQuery]]) as any;
 };
 
 export const getChaptersUnreadCountFromDb = async (): Promise<LibraryStats> => {
-  return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getChaptersUnreadCountQuery,
-        undefined,
-        (txObj, { rows }) => {
-          resolve((rows as any)._array[0]);
-        },
-        txnErrorCallback,
-      );
-    });
-  });
+  return getFirstTransaction(db, [[getChaptersUnreadCountQuery]]) as any;
 };
 
 export const getChaptersDownloadedCountFromDb =
   async (): Promise<LibraryStats> => {
-    return new Promise(resolve => {
-      db.transaction(tx => {
-        tx.executeSql(
-          getChaptersDownloadedCountQuery,
-          undefined,
-          (txObj, { rows }) => {
-            resolve((rows as any)._array[0]);
-          },
-          txnErrorCallback,
-        );
-      });
-    });
+    return getFirstTransaction(db, [[getChaptersDownloadedCountQuery]]) as any;
   };
 
 export const getNovelGenresFromDb = async (): Promise<LibraryStats> => {
   return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getNovelGenresQuery,
-        undefined,
-        (txObj, { rows }) => {
-          let genres: string[] = [];
+    getAllTransaction(db, [[getNovelGenresQuery]]).then(res => {
+      let genres: string[] = [];
 
-          (rows as any)._array.forEach((item: { genres: string }) => {
-            const novelGenres = item.genres?.split(/\s*,\s*/);
+      (res as any).forEach((item: {genres: string}) => {
+        const novelGenres = item.genres?.split(/\s*,\s*/);
 
-            if (novelGenres?.length) {
-              genres.push(...novelGenres);
-            }
-          });
+        if (novelGenres?.length) {
+          genres.push(...novelGenres);
+        }
+      });
 
-          resolve({ genres: countBy(genres) });
-        },
-        txnErrorCallback,
-      );
+      resolve({genres: countBy(genres)});
     });
   });
 };
 
 export const getNovelStatusFromDb = async (): Promise<LibraryStats> => {
   return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getNovelStatusQuery,
-        undefined,
-        (txObj, { rows }) => {
-          let status: string[] = [];
+    getAllTransaction(db, [[getNovelGenresQuery]]).then(res => {
+      let status: string[] = [];
 
-          (rows as any)._array.forEach((item: { status: string }) => {
-            status.push(item.status);
-          });
+      (res as any).forEach((item: {genres: string}) => {
+        const novelGenres = item.genres?.split(/\s*,\s*/);
 
-          resolve({ status: countBy(status) });
-        },
-        txnErrorCallback,
-      );
+        if (novelGenres?.length) {
+          status.push(...novelGenres);
+        }
+      });
+
+      resolve({status: countBy(status)});
     });
   });
 };

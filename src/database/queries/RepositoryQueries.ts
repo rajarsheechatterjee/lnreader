@@ -1,22 +1,15 @@
-import { Repository } from '@database/types';
+import * as SQLite from 'expo-sqlite';
 
-import { txnErrorCallback } from '../utils/helpers';
-import { noop } from 'lodash-es';
-import { db } from '@database/db';
+import {Repository} from '@database/types';
+
+import {getAllTransaction, runTransaction} from '../utils/helpers';
+
+const db = SQLite.openDatabaseSync('lnreader.db');
 
 const getRepositoriesQuery = 'SELECT * FROM Repository';
 
 export const getRepositoriesFromDb = async (): Promise<Repository[]> => {
-  return new Promise(resolve =>
-    db.transaction(tx => {
-      tx.executeSql(
-        getRepositoriesQuery,
-        [],
-        (txObj, { rows }) => resolve((rows as any)._array),
-        txnErrorCallback,
-      );
-    }),
-  );
+  return getAllTransaction(db, [[getRepositoriesQuery]]) as any;
 };
 
 const isRepoUrlDuplicateQuery = `
@@ -25,38 +18,36 @@ const isRepoUrlDuplicateQuery = `
 
 export const isRepoUrlDuplicate = (repoUrl: string): Promise<boolean> => {
   return new Promise(resolve =>
-    db.transaction(tx => {
-      tx.executeSql(
-        isRepoUrlDuplicateQuery,
-        [repoUrl],
-        (txObj, { rows }) => {
-          const { _array } = rows as any;
-          resolve(Boolean(_array[0]?.isDuplicate));
-        },
-        txnErrorCallback,
-      );
+    db.withTransactionAsync(async () => {
+      db.getFirstAsync(isRepoUrlDuplicateQuery, [repoUrl]).then(res => {
+        if (res instanceof Object && 'isDuplicate' in res) {
+          resolve(Boolean(res.isDuplicate));
+        } else {
+          throw 'isCategoryNameDuplicate return type does not match.';
+        }
+      });
     }),
   );
 };
 
 const createRepositoryQuery = 'INSERT INTO Repository (url) VALUES (?)';
 
-export const createRepository = (repoUrl: string): void =>
-  db.transaction(tx =>
-    tx.executeSql(createRepositoryQuery, [repoUrl], noop, txnErrorCallback),
+export const createRepository = (repoUrl: string): void => {
+  new Promise(resolve =>
+    runTransaction(db, [[createRepositoryQuery, [repoUrl]]]).then(resolve),
   );
+};
 
 const deleteRepositoryQuery = 'DELETE FROM Repository WHERE id = ?';
 
 export const deleteRepositoryById = (id: number): void => {
-  db.transaction(tx => {
-    tx.executeSql(deleteRepositoryQuery, [id], noop, txnErrorCallback);
-  });
+  runTransaction(db, [[deleteRepositoryQuery, [id]]]);
 };
 
 const updateRepositoryQuery = 'UPDATE Repository SET name = ? WHERE id = ?';
 
-export const updateRepository = (id: number, url: string): void =>
-  db.transaction(tx =>
-    tx.executeSql(updateRepositoryQuery, [url, id], noop, txnErrorCallback),
+export const updateRepository = (id: number, url: string): void => {
+  new Promise(resolve =>
+    runTransaction(db, [[updateRepositoryQuery, [url, id]]]).then(resolve),
   );
+};

@@ -1,18 +1,97 @@
-import { showToast } from '@utils/showToast';
-import { SQLError, SQLTransaction } from 'expo-sqlite';
+import {SQLiteBindParams, SQLiteDatabase, SQLiteRunResult} from 'expo-sqlite';
+import {noop} from 'lodash-es';
 
-export const txnErrorCallback = (
-  txn: SQLTransaction,
-  error: SQLError,
-): boolean => {
-  showToast(error.message);
-  return false;
-};
+function logError(error: any) {
+  console.error(error);
+}
 
-export const txnErrorCallbackWithoutToast = (error: SQLError): boolean => {
-  error;
-  return false;
-};
+export type QueryObject = Array<
+  | [string]
+  | [string, SQLiteBindParams | undefined]
+  | [
+      string,
+      SQLiteBindParams | undefined,
+      ((data: SQLiteRunResult) => void) | undefined,
+    ]
+  | [
+      string,
+      SQLiteBindParams | undefined,
+      ((data: SQLiteRunResult) => void) | undefined,
+      ((data: any) => void) | undefined,
+    ]
+>;
+export async function runTransaction(
+  db: SQLiteDatabase,
+  queryObject: QueryObject,
+) {
+  db.withTransactionAsync(async () => {
+    for (const [
+      query,
+      params,
+      callback = noop,
+      catchCallback = logError,
+    ] of queryObject) {
+      db.runAsync(query, params ?? [])
+        .then(callback)
+        .catch(catchCallback);
+    }
+  });
+}
 
-export const dbTxnErrorCallback = (error: SQLError): void =>
-  showToast(error.message);
+export function getAllTransaction(
+  db: SQLiteDatabase,
+  queryObject: Array<[string] | [string, SQLiteBindParams | undefined]>,
+) {
+  return new Promise((resolve, reject) => {
+    for (const [query, params = []] of queryObject) {
+      db.getAllAsync(query, params)
+        .then(res => {
+          resolve(res as any);
+        })
+        .catch(e => {
+          console.error(e);
+          reject(e);
+        });
+    }
+  });
+  // return new Promise((resolve, reject) =>
+  //   db
+  //     .withTransactionAsync(async () => {
+  //       console.log(queryObject);
+
+  //       for (const [query, params = []] of queryObject) {
+  //         console.log(query, params);
+  //         db.getAllAsync(query, params)
+  //           .then(res => {
+  //             console.log(res);
+
+  //             resolve(res as any);
+  //           })
+  //           .catch(e => {
+  //             console.log(e);
+  //           });
+  //       }
+  //     })
+  //     .catch(e => {
+  //       console.error(e);
+  //       reject(e);
+  //     }),
+  // );
+}
+
+export function getFirstTransaction(
+  db: SQLiteDatabase,
+  queryObject: Array<[string] | [string, SQLiteBindParams | undefined]>,
+) {
+  return new Promise(resolve =>
+    db.withTransactionAsync(async () => {
+      for (const [query, params] of queryObject) {
+        db.getFirstAsync(query, params ?? [])
+          .then(res => {
+            resolve(res as any);
+          })
+          .catch(logError);
+      }
+    }),
+  );
+}

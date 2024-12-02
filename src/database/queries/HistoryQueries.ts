@@ -1,10 +1,10 @@
-import { History } from '@database/types';
-import { txnErrorCallback } from '@database/utils/helpers';
-import { db } from '@database/db';
-import { noop } from 'lodash-es';
+import {History} from '@database/types';
+import {getAllTransaction, runTransaction} from '@database/utils/helpers';
+import * as SQLite from 'expo-sqlite';
+const db = SQLite.openDatabaseSync('lnreader.db');
 
-import { showToast } from '../../utils/showToast';
-import { getString } from '@strings/translations';
+import {showToast} from '../../utils/showToast';
+import {getString} from '@strings/translations';
 
 const getHistoryQuery = `
     SELECT 
@@ -18,45 +18,26 @@ const getHistoryQuery = `
     `;
 
 export const getHistoryFromDb = async (): Promise<History[]> => {
-  return new Promise(resolve => {
-    db.transaction(tx => {
-      tx.executeSql(
-        getHistoryQuery,
-        [],
-        (txObj, { rows }) => {
-          resolve((rows as any)._array);
-        },
-        txnErrorCallback,
-      );
-    });
-  });
+  return (await getAllTransaction(db, [[getHistoryQuery]])) as any;
 };
 
 export const insertHistory = async (chapterId: number) => {
-  db.transaction(tx => {
-    tx.executeSql(
+  runTransaction(db, [
+    [
       "UPDATE Chapter SET readTime = datetime('now','localtime') WHERE id = ?",
       [chapterId],
-      noop,
-      txnErrorCallback,
-    );
-  });
+    ],
+  ]);
 };
 
 export const deleteChapterHistory = async (chapterId: number) => {
-  db.transaction(tx => {
-    tx.executeSql(
-      'UPDATE Chapter SET readTime = NULL WHERE id = ?',
-      [chapterId],
-      noop,
-      txnErrorCallback,
-    );
-  });
+  runTransaction(db, [
+    ['UPDATE Chapter SET readTime = NULL WHERE id = ?', [chapterId]],
+  ]);
 };
 
 export const deleteAllHistory = async () => {
-  db.transaction(tx => {
-    tx.executeSql('UPDATE CHAPTER SET readTime = NULL');
-  });
+  runTransaction(db, [['UPDATE Chapter SET readTime = NULL']]);
+
   showToast(getString('historyScreen.deleted'));
 };
