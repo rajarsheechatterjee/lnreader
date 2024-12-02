@@ -1,11 +1,11 @@
-import React, { lazy, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { createMaterialBottomTabNavigator } from 'react-native-paper/react-navigation';
 
 import Library from '../screens/library/LibraryScreen';
-const Updates = lazy(() => import('../screens/updates/UpdatesScreen'));
-const History = lazy(() => import('../screens/history/HistoryScreen'));
-const Browse = lazy(() => import('../screens/browse/BrowseScreen'));
-const More = lazy(() => import('../screens/more/MoreScreen'));
+import Updates from '../screens/updates/UpdatesScreen';
+import History from '../screens/history/HistoryScreen';
+import Browse from '../screens/browse/BrowseScreen';
+import More from '../screens/more/MoreScreen';
 
 import { getString } from '@strings/translations';
 import { useAppSettings, usePlugins, useTheme } from '@hooks/persisted';

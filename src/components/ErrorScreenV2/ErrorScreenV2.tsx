@@ -2,9 +2,10 @@ import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useTheme } from '@hooks/persisted';
+import { getErrorMessage } from '@utils/error';
 
 interface ErrorScreenProps {
-  error: string;
+  error: any;
   actions?: Array<{
     iconName: string;
     title: string;
@@ -18,7 +19,9 @@ const ErrorScreen: React.FC<ErrorScreenProps> = ({ error, actions }) => {
   return (
     <View style={styles.container}>
       <Text style={[styles.icon, { color: theme.outline }]}>ಥ_ಥ</Text>
-      <Text style={[styles.error, { color: theme.outline }]}>{error}</Text>
+      <Text style={[styles.error, { color: theme.outline }]}>
+        {getErrorMessage(error)}
+      </Text>
       {actions?.length ? (
         <View style={styles.actionsCtn}>
           {actions.map(action => (

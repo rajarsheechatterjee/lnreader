@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { NavigationContainer } from '@react-navigation/native';
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as Linking from 'expo-linking';
 
@@ -15,42 +15,24 @@ import { useGithubUpdateChecker } from '@hooks/common/githubUpdateChecker';
  * Navigators
  */
 import BottomNavigator from './BottomNavigator';
-const MoreStack = React.lazy(() => import('./MoreStack'));
+import MoreStack from './MoreStack';
 
 /**
  * Screens
  */
-const Novel = React.lazy(() => import('../screens/novel/NovelScreen'));
-const Reader = React.lazy(() => import('../screens/reader/ReaderScreen'));
-const BrowseSourceScreen = React.lazy(
-  () => import('../screens/BrowseSourceScreen/BrowseSourceScreen'),
-);
-const GlobalSearchScreen = React.lazy(
-  () => import('../screens/GlobalSearchScreen/GlobalSearchScreen'),
-);
-const Migration = React.lazy(
-  () => import('../screens/browse/migration/Migration'),
-);
-const SourceNovels = React.lazy(() => import('../screens/browse/SourceNovels'));
-const MigrateNovel = React.lazy(
-  () => import('../screens/browse/migration/MigrationNovels'),
-);
+import Novel from '../screens/novel/NovelScreen';
+import Reader from '../screens/reader/ReaderScreen';
+import BrowseSourceScreen from '../screens/BrowseSourceScreen/BrowseSourceScreen';
+import GlobalSearchScreen from '../screens/GlobalSearchScreen/GlobalSearchScreen';
+import Migration from '../screens/browse/migration/Migration';
+import SourceNovels from '../screens/browse/SourceNovels';
+import MigrateNovel from '../screens/browse/migration/MigrationNovels';
 
-const MalTopNovels = React.lazy(
-  () => import('../screens/browse/discover/MalTopNovels'),
-);
-const AniListTopNovels = React.lazy(
-  () => import('../screens/browse/discover/AniListTopNovels'),
-);
-const NewUpdateDialog = React.lazy(
-  () => import('../components/NewUpdateDialog'),
-);
-const BrowseSettings = React.lazy(
-  () => import('../screens/browse/settings/BrowseSettings'),
-);
-const WebviewScreen = React.lazy(
-  () => import('@screens/WebviewScreen/WebviewScreen'),
-);
+import MalTopNovels from '../screens/browse/discover/MalTopNovels';
+import AniListTopNovels from '../screens/browse/discover/AniListTopNovels';
+import NewUpdateDialog from '../components/NewUpdateDialog';
+import BrowseSettings from '../screens/browse/settings/BrowseSettings';
+import WebviewScreen from '@screens/WebviewScreen/WebviewScreen';
 import { RootStackParamList } from './types';
 import Color from 'color';
 import { useMMKVBoolean } from 'react-native-mmkv';
@@ -116,8 +98,20 @@ const MainNavigator = () => {
   }
 
   return (
-    // @ts-ignore
-    <NavigationContainer theme={{ colors: theme, dark: theme.isDark }}>
+    <NavigationContainer
+      theme={{
+        colors: {
+          ...DefaultTheme.colors,
+          primary: theme.primary,
+          background: theme.background,
+          card: theme.surface,
+          text: theme.onSurface,
+          border: theme.outline,
+        },
+        dark: theme.isDark,
+        fonts: DefaultTheme.fonts,
+      }}
+    >
       {isNewVersion && <NewUpdateDialog newVersion={latestRelease} />}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="BottomNavigator" component={BottomNavigator} />

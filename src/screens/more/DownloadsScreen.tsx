@@ -69,7 +69,6 @@ const Downloads = ({ navigation }: DownloadsScreenProps) => {
         };
       }),
     );
-    setLoading(false);
   };
 
   const ListEmptyComponent = () =>
@@ -81,7 +80,7 @@ const Downloads = ({ navigation }: DownloadsScreenProps) => {
     ) : null;
 
   useEffect(() => {
-    getChapters();
+    getChapters().finally(() => setLoading(false));
   }, []);
 
   return (
