@@ -10,45 +10,27 @@ import {
   createChapterTableQuery,
   createChapterNovelIdIndexQuery,
 } from './tables/ChapterTable';
-import { dbTxnErrorCallback } from './utils/helpers';
-import { noop } from 'lodash-es';
+
 import { createRepositoryTableQuery } from './tables/RepositoryTable';
+import { MMKVStorage } from '@utils/mmkv/mmkv';
 
 const dbName = 'lnreader.db';
 
-export const db = SQLite.openDatabase(dbName);
+export const db = SQLite.openDatabaseSync(dbName);
 
 export const createTables = () => {
-  db.exec([{ sql: 'PRAGMA foreign_keys = ON', args: [] }], false, () => {});
-  db.transaction(tx => {
-    tx.executeSql(createNovelTableQuery);
-    tx.executeSql(createCategoriesTableQuery);
-    tx.executeSql(createCategoryDefaultQuery);
-    tx.executeSql(createCategoryTriggerQuery);
-    tx.executeSql(createNovelCategoryTableQuery);
-    tx.executeSql(createChapterTableQuery);
-    tx.executeSql(createChapterNovelIdIndexQuery);
-  });
-
-  db.transaction(tx => {
-    tx.executeSql(createRepositoryTableQuery);
-  });
-};
-
-/**
- * For Testing
- */
-export const deleteDatabase = async () => {
-  db.transaction(
-    tx => {
-      tx.executeSql('DROP TABLE Category');
-      tx.executeSql('DROP TABLE Novel');
-      tx.executeSql('DROP TABLE NovelCategory');
-      tx.executeSql('DROP TABLE Chapter');
-      tx.executeSql('DROP TABLE Download');
-      tx.executeSql('DROP TABLE Repository');
-    },
-    dbTxnErrorCallback,
-    noop,
-  );
+  const isOnBoard = MMKVStorage.getBoolean('IS_ONBOARDED');
+  if (!isOnBoard) {
+    db.execSync('PRAGMA foreign_keys = ON');
+    db.withTransactionSync(() => {
+      db.execSync(createNovelTableQuery);
+      db.execSync(createCategoriesTableQuery);
+      db.execSync(createCategoryDefaultQuery);
+      db.execSync(createNovelCategoryTableQuery);
+      db.execSync(createChapterTableQuery);
+      db.execSync(createCategoryTriggerQuery);
+      db.execSync(createChapterNovelIdIndexQuery);
+      db.execSync(createRepositoryTableQuery);
+    });
+  }
 };

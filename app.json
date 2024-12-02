@@ -5,7 +5,13 @@
     "scheme": "lnreader",
     "plugins": [
       "expo-localization",
-      "expo-sqlite"
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": false,
+          "useSQLCipher": false
+        }
+      ]
     ]
   }
 }
