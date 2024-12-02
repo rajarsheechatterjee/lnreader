@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import * as Linking from 'expo-linking';
 
 import {
   changeNavigationBarColor,
@@ -37,16 +36,10 @@ import { RootStackParamList } from './types';
 import Color from 'color';
 import { useMMKVBoolean } from 'react-native-mmkv';
 import OnboardingScreen from '@screens/onboarding/OnboardingScreen';
-import {
-  createRepository,
-  isRepoUrlDuplicate,
-} from '@database/queries/RepositoryQueries';
-import { showToast } from '@utils/showToast';
 import ServiceManager from '@services/ServiceManager';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const MainNavigator = () => {
-  const url = Linking.useURL();
   const theme = useTheme();
   const { updateLibraryOnLaunch } = useAppSettings();
   const { refreshPlugins } = usePlugins();
@@ -73,24 +66,6 @@ const MainNavigator = () => {
     }
   }, [isOnboarded]);
 
-  useEffect(() => {
-    if (url) {
-      const { hostname, path, queryParams } = Linking.parse(url);
-      if (hostname === 'repo' && path === 'add') {
-        const repoUrl = queryParams?.url;
-        if (typeof repoUrl === 'string') {
-          isRepoUrlDuplicate(repoUrl).then(isDuplicated => {
-            if (isDuplicated) {
-              showToast('A respository with this url already exists!');
-            } else {
-              createRepository(repoUrl);
-            }
-          });
-        }
-      }
-    }
-  }, [url]);
-
   const { isNewVersion, latestRelease } = useGithubUpdateChecker();
 
   if (!isOnboarded) {
@@ -98,7 +73,7 @@ const MainNavigator = () => {
   }
 
   return (
-    <NavigationContainer
+    <NavigationContainer<RootStackParamList>
       theme={{
         colors: {
           ...DefaultTheme.colors,
@@ -110,6 +85,22 @@ const MainNavigator = () => {
         },
         dark: theme.isDark,
         fonts: DefaultTheme.fonts,
+      }}
+      linking={{
+        prefixes: ['lnreader://'],
+        config: {
+          screens: {
+            MoreStack: {
+              screens: {
+                SettingsStack: {
+                  screens: {
+                    RespositorySettings: '/repo/add',
+                  },
+                },
+              },
+            },
+          },
+        },
       }}
     >
       {isNewVersion && <NewUpdateDialog newVersion={latestRelease} />}

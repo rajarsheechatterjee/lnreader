@@ -7,7 +7,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { MaterialBottomTabScreenProps } from 'react-native-paper';
 
 export type RootStackParamList = {
-  BottomNavigator: NavigatorScreenParams<BottomNavigatorParamList>;
+  BottomNavigator: NavigatorScreenParams<BottomNavigatorParamList> | undefined;
   Novel: { name: string; path: string; pluginId: string };
   Chapter: {
     novel: NovelInfo;
@@ -85,7 +85,7 @@ export type SettingsStackParamList = {
   AppearanceSettings: undefined;
   AdvancedSettings: undefined;
   LibrarySettings: undefined;
-  RespositorySettings: undefined;
+  RespositorySettings: { url?: string } | undefined;
 };
 
 export type NovelScreenProps = StackScreenProps<RootStackParamList, 'Novel'>;
@@ -158,4 +158,9 @@ export type BackupSettingsScreenProps = StackScreenProps<
 export type AdvancedSettingsScreenProps = StackScreenProps<
   SettingsStackParamList,
   'AdvancedSettings'
+>;
+
+export type RespositorySettingsScreenProps = CompositeScreenProps<
+  StackScreenProps<SettingsStackParamList, 'RespositorySettings'>,
+  StackScreenProps<RootStackParamList, 'BottomNavigator'>
 >;

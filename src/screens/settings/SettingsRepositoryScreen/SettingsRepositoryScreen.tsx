@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { FAB, Portal } from 'react-native-paper';
-import { useNavigation } from '@react-navigation/native';
 
 import { Appbar, EmptyView } from '@components';
 
-import { getRepositoriesFromDb } from '@database/queries/RepositoryQueries';
+import {
+  createRepository,
+  getRepositoriesFromDb,
+  isRepoUrlDuplicate,
+  updateRepository,
+} from '@database/queries/RepositoryQueries';
 import { Repository } from '@database/types';
-import { useBoolean } from '@hooks/index';
-import { useTheme } from '@hooks/persisted';
+import { useBackHandler, useBoolean } from '@hooks/index';
+import { usePlugins, useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 
 import AddRepositoryModal from './components/AddRepositoryModal';
 import CategorySkeletonLoading from '@screens/Categories/components/CategorySkeletonLoading';
 import RepositoryCard from './components/RepositoryCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  RespositorySettingsScreenProps,
+  RootStackParamList,
+} from '@navigators/types';
+import { showToast } from '@utils/showToast';
 
-const SettingsBrowseScreen = () => {
-  const navigation = useNavigation();
+const SettingsBrowseScreen = ({
+  route: { params },
+  navigation,
+}: RespositorySettingsScreenProps) => {
   const theme = useTheme();
   const { bottom } = useSafeAreaInsets();
+  const { refreshPlugins } = usePlugins();
 
   const [isLoading, setIsLoading] = useState(true);
   const [repositories, setRepositories] = useState<Repository[]>();
@@ -27,9 +39,31 @@ const SettingsBrowseScreen = () => {
     try {
       let res = await getRepositoriesFromDb();
       setRepositories(res);
-    } catch (err) {
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const upsertRepository = async (
+    repositoryUrl: string,
+    repository?: Repository,
+  ) => {
+    if (!new RegExp(/https?:\/\/(.*)plugins\.min\.json/).test(repositoryUrl)) {
+      showToast('Repository URL is invalid');
+      return;
+    }
+
+    if (await isRepoUrlDuplicate(repositoryUrl)) {
+      showToast('A respository with this url already exists!');
+    } else {
+      if (repository) {
+        await updateRepository(repository.id, repositoryUrl);
+      } else {
+        await createRepository(repositoryUrl);
+      }
+      closeAddRepositoryModal();
+      getRepositories();
+      refreshPlugins();
     }
   };
 
@@ -37,17 +71,36 @@ const SettingsBrowseScreen = () => {
     getRepositories();
   }, []);
 
+  useEffect(() => {
+    if (params?.url) {
+      upsertRepository(params.url);
+    }
+  }, [params]);
+
   const {
     value: addRepositoryModalVisible,
     setTrue: showAddRepositoryModal,
     setFalse: closeAddRepositoryModal,
   } = useBoolean();
 
+  useBackHandler(() => {
+    if (!navigation.canGoBack()) {
+      navigation.popTo<keyof RootStackParamList>('BottomNavigator');
+      return true;
+    }
+    return false;
+  });
+
   return (
     <>
       <Appbar
         title={'Repositories'}
-        handleGoBack={navigation.goBack}
+        handleGoBack={() => {
+          if (navigation.canGoBack()) {
+            navigation.goBack();
+          }
+          navigation.popTo<keyof RootStackParamList>('BottomNavigator');
+        }}
         theme={theme}
       />
       {isLoading ? (
@@ -60,6 +113,7 @@ const SettingsBrowseScreen = () => {
             <RepositoryCard
               repository={item}
               refetchRepositories={getRepositories}
+              upsertRepository={upsertRepository}
             />
           )}
           ListEmptyComponent={
@@ -83,7 +137,7 @@ const SettingsBrowseScreen = () => {
         <AddRepositoryModal
           visible={addRepositoryModalVisible}
           closeModal={closeAddRepositoryModal}
-          onSuccess={getRepositories}
+          upsertRepository={upsertRepository}
         />
       </Portal>
     </>

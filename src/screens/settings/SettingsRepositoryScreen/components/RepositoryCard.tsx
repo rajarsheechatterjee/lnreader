@@ -17,11 +17,16 @@ import DeleteRepositoryModal from './DeleteRepositoryModal';
 interface RepositoryCardProps {
   repository: Repository;
   refetchRepositories: () => Promise<void>;
+  upsertRepository: (
+    repositoryUrl: string,
+    repository?: Repository,
+  ) => Promise<void>;
 }
 
 const RepositoryCard: FC<RepositoryCardProps> = ({
   repository,
   refetchRepositories,
+  upsertRepository,
 }) => {
   const theme = useTheme();
 
@@ -90,11 +95,10 @@ const RepositoryCard: FC<RepositoryCardProps> = ({
       </View>
       <Portal>
         <AddRepositoryModal
-          isEditMode
           repository={repository}
           visible={repositoryModalVisible}
           closeModal={closeRepositoryModal}
-          onSuccess={refetchRepositories}
+          upsertRepository={upsertRepository}
         />
         <DeleteRepositoryModal
           repository={repository}

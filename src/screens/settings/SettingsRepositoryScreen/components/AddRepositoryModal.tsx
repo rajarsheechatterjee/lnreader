@@ -5,30 +5,25 @@ import { Modal, overlay, Portal, TextInput } from 'react-native-paper';
 import { Button } from '@components/index';
 
 import { Repository } from '@database/types';
-import {
-  createRepository,
-  isRepoUrlDuplicate,
-  updateRepository,
-} from '@database/queries/RepositoryQueries';
 import { useTheme } from '@hooks/persisted';
 
 import { getString } from '@strings/translations';
-import { showToast } from '@utils/showToast';
 
 interface AddRepositoryModalProps {
-  isEditMode?: boolean;
   repository?: Repository;
   visible: boolean;
   closeModal: () => void;
-  onSuccess: () => Promise<void>;
+  upsertRepository: (
+    repositoryUrl: string,
+    repository?: Repository,
+  ) => Promise<void>;
 }
 
 const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
-  isEditMode,
   repository,
   closeModal,
   visible,
-  onSuccess,
+  upsertRepository,
 }) => {
   const theme = useTheme();
   const [repositoryUrl, setRepositoryUrl] = useState(repository?.url || '');
@@ -44,7 +39,7 @@ const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
         ]}
       >
         <Text style={[styles.modalTitle, { color: theme.onSurface }]}>
-          {isEditMode ? 'Edit repository' : 'Add repository'}
+          {repository ? 'Edit repository' : 'Add repository'}
         </Text>
         <TextInput
           autoFocus
@@ -57,30 +52,8 @@ const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
         />
         <View style={styles.btnContainer}>
           <Button
-            title={getString(isEditMode ? 'common.ok' : 'common.add')}
-            onPress={async () => {
-              if (
-                !new RegExp(/https?:\/\/(.*)plugins\.min\.json/).test(
-                  repositoryUrl,
-                )
-              ) {
-                showToast('Repository URL is invalid');
-                return;
-              }
-
-              if (await isRepoUrlDuplicate(repositoryUrl)) {
-                showToast('A respository with this url already exists!');
-              } else {
-                if (isEditMode && repository) {
-                  updateRepository(repository?.id, repositoryUrl);
-                } else {
-                  createRepository(repositoryUrl);
-                }
-                onSuccess();
-              }
-              setRepositoryUrl('');
-              closeModal();
-            }}
+            title={getString(repository ? 'common.ok' : 'common.add')}
+            onPress={() => upsertRepository(repositoryUrl, repository)}
           />
           <Button title={getString('common.cancel')} onPress={closeModal} />
         </View>
