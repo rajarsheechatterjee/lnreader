@@ -104,7 +104,10 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
       <TabBar
         {...props}
         scrollEnabled
-        indicatorStyle={{ backgroundColor: theme.primary, height: 3 }}
+        indicatorStyle={{
+          backgroundColor: theme.primary,
+          height: 3,
+        }}
         style={[
           {
             backgroundColor: theme.surface,
@@ -116,25 +119,6 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
         ]}
         tabStyle={{ width: 'auto', minWidth: 100 }}
         gap={8}
-        renderLabel={({ route, color }) => (
-          <Row>
-            <Text style={{ color, fontWeight: '600' }}>{route.title}</Text>
-            {showNumberOfNovels ? (
-              <View
-                style={[
-                  styles.badgeCtn,
-                  { backgroundColor: theme.surfaceVariant },
-                ]}
-              >
-                <Text
-                  style={[styles.badgetText, { color: theme.onSurfaceVariant }]}
-                >
-                  {(route as any)?.novels.length}
-                </Text>
-              </View>
-            ) : null}
-          </Row>
-        )}
         inactiveColor={theme.secondary}
         activeColor={theme.primary}
         android_ripple={{ color: theme.rippleColor }}
@@ -259,6 +243,30 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
         />
       ) : null}
       <TabView
+        commonOptions={{
+          label: ({ route, color }) => (
+            <Row>
+              <Text style={{ color, fontWeight: '600' }}>{route.title}</Text>
+              {showNumberOfNovels ? (
+                <View
+                  style={[
+                    styles.badgeCtn,
+                    { backgroundColor: theme.surfaceVariant },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.badgetText,
+                      { color: theme.onSurfaceVariant },
+                    ]}
+                  >
+                    {route?.novels.length}
+                  </Text>
+                </View>
+              ) : null}
+            </Row>
+          ),
+        }}
         lazy
         navigationState={{
           index,

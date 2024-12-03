@@ -1,4 +1,4 @@
-import React, { Ref, useMemo, useState } from 'react';
+import React, { RefObject, useMemo, useState } from 'react';
 import { StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import { SceneMap, TabBar, TabView } from 'react-native-tab-view';
 import color from 'color';
@@ -17,11 +17,12 @@ import {
 import { FlashList } from '@shopify/flash-list';
 import { RadioButton } from '@components/RadioButton/RadioButton';
 import { overlay } from 'react-native-paper';
-import { BottomSheetView, BottomSheetModal } from '@gorhom/bottom-sheet';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 import BottomSheet from '@components/BottomSheet/BottomSheet';
+import { BottomSheetModalMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
 
 interface LibraryBottomSheetProps {
-  bottomSheetRef: Ref<BottomSheetModal> | null;
+  bottomSheetRef: RefObject<BottomSheetModalMethods>;
 }
 
 const FirstRoute = () => {
@@ -177,9 +178,6 @@ const LibraryBottomSheet: React.FC<LibraryBottomSheetProps> = ({
         },
         styles.tabBar,
       ]}
-      renderLabel={({ route, color }) => (
-        <Text style={{ color }}>{route.title}</Text>
-      )}
       inactiveColor={theme.onSurfaceVariant}
       activeColor={theme.primary}
       pressColor={color(theme.primary).alpha(0.12).string()}
@@ -211,6 +209,11 @@ const LibraryBottomSheet: React.FC<LibraryBottomSheetProps> = ({
         ]}
       >
         <TabView
+          commonOptions={{
+            label: ({ route, color }) => (
+              <Text style={{ color }}>{route.title}</Text>
+            ),
+          }}
           navigationState={{ index, routes }}
           renderTabBar={renderTabBar}
           renderScene={renderScene}

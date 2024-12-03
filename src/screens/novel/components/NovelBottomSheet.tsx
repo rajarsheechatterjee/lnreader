@@ -174,9 +174,6 @@ const ChaptersSettingsSheet = ({
         borderBottomColor: theme.outline,
         elevation: 0,
       }}
-      renderLabel={({ route, color }) => (
-        <Text style={{ color }}>{route.title}</Text>
-      )}
       inactiveColor={theme.onSurfaceVariant}
       activeColor={theme.primary}
       pressColor={color(theme.primary).alpha(0.12).string()}
@@ -192,6 +189,11 @@ const ChaptersSettingsSheet = ({
         ]}
       >
         <TabView
+          commonOptions={{
+            label: ({ route, color }) => (
+              <Text style={{ color }}>{route.title}</Text>
+            ),
+          }}
           navigationState={{ index, routes }}
           renderTabBar={renderTabBar}
           renderScene={renderScene}
