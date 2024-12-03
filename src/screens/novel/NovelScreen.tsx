@@ -51,6 +51,7 @@ import { isNumber } from 'lodash-es';
 import NovelAppbar from './components/NovelAppbar';
 import { resolveUrl } from '@services/plugin/fetch';
 import { updateChapterProgressByIds } from '@database/queries/ChapterQueries';
+import { MaterialDesignIconName } from '@type/icon';
 
 const Novel = ({ route, navigation }: NovelScreenProps) => {
   const { name, path, pluginId } = route.params;
@@ -198,7 +199,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
   const downloadCustomChapterModal = useBoolean();
 
   const actions = useMemo(() => {
-    const list = [];
+    const list: { icon: MaterialDesignIconName; onPress: () => void }[] = [];
 
     if (!novel?.isLocal && selected.some(obj => !obj.isDownloaded)) {
       list.push({

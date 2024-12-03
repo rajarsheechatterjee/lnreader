@@ -43,7 +43,7 @@ const NovelAppbar = ({
     const backgroundColor = interpolateColor(
       headerOpacity.value,
       [0, 1],
-      ['transparent', theme.surface2],
+      ['transparent', theme.surface2 || theme.surface],
     );
     return {
       backgroundColor,
