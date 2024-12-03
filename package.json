@@ -20,7 +20,7 @@
     "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-community/slider": "^4.4.2",
     "@react-native-cookies/cookies": "^6.2.1",
-    "@react-native-google-signin/google-signin": "^11.0.0",
+    "@react-native-google-signin/google-signin": "^13.1.0",
     "@react-native-vector-icons/common": "^11.0.0",
     "@react-native-vector-icons/material-design-icons": "^7.4.47",
     "@react-navigation/native": "^7.0.12",

@@ -64,7 +64,7 @@ function UnAuthorized({
 }: {
   theme: ThemeColors;
   setBackupModal: (backupModal: BackupModal) => void;
-  setUser: (user?: User) => void;
+  setUser: (user?: User | null) => void;
 }) {
   const signIn = () => {
     GoogleSignin.hasPlayServices()
@@ -73,8 +73,8 @@ function UnAuthorized({
           return GoogleSignin.signIn();
         }
       })
-      .then(user => {
-        setUser(user);
+      .then(response => {
+        setUser(response?.data);
         setBackupModal(BackupModal.AUTHORIZED);
       });
   };
@@ -227,20 +227,16 @@ export default function GoogleDriveModal({
     GoogleSignin.configure({
       scopes: ['https://www.googleapis.com/auth/drive.file'],
     });
-    GoogleSignin.isSignedIn()
-      .then(isSignedIn => {
-        if (isSignedIn) {
-          return GoogleSignin.getCurrentUser();
-        } else {
-          setBackupModal(BackupModal.UNAUTHORIZED);
-        }
-      })
-      .then(user => {
-        if (user) {
-          setUser(user);
-          setBackupModal(BackupModal.AUTHORIZED);
-        }
-      });
+    const isSignedIn = GoogleSignin.hasPreviousSignIn();
+    if (isSignedIn) {
+      const user = GoogleSignin.getCurrentUser();
+      if (user) {
+        setUser(user);
+        setBackupModal(BackupModal.AUTHORIZED);
+      }
+    } else {
+      setBackupModal(BackupModal.UNAUTHORIZED);
+    }
   }, []);
 
   const renderModal = () => {
