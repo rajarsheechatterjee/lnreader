@@ -3,9 +3,10 @@ import { Pressable, View } from 'react-native';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { ThemeColors } from '../../theme/types';
 import Color from 'color';
+import { MaterialDesignIconName } from '@type/icon';
 
 interface ToggleButtonProps {
-  icon: string;
+  icon: MaterialDesignIconName;
   selected: boolean;
   theme: ThemeColors;
   color?: string;

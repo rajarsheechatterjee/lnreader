@@ -20,6 +20,7 @@ module.exports = function (api) {
             '@navigators': './src/navigators',
             '@native': './src/native',
             '@api': './src/api',
+            '@type': './src/type',
           },
         },
       ],

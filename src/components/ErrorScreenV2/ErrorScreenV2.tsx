@@ -3,11 +3,12 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { useTheme } from '@hooks/persisted';
 import { getErrorMessage } from '@utils/error';
+import { MaterialDesignIconName } from '@type/icon';
 
 interface ErrorScreenProps {
   error: any;
   actions?: Array<{
-    iconName: string;
+    iconName: MaterialDesignIconName;
     title: string;
     onPress: () => void;
   }>;

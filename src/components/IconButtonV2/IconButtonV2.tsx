@@ -4,9 +4,10 @@ import MaterialCommunityIcons from '@react-native-vector-icons/material-design-i
 import Color from 'color';
 
 import { ThemeColors } from '../../theme/types';
+import { MaterialDesignIconName } from '@type/icon';
 
 type Props = {
-  name: string;
+  name: MaterialDesignIconName;
   color?: string;
   size?: number;
   disabled?: boolean;

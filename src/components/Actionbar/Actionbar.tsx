@@ -10,9 +10,10 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
+import { MaterialDesignIconName } from '@type/icon';
 
 type Action = {
-  icon: string;
+  icon: MaterialDesignIconName;
   onPress: () => void;
 };
 
