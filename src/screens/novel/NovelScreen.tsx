@@ -140,7 +140,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
             getString('novelScreen.updatedToast', { name: novel.name }),
           ),
         )
-        .catch(error => showToast(error.message))
+        .catch(error => showToast('Failed updating: ' + error.message))
         .finally(() => setUpdating(false));
     }
   };
@@ -153,7 +153,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
       })
         .then(() => getNovel())
         .then(() => showToast(`Updated page: ${page}`))
-        .catch(e => showToast(e.message))
+        .catch(e => showToast('Failed updating: ' + e.message))
         .finally(() => setUpdating(false));
     }
   };

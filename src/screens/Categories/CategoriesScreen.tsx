@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { FAB, Portal } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 
 import { Appbar, EmptyView } from '@components/index';
