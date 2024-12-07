@@ -1,3 +1,4 @@
+import { db } from '@database/db';
 import { SQLiteBindParams, SQLiteDatabase, SQLiteRunResult } from 'expo-sqlite';
 import { noop } from 'lodash-es';
 
@@ -106,4 +107,11 @@ export function getFirstTransaction(
       }
     }),
   );
+}
+
+export async function getFirstAsync(
+  queryObject: [string] | [string, SQLiteBindParams | undefined],
+) {
+  const [query, params] = queryObject;
+  return db.getFirstAsync(query, params ?? []);
 }

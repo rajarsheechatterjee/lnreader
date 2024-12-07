@@ -60,20 +60,19 @@ const StatsScreen = () => {
     />
   );
 
-  if (isLoading) {
-    return (
-      <>
-        {Header}
-        <LoadingScreenV2 theme={theme} />
-      </>
-    );
-  }
-
   if (error) {
     return (
       <>
         {Header}
         <ErrorScreenV2 error={error} />
+      </>
+    );
+  }
+  if (isLoading) {
+    return (
+      <>
+        {Header}
+        <LoadingScreenV2 theme={theme} />
       </>
     );
   }

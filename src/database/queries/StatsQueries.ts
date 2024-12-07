@@ -1,9 +1,11 @@
-import * as SQLite from 'expo-sqlite';
-import {countBy} from 'lodash-es';
-import {LibraryStats} from '../types';
-import {getAllTransaction, getFirstTransaction} from '../utils/helpers';
-
-const db = SQLite.openDatabaseSync('lnreader.db');
+import { countBy } from 'lodash-es';
+import { LibraryStats } from '../types';
+import {
+  getAllTransaction,
+  getFirstAsync,
+  getFirstTransaction,
+} from '../utils/helpers';
+import { db } from '@database/db';
 
 const getLibraryStatsQuery = `
   SELECT COUNT(*) as novelsCount, COUNT(DISTINCT pluginId) as sourcesCount
@@ -56,58 +58,50 @@ const getNovelStatusQuery = `
   `;
 
 export const getLibraryStatsFromDb = async (): Promise<LibraryStats> => {
-  return getFirstTransaction(db, [[getLibraryStatsQuery]]) as any;
+  return getFirstAsync([getLibraryStatsQuery]) as any;
 };
 
 export const getChaptersTotalCountFromDb = async (): Promise<LibraryStats> => {
-  return getFirstTransaction(db, [[getChaptersTotalCountQuery]]) as any;
+  return getFirstAsync([getChaptersTotalCountQuery]) as any;
 };
 
 export const getChaptersReadCountFromDb = async (): Promise<LibraryStats> => {
-  return getFirstTransaction(db, [[getChaptersReadCountQuery]]) as any;
+  return getFirstAsync([getChaptersReadCountQuery]) as any;
 };
 
 export const getChaptersUnreadCountFromDb = async (): Promise<LibraryStats> => {
-  return getFirstTransaction(db, [[getChaptersUnreadCountQuery]]) as any;
+  return getFirstAsync([getChaptersUnreadCountQuery]) as any;
 };
 
 export const getChaptersDownloadedCountFromDb =
   async (): Promise<LibraryStats> => {
-    return getFirstTransaction(db, [[getChaptersDownloadedCountQuery]]) as any;
+    return getFirstAsync([getChaptersDownloadedCountQuery]) as any;
   };
 
 export const getNovelGenresFromDb = async (): Promise<LibraryStats> => {
-  return new Promise(resolve => {
-    getAllTransaction(db, [[getNovelGenresQuery]]).then(res => {
-      let genres: string[] = [];
+  let genres: string[] = [];
+  await getAllTransaction(db, [[getNovelGenresQuery]]).then(res => {
+    (res as any).forEach((item: { genres: string }) => {
+      const novelGenres = item.genres?.split(/\s*,\s*/);
 
-      (res as any).forEach((item: {genres: string}) => {
-        const novelGenres = item.genres?.split(/\s*,\s*/);
-
-        if (novelGenres?.length) {
-          genres.push(...novelGenres);
-        }
-      });
-
-      resolve({genres: countBy(genres)});
+      if (novelGenres?.length) {
+        genres.push(...novelGenres);
+      }
     });
   });
+  return { genres: countBy(genres) };
 };
 
 export const getNovelStatusFromDb = async (): Promise<LibraryStats> => {
-  return new Promise(resolve => {
-    getAllTransaction(db, [[getNovelGenresQuery]]).then(res => {
-      let status: string[] = [];
+  let status: string[] = [];
+  await getAllTransaction(db, [[getNovelStatusQuery]]).then(res => {
+    (res as any).forEach((item: { status: string }) => {
+      const novelStatus = item.status?.split(/\s*,\s*/);
 
-      (res as any).forEach((item: {genres: string}) => {
-        const novelGenres = item.genres?.split(/\s*,\s*/);
-
-        if (novelGenres?.length) {
-          status.push(...novelGenres);
-        }
-      });
-
-      resolve({status: countBy(status)});
+      if (novelStatus?.length) {
+        status.push(...novelStatus);
+      }
     });
   });
+  return { status: countBy(status) };
 };
