@@ -20,7 +20,7 @@ interface AddCategoryModalProps {
   category?: Category;
   visible: boolean;
   closeModal: () => void;
-  onSuccess: () => Promise<void>;
+  onSuccess: () => void;
 }
 
 const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
@@ -33,11 +33,16 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
   const theme = useTheme();
   const [categoryName, setCategoryName] = useState(category?.name || '');
 
+  function close() {
+    setCategoryName('');
+    closeModal();
+  }
+
   return (
     <Portal>
       <Modal
         visible={visible}
-        onDismiss={closeModal}
+        onDismiss={close}
         contentContainerStyle={[
           styles.modalContainer,
           { backgroundColor: overlay(2, theme.surface) },
@@ -63,7 +68,7 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
           <Button
             title={getString(isEditMode ? 'common.ok' : 'common.add')}
             onPress={async () => {
-              if (await isCategoryNameDuplicate(categoryName)) {
+              if (isCategoryNameDuplicate(categoryName)) {
                 showToast(getString('categories.duplicateError'));
               } else {
                 if (isEditMode && category) {
@@ -72,12 +77,11 @@ const AddCategoryModal: React.FC<AddCategoryModalProps> = ({
                   createCategory(categoryName);
                 }
                 onSuccess();
+                close();
               }
-              setCategoryName('');
-              closeModal();
             }}
           />
-          <Button title={getString('common.cancel')} onPress={closeModal} />
+          <Button title={getString('common.cancel')} onPress={close} />
         </View>
       </Modal>
     </Portal>

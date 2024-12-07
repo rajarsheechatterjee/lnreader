@@ -28,9 +28,15 @@ const CategoriesScreen = () => {
   const [categories, setCategories] = useState<Category[]>();
   const { bottom } = useSafeAreaInsets();
 
+  const {
+    value: categoryModalVisible,
+    setTrue: showCategoryModal,
+    setFalse: closeCategoryModal,
+  } = useBoolean();
+
   const getCategories = async () => {
     try {
-      let res = await getCategoriesFromDb();
+      let res = getCategoriesFromDb();
       setCategories(res);
     } catch (err) {
     } finally {
@@ -70,11 +76,6 @@ const CategoriesScreen = () => {
     updateCategoryOrderInDb(updatedOrderCategories || []);
   };
 
-  const {
-    value: categoryModalVisible,
-    setTrue: showCategoryModal,
-    setFalse: closeCategoryModal,
-  } = useBoolean();
   return (
     <>
       <Appbar
@@ -114,13 +115,12 @@ const CategoriesScreen = () => {
         onPress={showCategoryModal}
         icon={'plus'}
       />
-      <Portal>
-        <AddCategoryModal
-          visible={categoryModalVisible}
-          closeModal={closeCategoryModal}
-          onSuccess={getCategories}
-        />
-      </Portal>
+
+      <AddCategoryModal
+        visible={categoryModalVisible}
+        closeModal={closeCategoryModal}
+        onSuccess={getCategories}
+      />
     </>
   );
 };

@@ -36,7 +36,7 @@ const SetCategoryModal: React.FC<SetCategoryModalProps> = ({
   const [categories = [], setCategories] = useState<CCategory[]>();
 
   const getCategories = async () => {
-    const res = await getCategoriesWithCount(novelIds);
+    const res = getCategoriesWithCount(novelIds);
     setCategories(res);
     setSelectedCategories(res.filter(c => c.novelsCount));
   };
@@ -121,7 +121,6 @@ const SetCategoryModal: React.FC<SetCategoryModalProps> = ({
                 selectedCategories.map(category => category.id),
               );
               closeModal();
-              setSelectedCategories([]);
               onSuccess?.();
             }}
           />
