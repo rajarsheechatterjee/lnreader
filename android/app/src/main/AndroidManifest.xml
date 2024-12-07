@@ -64,7 +64,7 @@
 
 		<activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
 
-		<service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" />
+		<service android:name="com.asterinet.react.bgactions.RNBackgroundActionsTask" android:foregroundServiceType="shortService" />
 
 	</application>
 </manifest>

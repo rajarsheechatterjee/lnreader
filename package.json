@@ -13,7 +13,8 @@
     "open": "open ./android/app/build/outputs/apk/release/",
     "strings": "node scripts/stringTypes.cjs",
     "prepare": "husky install",
-    "postinstall": "node scripts/patch.dependencies.cjs"
+    "postinstall": "node scripts/patch.dependencies.cjs",
+    "rebuild": "rm -rf node_modules/ ./android/build/ ./android/app/build/ ./android/app/.cxx && npm i && cd android/ && ./gradlew clean && cd .. && npm start -- --reset-cache"
   },
   "dependencies": {
     "@cd-z/react-native-epub-creator": "^2.0.4",
@@ -49,7 +50,7 @@
     "protobufjs": "^7.2.6",
     "react": "18.3.1",
     "react-native": "0.76.3",
-    "react-native-background-actions": "^3.0.1",
+    "react-native-background-actions": "^4.0.1",
     "react-native-device-info": "^8.4.7",
     "react-native-drawer-layout": "^4.0.3",
     "react-native-error-boundary": "^1.1.16",

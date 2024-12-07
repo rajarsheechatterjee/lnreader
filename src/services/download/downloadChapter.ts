@@ -84,11 +84,10 @@ export const downloadChapter = async ({ chapterId }: { chapterId: number }) => {
   const chapterText = await plugin.parseChapter(chapter.path);
   if (chapterText && chapterText.length) {
     await downloadFiles(chapterText, plugin, novel.id, chapter.id);
-    db.transaction(tx => {
-      tx.executeSql('UPDATE Chapter SET isDownloaded = 1 WHERE id = ?', [
-        chapter.id,
-      ]);
-    });
+    db.runSync('UPDATE Chapter SET isDownloaded = 1 WHERE id = ?', [
+      chapter.id,
+    ]);
+
     await sleep(1000);
   } else {
     throw new Error(getString('downloadScreen.chapterEmptyOrScrapeError'));

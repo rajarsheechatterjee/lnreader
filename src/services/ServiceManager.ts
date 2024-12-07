@@ -59,7 +59,7 @@ export default class ServiceManager {
   }
   start() {
     if (!this.isRunning) {
-      BackgroundService.start(ServiceManager.lauch, {
+      BackgroundService.start(ServiceManager.launch, {
         taskName: 'app_services',
         taskTitle: 'App Service',
         taskDesc: getString('common.preparing'),
@@ -101,7 +101,7 @@ export default class ServiceManager {
     }
   }
 
-  static async lauch() {
+  static async launch() {
     // retrieve class instance because this is running in different context
     const manager = ServiceManager.manager;
     const doneTasks: Record<BackgroundTask['name'], number> = {
@@ -165,6 +165,7 @@ export default class ServiceManager {
   }
   addTask(tasks: BackgroundTask | BackgroundTask[]) {
     const currentTasks = this.getTaskList();
+
     const addableTasks = (Array.isArray(tasks) ? tasks : [tasks]).filter(
       task =>
         this.isMultiplicableTask(task) ||
