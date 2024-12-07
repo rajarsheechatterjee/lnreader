@@ -2,13 +2,8 @@ import * as SQLite from 'expo-sqlite';
 import { BackupCategory, Category, NovelCategory, CCategory } from '../types';
 import { showToast } from '@utils/showToast';
 import { getString } from '@strings/translations';
-import {
-  getAllSync,
-  getAllTransaction,
-  runSyncTransaction,
-  runTransaction,
-} from '@database/utils/helpers';
-const db = SQLite.openDatabaseSync('lnreader.db');
+import { db } from '@database/db';
+import { getAllSync, runSyncTransaction } from '@database/utils/helpers';
 
 const getCategoriesQuery = `
   SELECT * FROM Category ORDER BY sort
