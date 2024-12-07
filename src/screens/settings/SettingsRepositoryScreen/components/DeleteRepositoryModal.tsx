@@ -14,7 +14,7 @@ interface DeleteRepositoryModalProps {
   repository: Repository;
   visible: boolean;
   closeModal: () => void;
-  onSuccess: () => Promise<void>;
+  onSuccess: () => void;
 }
 
 const DeleteRepositoryModal: React.FC<DeleteRepositoryModalProps> = ({

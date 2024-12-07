@@ -7,7 +7,7 @@ import { Appbar, EmptyView } from '@components';
 import {
   createRepository,
   getRepositoriesFromDb,
-  isRepoUrlDuplicate,
+  isRepoUrlDuplicated,
   updateRepository,
 } from '@database/queries/RepositoryQueries';
 import { Repository } from '@database/types';
@@ -16,7 +16,6 @@ import { usePlugins, useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 
 import AddRepositoryModal from './components/AddRepositoryModal';
-import CategorySkeletonLoading from '@screens/Categories/components/CategorySkeletonLoading';
 import RepositoryCard from './components/RepositoryCard';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
@@ -33,55 +32,43 @@ const SettingsBrowseScreen = ({
   const { bottom } = useSafeAreaInsets();
   const { refreshPlugins } = usePlugins();
 
-  const [isLoading, setIsLoading] = useState(true);
-  const [repositories, setRepositories] = useState<Repository[]>();
-  const getRepositories = async () => {
-    try {
-      let res = await getRepositoriesFromDb();
-      setRepositories(res);
-    } finally {
-      setIsLoading(false);
-    }
+  const [repositories, setRepositories] = useState<Repository[]>(
+    getRepositoriesFromDb(),
+  );
+  const getRepositories = () => {
+    setRepositories(getRepositoriesFromDb());
   };
-
-  const upsertRepository = async (
-    repositoryUrl: string,
-    repository?: Repository,
-  ) => {
-    if (!new RegExp(/https?:\/\/(.*)plugins\.min\.json/).test(repositoryUrl)) {
-      showToast('Repository URL is invalid');
-      return;
-    }
-
-    if (await isRepoUrlDuplicate(repositoryUrl)) {
-      showToast('A respository with this url already exists!');
-    } else {
-      if (repository) {
-        await updateRepository(repository.id, repositoryUrl);
-      } else {
-        await createRepository(repositoryUrl);
-      }
-      closeAddRepositoryModal();
-      getRepositories();
-      refreshPlugins();
-    }
-  };
-
-  useEffect(() => {
-    getRepositories();
-  }, []);
-
-  useEffect(() => {
-    if (params?.url) {
-      upsertRepository(params.url);
-    }
-  }, [params]);
 
   const {
     value: addRepositoryModalVisible,
     setTrue: showAddRepositoryModal,
     setFalse: closeAddRepositoryModal,
   } = useBoolean();
+
+  const upsertRepository = (repositoryUrl: string, repository?: Repository) => {
+    if (!new RegExp(/https?:\/\/(.*)plugins\.min\.json/).test(repositoryUrl)) {
+      showToast('Repository URL is invalid');
+      return;
+    }
+
+    if (isRepoUrlDuplicated(repositoryUrl)) {
+      showToast('A respository with this url already exists!');
+    } else {
+      if (repository) {
+        updateRepository(repository.id, repositoryUrl);
+      } else {
+        createRepository(repositoryUrl);
+      }
+      getRepositories();
+      refreshPlugins();
+    }
+  };
+
+  useEffect(() => {
+    if (params?.url) {
+      upsertRepository(params.url);
+    }
+  }, [params]);
 
   useBackHandler(() => {
     if (!navigation.canGoBack()) {
@@ -103,28 +90,25 @@ const SettingsBrowseScreen = ({
         }}
         theme={theme}
       />
-      {isLoading ? (
-        <CategorySkeletonLoading width={360.7} height={89.5} theme={theme} />
-      ) : (
-        <FlatList
-          data={repositories}
-          contentContainerStyle={styles.contentCtn}
-          renderItem={({ item }) => (
-            <RepositoryCard
-              repository={item}
-              refetchRepositories={getRepositories}
-              upsertRepository={upsertRepository}
-            />
-          )}
-          ListEmptyComponent={
-            <EmptyView
-              icon="Σ(ಠ_ಠ)"
-              description={getString('repositories.emptyMsg')}
-              theme={theme}
-            />
-          }
-        />
-      )}
+
+      <FlatList
+        data={repositories}
+        contentContainerStyle={styles.contentCtn}
+        renderItem={({ item }) => (
+          <RepositoryCard
+            repository={item}
+            refetchRepositories={getRepositories}
+            upsertRepository={upsertRepository}
+          />
+        )}
+        ListEmptyComponent={
+          <EmptyView
+            icon="Σ(ಠ_ಠ)"
+            description={getString('repositories.emptyMsg')}
+            theme={theme}
+          />
+        }
+      />
       <FAB
         style={[styles.fab, { backgroundColor: theme.primary, bottom: bottom }]}
         color={theme.onPrimary}

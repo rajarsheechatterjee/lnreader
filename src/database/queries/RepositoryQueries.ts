@@ -1,53 +1,20 @@
-import * as SQLite from 'expo-sqlite';
+import { Repository } from '@database/types';
+import { db } from '@database/db';
 
-import {Repository} from '@database/types';
+export const getRepositoriesFromDb = () =>
+  db.getAllSync<Repository>('SELECT * FROM Repository');
 
-import {getAllTransaction, runTransaction} from '../utils/helpers';
+export const isRepoUrlDuplicated = (repoUrl: string) =>
+  (db.getFirstSync<{ isDuplicated: number }>(
+    'SELECT COUNT(*) as isDuplicated FROM Repository WHERE url = ?',
+    repoUrl,
+  )?.isDuplicated || 0) > 0;
 
-const db = SQLite.openDatabaseSync('lnreader.db');
+export const createRepository = (repoUrl: string) =>
+  db.runSync('INSERT INTO Repository (url) VALUES (?)', repoUrl);
 
-const getRepositoriesQuery = 'SELECT * FROM Repository';
+export const deleteRepositoryById = (id: number) =>
+  db.runSync('DELETE FROM Repository WHERE id = ?', id);
 
-export const getRepositoriesFromDb = async (): Promise<Repository[]> => {
-  return getAllTransaction(db, [[getRepositoriesQuery]]) as any;
-};
-
-const isRepoUrlDuplicateQuery = `
-  SELECT COUNT(*) as isDuplicate FROM Repository WHERE url = ?
-	`;
-
-export const isRepoUrlDuplicate = (repoUrl: string): Promise<boolean> => {
-  return new Promise(resolve =>
-    db.withTransactionAsync(async () => {
-      db.getFirstAsync(isRepoUrlDuplicateQuery, [repoUrl]).then(res => {
-        if (res instanceof Object && 'isDuplicate' in res) {
-          resolve(Boolean(res.isDuplicate));
-        } else {
-          throw 'isCategoryNameDuplicate return type does not match.';
-        }
-      });
-    }),
-  );
-};
-
-const createRepositoryQuery = 'INSERT INTO Repository (url) VALUES (?)';
-
-export const createRepository = (repoUrl: string): void => {
-  new Promise(resolve =>
-    runTransaction(db, [[createRepositoryQuery, [repoUrl]]]).then(resolve),
-  );
-};
-
-const deleteRepositoryQuery = 'DELETE FROM Repository WHERE id = ?';
-
-export const deleteRepositoryById = (id: number): void => {
-  runTransaction(db, [[deleteRepositoryQuery, [id]]]);
-};
-
-const updateRepositoryQuery = 'UPDATE Repository SET name = ? WHERE id = ?';
-
-export const updateRepository = (id: number, url: string): void => {
-  new Promise(resolve =>
-    runTransaction(db, [[updateRepositoryQuery, [url, id]]]).then(resolve),
-  );
-};
+export const updateRepository = (id: number, url: string) =>
+  db.runSync('UPDATE Repository SET url = ? WHERE id = ?', url, id);

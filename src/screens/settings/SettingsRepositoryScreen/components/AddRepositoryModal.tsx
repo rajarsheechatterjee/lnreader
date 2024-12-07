@@ -13,10 +13,7 @@ interface AddRepositoryModalProps {
   repository?: Repository;
   visible: boolean;
   closeModal: () => void;
-  upsertRepository: (
-    repositoryUrl: string,
-    repository?: Repository,
-  ) => Promise<void>;
+  upsertRepository: (repositoryUrl: string, repository?: Repository) => void;
 }
 
 const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
@@ -53,7 +50,10 @@ const AddRepositoryModal: React.FC<AddRepositoryModalProps> = ({
         <View style={styles.btnContainer}>
           <Button
             title={getString(repository ? 'common.ok' : 'common.add')}
-            onPress={() => upsertRepository(repositoryUrl, repository)}
+            onPress={() => {
+              upsertRepository(repositoryUrl, repository);
+              closeModal();
+            }}
           />
           <Button title={getString('common.cancel')} onPress={closeModal} />
         </View>
