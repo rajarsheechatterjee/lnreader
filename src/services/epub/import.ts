@@ -12,126 +12,95 @@ import EpubUtil from '@native/EpubUtil';
 import { NOVEL_STORAGE } from '@utils/Storages';
 import { db } from '@database/db';
 
-const insertLocalNovel = (
+const insertLocalNovel = async (
   name: string,
   path: string,
   cover?: string,
   author?: string,
   artist?: string,
   summary?: string,
-): Promise<number> => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        `
-          INSERT INTO 
-            Novel(name, path, pluginId, inLibrary, isLocal) 
-          VALUES(?, ?, 'local', 1, 1)`,
-        [name, path],
-        async (txObj, { insertId }) => {
-          if (insertId && insertId >= 0) {
-            await updateNovelCategoryById(insertId, [2]);
-            const novelDir = NOVEL_STORAGE + '/local/' + insertId;
-            await FileManager.mkdir(novelDir);
-            const newCoverPath =
-              'file://' + novelDir + '/' + cover?.split(/[\/\\]/).pop();
-            if (cover && (await FileManager.exists(cover))) {
-              await FileManager.moveFile(cover, newCoverPath);
-            }
-            await updateNovelInfo({
-              id: insertId,
-              pluginId: LOCAL_PLUGIN_ID,
-              author: author,
-              artist: artist,
-              summary: summary,
-              path: NOVEL_STORAGE + '/local/' + insertId,
-              cover: newCoverPath,
-              name: name,
-              inLibrary: true,
-              isLocal: true,
-              totalPages: 0,
-            });
-            resolve(insertId);
-          } else {
-            reject(
-              new Error(getString('advancedSettingsScreen.novelInsertFailed')),
-            );
-          }
-        },
-        (txObj, error) => {
-          reject(error);
-          return false;
-        },
-      );
+) => {
+  const insertedNovel = await db.runAsync(
+    `
+      INSERT INTO 
+        Novel(name, path, pluginId, inLibrary, isLocal) 
+        VALUES(?, ?, 'local', 1, 1)`,
+    name,
+    path,
+  );
+  if (insertedNovel.lastInsertRowId && insertedNovel.lastInsertRowId >= 0) {
+    await updateNovelCategoryById(insertedNovel.lastInsertRowId, [2]);
+    const novelDir = NOVEL_STORAGE + '/local/' + insertedNovel.lastInsertRowId;
+    await FileManager.mkdir(novelDir);
+    const newCoverPath =
+      'file://' + novelDir + '/' + cover?.split(/[\/\\]/).pop();
+    if (cover && (await FileManager.exists(cover))) {
+      await FileManager.moveFile(cover, newCoverPath);
+    }
+    await updateNovelInfo({
+      id: insertedNovel.lastInsertRowId,
+      pluginId: LOCAL_PLUGIN_ID,
+      author: author,
+      artist: artist,
+      summary: summary,
+      path: NOVEL_STORAGE + '/local/' + insertedNovel.lastInsertRowId,
+      cover: newCoverPath,
+      name: name,
+      inLibrary: true,
+      isLocal: true,
+      totalPages: 0,
     });
-  });
+    return insertedNovel.lastInsertRowId;
+  }
+  throw new Error(getString('advancedSettingsScreen.novelInsertFailed'));
 };
 
-const insertLocalChapter = (
+const insertLocalChapter = async (
   novelId: number,
   fakeId: number,
   name: string,
   path: string,
   releaseTime: string,
 ): Promise<string[]> => {
-  return new Promise((resolve, reject) => {
-    db.transaction(tx => {
-      tx.executeSql(
-        'INSERT INTO Chapter(novelId, name, path, releaseTime, position) VALUES(?, ?, ?, ?, ?)',
-        [
-          novelId,
-          name,
-          NOVEL_STORAGE + '/local/' + novelId + '/' + fakeId,
-          releaseTime,
-          fakeId,
-        ],
-        async (txObj, { insertId }) => {
-          if (insertId && insertId >= 0) {
-            let chapterText: string = '';
-            try {
-              path = decodeURI(path);
-            } catch {
-              // nothing to do
-            }
-            chapterText = FileManager.readFile(path);
-            if (!chapterText) {
-              return;
-            }
-            const staticPaths: string[] = [];
-            const novelDir = NOVEL_STORAGE + '/local/' + novelId;
-            const epubContentDir = path.replace(/[^\\\/]+$/, '');
-            chapterText = chapterText.replace(
-              /(href|src)=(["'])(.*?)\2/g,
-              ($0, $1, $2, $3: string) => {
-                if ($3) {
-                  staticPaths.push(epubContentDir + '/' + $3);
-                }
-                return `${$1}="file://${novelDir}/${$3
-                  .split(/[\\\/]/)
-                  ?.pop()}"`;
-              },
-            );
-            await FileManager.mkdir(novelDir + '/' + insertId);
-            await FileManager.writeFile(
-              novelDir + '/' + insertId + '/index.html',
-              chapterText,
-            );
-            resolve(staticPaths);
-          } else {
-            reject(
-              new Error(
-                getString('advancedSettingsScreen.chapterInsertFailed'),
-              ),
-            );
-          }
-        },
-        (txObj, error) => {
-          reject(error);
-          return false;
-        },
-      );
-    });
-  });
+  const insertedChapter = await db.runAsync(
+    'INSERT INTO Chapter(novelId, name, path, releaseTime, position) VALUES(?, ?, ?, ?, ?)',
+    novelId,
+    name,
+    NOVEL_STORAGE + '/local/' + novelId + '/' + fakeId,
+    releaseTime,
+    fakeId,
+  );
+  if (insertedChapter.lastInsertRowId && insertedChapter.lastInsertRowId >= 0) {
+    let chapterText: string = '';
+    try {
+      path = decodeURI(path);
+    } catch {
+      // nothing to do
+    }
+    chapterText = FileManager.readFile(path);
+    if (!chapterText) {
+      return [];
+    }
+    const staticPaths: string[] = [];
+    const novelDir = NOVEL_STORAGE + '/local/' + novelId;
+    const epubContentDir = path.replace(/[^\\\/]+$/, '');
+    chapterText = chapterText.replace(
+      /(href|src)=(["'])(.*?)\2/g,
+      (_, $1, __, $3: string) => {
+        if ($3) {
+          staticPaths.push(epubContentDir + '/' + $3);
+        }
+        return `${$1}="file://${novelDir}/${$3.split(/[\\\/]/)?.pop()}"`;
+      },
+    );
+    await FileManager.mkdir(novelDir + '/' + insertedChapter.lastInsertRowId);
+    await FileManager.writeFile(
+      novelDir + '/' + insertedChapter.lastInsertRowId + '/index.html',
+      chapterText,
+    );
+    return staticPaths;
+  }
+  throw new Error(getString('advancedSettingsScreen.chapterInsertFailed'));
 };
 
 export const importEpub = async ({
@@ -161,6 +130,7 @@ export const importEpub = async ({
     novel.artist,
     novel.summary,
   );
+
   const now = dayjs().toISOString();
   const filePathSet = new Set<string>();
   if (novel.chapters) {
