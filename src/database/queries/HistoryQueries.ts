@@ -1,12 +1,11 @@
-import {History} from '@database/types';
-import {getAllTransaction, runTransaction} from '@database/utils/helpers';
-import * as SQLite from 'expo-sqlite';
-const db = SQLite.openDatabaseSync('lnreader.db');
+import { History } from '@database/types';
 
-import {showToast} from '../../utils/showToast';
-import {getString} from '@strings/translations';
+import { showToast } from '@utils/showToast';
+import { getString } from '@strings/translations';
+import { db } from '@database/db';
 
-const getHistoryQuery = `
+export const getHistoryFromDb = () =>
+  db.getAllAsync<History>(`
     SELECT 
       Chapter.*, Novel.pluginId, Novel.name as novelName, Novel.path as novelPath, Novel.cover as novelCover, Novel.id as novelId
     FROM Chapter 
@@ -15,29 +14,18 @@ const getHistoryQuery = `
     GROUP BY novelId
     HAVING readTime = MAX(readTime)
     ORDER BY readTime DESC
-    `;
+    `);
 
-export const getHistoryFromDb = async (): Promise<History[]> => {
-  return (await getAllTransaction(db, [[getHistoryQuery]])) as any;
-};
+export const insertHistory = async (chapterId: number) =>
+  db.runAsync(
+    "UPDATE Chapter SET readTime = datetime('now','localtime') WHERE id = ?",
+    chapterId,
+  );
 
-export const insertHistory = async (chapterId: number) => {
-  runTransaction(db, [
-    [
-      "UPDATE Chapter SET readTime = datetime('now','localtime') WHERE id = ?",
-      [chapterId],
-    ],
-  ]);
-};
-
-export const deleteChapterHistory = async (chapterId: number) => {
-  runTransaction(db, [
-    ['UPDATE Chapter SET readTime = NULL WHERE id = ?', [chapterId]],
-  ]);
-};
+export const deleteChapterHistory = (chapterId: number) =>
+  db.runAsync('UPDATE Chapter SET readTime = NULL WHERE id = ?', chapterId);
 
 export const deleteAllHistory = async () => {
-  runTransaction(db, [['UPDATE Chapter SET readTime = NULL']]);
-
+  await db.execAsync('UPDATE Chapter SET readTime = NULL');
   showToast(getString('historyScreen.deleted'));
 };
