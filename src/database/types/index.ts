@@ -61,6 +61,14 @@ export interface Update extends ChapterInfo {
   novelCover: string;
 }
 
+export interface UpdateOverview {
+  novelId: number;
+  novelName: string;
+  updateDate: string;
+  updatesPerDay: number;
+  novelCover: string;
+}
+
 export interface Category {
   id: number;
   name: string;

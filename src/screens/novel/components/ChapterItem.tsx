@@ -164,6 +164,7 @@ const ChapterItem: React.FC<ChapterItemProps> = ({
         <DownloadButton
           isDownloading={isDownloading}
           isDownloaded={chapter.isDownloaded}
+          chapterId={chapter.id}
           theme={theme}
           deleteChapter={deleteChapter}
           downloadChapter={downloadChapter}

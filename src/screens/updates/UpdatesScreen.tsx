@@ -1,15 +1,11 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { memo, Suspense, useCallback, useEffect } from 'react';
 import dayjs from 'dayjs';
 import { RefreshControl, SectionList, StyleSheet, Text } from 'react-native';
 
 import { EmptyView, ErrorScreenV2, SearchbarV2 } from '@components';
 
-import { convertDateToISOString } from '@database/utils/convertDateToISOString';
-
-import { Update } from '@database/types';
-
 import { useSearch } from '@hooks';
-import { useDownload, useUpdates } from '@hooks/persisted';
+import { useUpdates } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import { ThemeColors } from '@theme/types';
 import { useTheme } from '@hooks/persisted';
@@ -25,56 +21,24 @@ const UpdatesScreen = ({ navigation }: UpdateScreenProps) => {
   const theme = useTheme();
   const {
     isLoading,
-    updates,
-    searchResults,
-    clearSearchResults,
-    searchUpdates,
+    updatesOverview,
     getUpdates,
     lastUpdateTime,
     showLastUpdateTime,
     error,
   } = useUpdates();
-  const { downloadQueue } = useDownload();
   const { searchText, setSearchText, clearSearchbar } = useSearch();
   const onChangeText = (text: string) => {
     setSearchText(text);
-    searchUpdates(text);
-  };
-
-  const handleClearSearchbar = () => {
-    clearSearchbar();
-    clearSearchResults();
-  };
-
-  const groupUpdatesByDate = (rawHistory: Update[]) => {
-    const dateGroups = rawHistory.reduce<
-      Record<string, Record<number, Update[]>>
-    >((groups, item) => {
-      const date = convertDateToISOString(item.updatedTime);
-      const novelId = item.novelId;
-      if (!groups[date]) {
-        groups[date] = {};
-      }
-      if (!groups[date][novelId]) {
-        groups[date][novelId] = [];
-      }
-
-      groups[date][novelId] = [...groups[date][novelId], item];
-      return groups;
-    }, {});
-
-    return Object.keys(dateGroups).map(date => {
-      return {
-        date,
-        data: Object.values(dateGroups[date]), // convert map to 2d array
-      };
-    });
   };
 
   useFocusEffect(
     useCallback(() => {
-      getUpdates();
-    }, [downloadQueue]),
+      //? Push updates to the end of the stack to avoid lag
+      setTimeout(() => {
+        getUpdates();
+      }, 0);
+    }, []),
   );
 
   useEffect(
@@ -95,7 +59,7 @@ const UpdatesScreen = ({ navigation }: UpdateScreenProps) => {
     <>
       <SearchbarV2
         searchText={searchText}
-        clearSearchbar={handleClearSearchbar}
+        clearSearchbar={clearSearchbar}
         placeholder={getString('updatesScreen.searchbar')}
         onChangeText={onChangeText}
         leftIcon="magnify"
@@ -108,70 +72,83 @@ const UpdatesScreen = ({ navigation }: UpdateScreenProps) => {
           },
         ]}
       />
-      {isLoading ? (
+      {isLoading && updatesOverview.length === 0 ? (
         <UpdatesSkeletonLoading theme={theme} />
       ) : error ? (
         <ErrorScreenV2 error={error} />
       ) : (
-        <SectionList
-          extraData={[updates]}
-          ListHeaderComponent={
-            showLastUpdateTime && lastUpdateTime ? (
-              <LastUpdateTime lastUpdateTime={lastUpdateTime} theme={theme} />
-            ) : null
-          }
-          contentContainerStyle={styles.listContainer}
-          sections={groupUpdatesByDate(searchText ? searchResults : updates)}
-          renderSectionHeader={({ section: { date } }) => (
-            <Text style={[styles.dateHeader, { color: theme.onSurface }]}>
-              {dayjs(date).calendar()}
-            </Text>
-          )}
-          keyExtractor={item => 'updatedGroup' + item[0].novelId}
-          renderItem={({ item }) => (
-            <UpdateNovelCard
-              deleteChapter={chapter => {
-                deleteChapter(
-                  chapter.pluginId,
-                  chapter.novelId,
-                  chapter.id,
-                ).then(() => {
-                  showToast(
-                    getString('common.deleted', {
-                      name: chapter.name,
-                    }),
-                  );
-                  getUpdates();
-                });
-              }}
-              chapterList={item}
-              descriptionText={getString('updatesScreen.updatesLower')}
-            />
-          )}
-          ListEmptyComponent={
-            <EmptyView
-              icon="(˘･_･˘)"
-              description={getString('updatesScreen.emptyView')}
-              theme={theme}
-            />
-          }
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() =>
-                ServiceManager.manager.addTask({ name: 'UPDATE_LIBRARY' })
-              }
-              colors={[theme.onPrimary]}
-              progressBackgroundColor={theme.primary}
-            />
-          }
-        />
+        <Suspense fallback={<UpdatesSkeletonLoading theme={theme} />}>
+          <SectionList
+            extraData={[updatesOverview.length]}
+            ListHeaderComponent={
+              showLastUpdateTime && lastUpdateTime ? (
+                <LastUpdateTime lastUpdateTime={lastUpdateTime} theme={theme} />
+              ) : null
+            }
+            contentContainerStyle={styles.listContainer}
+            // sections={groupUpdatesByDate(searchText ? searchResults : updates)}
+            renderSectionHeader={({ section: { date } }) => (
+              <Text style={[styles.dateHeader, { color: theme.onSurface }]}>
+                {dayjs(date).calendar()}
+              </Text>
+            )}
+            sections={updatesOverview
+              .filter(v =>
+                searchText
+                  ? v.novelName.toLowerCase().includes(searchText.toLowerCase())
+                  : true,
+              )
+              .map(v => {
+                return { data: [v], date: v.updateDate };
+              })}
+            keyExtractor={item => 'updatedGroup' + item.novelId}
+            renderItem={({ item }) => (
+              <Suspense fallback={<UpdatesSkeletonLoading theme={theme} />}>
+                <UpdateNovelCard
+                  deleteChapter={chapter => {
+                    deleteChapter(
+                      chapter.pluginId,
+                      chapter.novelId,
+                      chapter.id,
+                    ).then(() => {
+                      showToast(
+                        getString('common.deleted', {
+                          name: chapter.name,
+                        }),
+                      );
+                      getUpdates();
+                    });
+                  }}
+                  chapterListInfo={item}
+                  descriptionText={getString('updatesScreen.updatesLower')}
+                />
+              </Suspense>
+            )}
+            ListEmptyComponent={
+              <EmptyView
+                icon="(˘･_･˘)"
+                description={getString('updatesScreen.emptyView')}
+                theme={theme}
+              />
+            }
+            refreshControl={
+              <RefreshControl
+                refreshing={false}
+                onRefresh={() =>
+                  ServiceManager.manager.addTask({ name: 'UPDATE_LIBRARY' })
+                }
+                colors={[theme.onPrimary]}
+                progressBackgroundColor={theme.primary}
+              />
+            }
+          />
+        </Suspense>
       )}
     </>
   );
 };
 
-export default UpdatesScreen;
+export default memo(UpdatesScreen);
 
 const LastUpdateTime: React.FC<{
   lastUpdateTime: Date | number | string;

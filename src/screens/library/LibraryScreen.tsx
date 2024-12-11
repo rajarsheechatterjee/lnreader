@@ -60,9 +60,21 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
 
   const { right: rightInset } = useSafeAreaInsets();
 
+  const layout = useWindowDimensions();
+
   const onChangeText = debounce((text: string) => {
     setSearchText(text);
   }, 100);
+
+  const bottomSheetRef = useRef<BottomSheetModal | null>(null);
+
+  const [index, setIndex] = useState(0);
+
+  const {
+    value: setCategoryModalVisible,
+    setTrue: showSetCategoryModal,
+    setFalse: closeSetCategoryModal,
+  } = useBoolean();
 
   const handleClearSearchbar = () => {
     clearSearchbar();
@@ -70,6 +82,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
 
   const { library, refetchLibrary, isLoading } = useLibrary({ searchText });
   const [selectedNovelIds, setSelectedNovelIds] = useState<number[]>([]);
+
   useBackHandler(() => {
     if (selectedNovelIds.length) {
       setSelectedNovelIds([]);
@@ -78,12 +91,6 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
 
     return false;
   });
-
-  const layout = useWindowDimensions();
-
-  const [index, setIndex] = useState(0);
-
-  const bottomSheetRef = useRef<BottomSheetModal | null>(null);
 
   useEffect(
     () =>
@@ -96,6 +103,23 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
       }),
     [navigation],
   );
+
+  const searchbarPlaceholder =
+    selectedNovelIds.length === 0
+      ? getString('libraryScreen.searchbar')
+      : `${selectedNovelIds.length} selected`;
+
+  function openRandom() {
+    const novels = library[index].novels;
+    const randomNovel = novels[Math.floor(Math.random() * novels.length)];
+    if (randomNovel) {
+      navigation.navigate('Novel', {
+        name: randomNovel.name,
+        path: randomNovel.path,
+        pluginId: randomNovel.pluginId,
+      });
+    }
+  }
 
   const renderTabBar = (
     props: SceneRendererProps & { navigationState: State },
@@ -124,29 +148,6 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
         android_ripple={{ color: theme.rippleColor }}
       />
     ) : null;
-
-  const searchbarPlaceholder =
-    selectedNovelIds.length === 0
-      ? getString('libraryScreen.searchbar')
-      : `${selectedNovelIds.length} selected`;
-
-  const {
-    value: setCategoryModalVisible,
-    setTrue: showSetCategoryModal,
-    setFalse: closeSetCategoryModal,
-  } = useBoolean();
-
-  function openRandom() {
-    const novels = library[index].novels;
-    const randomNovel = novels[Math.floor(Math.random() * novels.length)];
-    if (randomNovel) {
-      navigation.navigate('Novel', {
-        name: randomNovel.name,
-        path: randomNovel.path,
-        pluginId: randomNovel.pluginId,
-      });
-    }
-  }
 
   return (
     <>

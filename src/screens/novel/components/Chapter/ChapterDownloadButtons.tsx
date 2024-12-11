@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { MD3ThemeType } from '@theme/types';
 import { ActivityIndicator, StyleSheet } from 'react-native';
 
 import { IconButton, Menu, overlay } from 'react-native-paper';
 import { getString } from '@strings/translations';
+import { isChapterDownloaded } from '@database/queries/ChapterQueries';
 
 interface DownloadButtonProps {
+  chapterId: number;
   isDownloaded: boolean;
   isDownloading?: boolean;
   theme: MD3ThemeType;
@@ -17,6 +19,7 @@ interface DownloadButtonProps {
 }
 
 export const DownloadButton: React.FC<DownloadButtonProps> = ({
+  chapterId,
   isDownloaded,
   isDownloading,
   theme,
@@ -26,10 +29,16 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
   showDeleteChapterMenu,
   deleteChapterMenuVisible,
 }) => {
+  const [downloaded, setDownloaded] = React.useState(isDownloaded);
+  useEffect(() => {
+    if (!isDownloading) {
+      setDownloaded(isChapterDownloaded(chapterId));
+    }
+  }, [isDownloading]);
   if (isDownloading) {
     return <ChapterDownloadingButton theme={theme} />;
   }
-  return isDownloaded ? (
+  return downloaded ? (
     <Menu
       visible={deleteChapterMenuVisible}
       onDismiss={hideDeleteChapterMenu}
@@ -39,7 +48,10 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
       contentStyle={{ backgroundColor: overlay(2, theme.surface) }}
     >
       <Menu.Item
-        onPress={deleteChapter}
+        onPress={() => {
+          deleteChapter();
+          setDownloaded(false);
+        }}
         title={getString('common.delete')}
         titleStyle={{ color: theme.onSurface }}
       />
@@ -49,6 +61,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
       theme={theme}
       onPress={() => {
         downloadChapter();
+        setDownloaded(true);
       }}
     />
   );

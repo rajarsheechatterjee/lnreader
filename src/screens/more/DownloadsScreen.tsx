@@ -106,22 +106,25 @@ const Downloads = ({ navigation }: DownloadsScreenProps) => {
           contentContainerStyle={styles.flatList}
           data={groupUpdatesByDate(chapters)}
           keyExtractor={(item, index) => 'downloadGroup' + index}
-          renderItem={({ item }) => (
-            <UpdateNovelCard
-              chapterList={item}
-              descriptionText={getString('downloadScreen.downloadsLower')}
-              deleteChapter={chapter => {
-                deleteChapter(
-                  chapter.pluginId,
-                  chapter.novelId,
-                  chapter.id,
-                ).then(() => {
-                  showToast(`${getString('common.delete')} ${chapter.name}`);
-                  getChapters();
-                });
-              }}
-            />
-          )}
+          renderItem={({ item }) => {
+            return (
+              <UpdateNovelCard
+                onlyDownloadedChapters
+                chapterList={item}
+                descriptionText={getString('downloadScreen.downloadsLower')}
+                deleteChapter={chapter => {
+                  deleteChapter(
+                    chapter.pluginId,
+                    chapter.novelId,
+                    chapter.id,
+                  ).then(() => {
+                    showToast(`${getString('common.delete')} ${chapter.name}`);
+                    getChapters();
+                  });
+                }}
+              />
+            );
+          }}
           ListEmptyComponent={<ListEmptyComponent />}
         />
       )}

@@ -1,13 +1,14 @@
-import React, { useRef, useState } from 'react';
+import React, { memo, useRef, useState } from 'react';
 import { Pressable, StyleSheet, View, TextInput } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import IconButtonV2 from '../IconButtonV2/IconButtonV2';
 import { ThemeColors } from '../../theme/types';
 import { Menu } from 'react-native-paper';
+import { MaterialDesignIconName } from '@type/icon';
 
 interface RightIcon {
-  iconName: string;
+  iconName: MaterialDesignIconName;
   color?: string;
   onPress: () => void;
 }
@@ -22,7 +23,7 @@ interface SearcbarProps {
   placeholder: string;
   onChangeText?: (text: string) => void;
   onSubmitEditing?: () => void;
-  leftIcon: string;
+  leftIcon: MaterialDesignIconName;
   rightIcons?: RightIcon[];
   menuButtons?: MenuButton[];
   handleBackAction?: () => void;
@@ -146,7 +147,7 @@ const Searchbar: React.FC<SearcbarProps> = ({
   );
 };
 
-export default Searchbar;
+export default memo(Searchbar);
 
 const styles = StyleSheet.create({
   searchbarContainer: {

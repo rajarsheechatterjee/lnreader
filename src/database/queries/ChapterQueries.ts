@@ -1,5 +1,5 @@
 import { showToast } from '@utils/showToast';
-import { ChapterInfo, DownloadedChapter } from '../types';
+import { ChapterInfo, DownloadedChapter, UpdateOverview } from '../types';
 import { ChapterItem } from '@plugins/types';
 
 import { Update } from '../types';
@@ -248,8 +248,40 @@ export const getDownloadedChapters = () =>
     WHERE Chapter.isDownloaded = 1
   `);
 
-export const getUpdatesFromDb = () =>
-  db.getAllAsync<Update>(`
+export const getUpdatedOverviewFromDb = () =>
+  db.getAllAsync<UpdateOverview>(`SELECT
+  Novel.id AS novelId,
+  Novel.name AS novelName,
+  Novel.cover AS novelCover,
+  Novel.path AS novelPath,
+  DATE(Chapter.updatedTime) AS updateDate, -- Extract the date from updatedTime
+  COUNT(*) AS updatesPerDay
+FROM
+  Chapter
+JOIN
+  Novel
+ON
+  Chapter.novelId = Novel.id
+WHERE
+  Chapter.updatedTime IS NOT NULL
+GROUP BY
+  Novel.id,
+  Novel.name,
+  Novel.cover,
+  Novel.path,
+  DATE(Chapter.updatedTime) -- Group by date and novelId
+ORDER BY
+  novelId,
+  updateDate;
+
+`);
+
+export const getDetailedUpdatesFromDb = async (
+  novelId: number,
+  onlyDownloadableChapters?: boolean,
+) => {
+  let result = db.getAllAsync<Update>(
+    `
 SELECT
   Chapter.*,
   pluginId, Novel.id as novelId, Novel.name as novelName, Novel.path as novelPath, cover as novelCover
@@ -257,9 +289,25 @@ FROM
   Chapter
 JOIN
   Novel
-ON Chapter.novelId = Novel.id AND Chapter.updatedTime IS NOT NULL
-ORDER BY Chapter.updatedTime DESC
-`);
+  ON Chapter.novelId = Novel.id
+WHERE novelId = ?  ${
+      onlyDownloadableChapters
+        ? 'AND Chapter.isDownloaded = 1 '
+        : 'AND updatedTime IS NOT NULL'
+    }
+ORDER BY updatedTime DESC; 
+`,
+    novelId,
+  );
+
+  return await result;
+};
+
+export const isChapterDownloaded = (chapterId: number) =>
+  !!db.getFirstSync<ChapterInfo>(
+    'SELECT * FROM Chapter WHERE id = ? AND isDownloaded = 1',
+    chapterId,
+  );
 
 export const clearUpdates = () =>
   db.execAsync('UPDATE Chapter SET updatedTime = NULL');
