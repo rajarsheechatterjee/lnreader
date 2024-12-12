@@ -14,6 +14,17 @@ import {
 } from './backup/selfhost';
 import { migrateNovel, MigrateNovelData } from './migrate/migrateNovel';
 import { downloadChapter } from './download/downloadChapter';
+import { askForPostNotificationsPermission } from '@utils/askForPostNoftificationsPermission';
+
+type taskNames =
+  | 'IMPORT_EPUB'
+  | 'UPDATE_LIBRARY'
+  | 'DRIVE_BACKUP'
+  | 'DRIVE_RESTORE'
+  | 'SELF_HOST_BACKUP'
+  | 'SELF_HOST_RESTORE'
+  | 'MIGRATE_NOVEL'
+  | 'DOWNLOAD_CHAPTER';
 
 export type BackgroundTask =
   | {
@@ -57,8 +68,10 @@ export default class ServiceManager {
       >
     ).includes(task.name);
   }
-  start() {
+  async start() {
     if (!this.isRunning) {
+      const notificationsAllowed = await askForPostNotificationsPermission();
+      if (!notificationsAllowed) return;
       BackgroundService.start(ServiceManager.launch, {
         taskName: 'app_services',
         taskTitle: 'App Service',
@@ -141,7 +154,12 @@ export default class ServiceManager {
           title: 'Background tasks done',
           body: Object.keys(doneTasks)
             .filter(key => doneTasks[key as BackgroundTask['name']] > 0)
-            .map(key => `${key}: ${doneTasks[key as BackgroundTask['name']]}`)
+            .map(
+              key =>
+                `${getString(`notifications.${key as taskNames}`)}: ${
+                  doneTasks[key as BackgroundTask['name']]
+                }`,
+            )
             .join('\n'),
         },
         trigger: null,

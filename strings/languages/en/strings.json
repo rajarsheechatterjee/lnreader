@@ -500,5 +500,15 @@
     "light": "Light",
     "dark": "Dark",
     "complete": "Complete"
+  },
+  "notifications": {
+    "IMPORT_EPUB": "Imported epub",
+    "UPDATE_LIBRARY": "Updated library",
+    "DRIVE_BACKUP": "Drive backup",
+    "DRIVE_RESTORE": "Drive restore",
+    "SELF_HOST_BACKUP": "Self host backup",
+    "SELF_HOST_RESTORE": "Self host restore",
+    "MIGRATE_NOVEL": "Migrated novel",
+    "DOWNLOAD_CHAPTER": "Downloaded chapter"
   }
 }

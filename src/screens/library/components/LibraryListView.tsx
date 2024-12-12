@@ -11,7 +11,6 @@ import { LibraryNovelInfo } from '@database/types';
 import { getString } from '@strings/translations';
 import { useTheme } from '@hooks/persisted';
 import { LibraryScreenProps } from '@navigators/types';
-import * as DocumentPicker from 'expo-document-picker';
 import ServiceManager from '@services/ServiceManager';
 
 interface Props {

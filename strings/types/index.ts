@@ -111,6 +111,7 @@ export interface StringMap {
   'browseScreen.settings.description': 'string';
   'browseSettings': 'string';
   'browseSettingsScreen.concurrentSearches': 'string';
+  'browseSettingsScreen.multi': 'string';
   'browseSettingsScreen.languages': 'string';
   'categories.addCategories': 'string';
   'categories.cantDeleteDefault': 'string';
@@ -404,4 +405,12 @@ export interface StringMap {
   'onboardingScreen.light': 'string';
   'onboardingScreen.dark': 'string';
   'onboardingScreen.complete': 'string';
+  'notifications.IMPORT_EPUB': 'string';
+  'notifications.UPDATE_LIBRARY': 'string';
+  'notifications.DRIVE_BACKUP': 'string';
+  'notifications.DRIVE_RESTORE': 'string';
+  'notifications.SELF_HOST_BACKUP': 'string';
+  'notifications.SELF_HOST_RESTORE': 'string';
+  'notifications.MIGRATE_NOVEL': 'string';
+  'notifications.DOWNLOAD_CHAPTER': 'string';
 }
