@@ -39,6 +39,7 @@ import { LibraryScreenProps } from '@navigators/types';
 import { NovelInfo } from '@database/types';
 import * as DocumentPicker from 'expo-document-picker';
 import ServiceManager from '@services/ServiceManager';
+import useImport from '@hooks/persisted/useImport';
 
 type State = NavigationState<{
   key: string;
@@ -59,6 +60,8 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
   const { isLoading: isHistoryLoading, history, error } = useHistory();
 
   const { right: rightInset } = useSafeAreaInsets();
+
+  const { importQueue, importNovel } = useImport();
 
   const layout = useWindowDimensions();
 
@@ -104,6 +107,10 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
     [navigation],
   );
 
+  useEffect(() => {
+    refetchLibrary();
+  }, [importQueue]);
+
   const searchbarPlaceholder =
     selectedNovelIds.length === 0
       ? getString('libraryScreen.searchbar')
@@ -120,6 +127,14 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
       });
     }
   }
+
+  const pickAndImport = () => {
+    DocumentPicker.getDocumentAsync({
+      type: 'application/epub+zip',
+      copyToCacheDirectory: true,
+      multiple: true,
+    }).then(importNovel);
+  };
 
   const renderTabBar = (
     props: SceneRendererProps & { navigationState: State },
@@ -200,25 +215,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
           },
           {
             title: getString('libraryScreen.extraMenu.importEpub'),
-            onPress: () => {
-              DocumentPicker.getDocumentAsync({
-                type: 'application/epub+zip',
-                copyToCacheDirectory: true,
-                multiple: true,
-              }).then(res => {
-                if (!res.canceled) {
-                  ServiceManager.manager.addTask(
-                    res.assets.map(asset => ({
-                      name: 'IMPORT_EPUB',
-                      data: {
-                        filename: asset.name,
-                        uri: asset.uri,
-                      },
-                    })),
-                  );
-                }
-              });
-            },
+            onPress: pickAndImport,
           },
           {
             title: getString('libraryScreen.extraMenu.openRandom'),
@@ -301,6 +298,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
                 novels={route.novels}
                 selectedNovelIds={selectedNovelIds}
                 setSelectedNovelIds={setSelectedNovelIds}
+                pickAndImport={pickAndImport}
                 navigation={navigation}
               />
             </>

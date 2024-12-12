@@ -20,6 +20,7 @@ interface Props {
   selectedNovelIds: number[];
   setSelectedNovelIds: React.Dispatch<React.SetStateAction<number[]>>;
   navigation: LibraryScreenProps['navigation'];
+  pickAndImport: () => void;
 }
 
 export const LibraryView: React.FC<Props> = ({
@@ -27,6 +28,7 @@ export const LibraryView: React.FC<Props> = ({
   novels,
   selectedNovelIds,
   setSelectedNovelIds,
+  pickAndImport,
   navigation,
 }) => {
   const theme = useTheme();
@@ -87,25 +89,7 @@ export const LibraryView: React.FC<Props> = ({
                 : {
                     iconName: 'book-arrow-up-outline',
                     title: getString('advancedSettingsScreen.importEpub'),
-                    onPress: () => {
-                      DocumentPicker.getDocumentAsync({
-                        type: 'application/epub+zip',
-                        copyToCacheDirectory: true,
-                        multiple: true,
-                      }).then(res => {
-                        if (!res.canceled) {
-                          ServiceManager.manager.addTask(
-                            res.assets.map(asset => ({
-                              name: 'IMPORT_EPUB',
-                              data: {
-                                filename: asset.name,
-                                uri: asset.uri,
-                              },
-                            })),
-                          );
-                        }
-                      });
-                    },
+                    onPress: pickAndImport,
                   },
             ]}
           />

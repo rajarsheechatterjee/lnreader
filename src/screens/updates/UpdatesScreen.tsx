@@ -86,7 +86,6 @@ const UpdatesScreen = ({ navigation }: UpdateScreenProps) => {
               ) : null
             }
             contentContainerStyle={styles.listContainer}
-            // sections={groupUpdatesByDate(searchText ? searchResults : updates)}
             renderSectionHeader={({ section: { date } }) => (
               <Text style={[styles.dateHeader, { color: theme.onSurface }]}>
                 {dayjs(date).calendar()}

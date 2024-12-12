@@ -130,7 +130,6 @@ export const importEpub = async ({
     novel.artist,
     novel.summary,
   );
-
   const now = dayjs().toISOString();
   const filePathSet = new Set<string>();
   if (novel.chapters) {
