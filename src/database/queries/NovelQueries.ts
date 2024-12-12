@@ -1,25 +1,23 @@
-import * as SQLite from 'expo-sqlite';
-const db = SQLite.openDatabaseSync('lnreader.db');
-
 import * as DocumentPicker from 'expo-document-picker';
 
-import {fetchNovel} from '@services/plugin/fetch';
-import {insertChapters} from './ChapterQueries';
+import { fetchNovel } from '@services/plugin/fetch';
+import { insertChapters } from './ChapterQueries';
 
-import {showToast} from '@utils/showToast';
+import { showToast } from '@utils/showToast';
 import {
   getAllTransaction,
   getFirstTransaction,
   QueryObject,
   runTransaction,
 } from '../utils/helpers';
-import {getString} from '@strings/translations';
-import {BackupNovel, NovelInfo} from '../types';
-import {SourceNovel} from '@plugins/types';
-import {NOVEL_STORAGE} from '@utils/Storages';
+import { getString } from '@strings/translations';
+import { BackupNovel, NovelInfo } from '../types';
+import { SourceNovel } from '@plugins/types';
+import { NOVEL_STORAGE } from '@utils/Storages';
 import FileManager from '@native/FileManager';
-import {downloadFile} from '@plugins/helpers/fetch';
-import {getPlugin} from '@plugins/pluginManager';
+import { downloadFile } from '@plugins/helpers/fetch';
+import { getPlugin } from '@plugins/pluginManager';
+import { db } from '@database/db';
 
 export const insertNovelAndChapters = async (
   pluginId: string,
@@ -243,7 +241,7 @@ export const updateNovelInfo = async (info: NovelInfo) => {
 };
 
 export const pickCustomNovelCover = async (novel: NovelInfo) => {
-  const image = await DocumentPicker.getDocumentAsync({type: 'image/*'});
+  const image = await DocumentPicker.getDocumentAsync({ type: 'image/*' });
   if (image.assets && image.assets[0]) {
     const novelDir = NOVEL_STORAGE + '/' + novel.pluginId + '/' + novel.id;
     let novelCoverUri = 'file://' + novelDir + '/cover.png';
@@ -319,7 +317,7 @@ const restoreObjectQuery = (table: string, obj: any) => {
 };
 
 export const _restoreNovelAndChapters = async (backupNovel: BackupNovel) => {
-  const {chapters, ...novel} = backupNovel;
+  const { chapters, ...novel } = backupNovel;
   await runTransaction(db, [
     ['DELETE FROM Novel WHERE id = ?', [novel.id]],
     [

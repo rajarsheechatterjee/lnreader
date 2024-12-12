@@ -1,10 +1,6 @@
 import { countBy } from 'lodash-es';
 import { LibraryStats } from '../types';
-import {
-  getAllTransaction,
-  getFirstAsync,
-  getFirstTransaction,
-} from '../utils/helpers';
+import { getAllTransaction, getFirstAsync } from '../utils/helpers';
 import { db } from '@database/db';
 
 const getLibraryStatsQuery = `
