@@ -1,39 +1,17 @@
-import {LibraryFilter} from '@screens/library/constants/constants';
-import * as SQLite from 'expo-sqlite';
-import {LibraryNovelInfo, NovelInfo} from '../types';
-import {getAllTransaction} from '../utils/helpers';
-
-const db = SQLite.openDatabaseSync('lnreader.db');
-
-export const getNovelsWithCategory = (
-  categoryId: number,
-  onlyOngoingNovels?: boolean,
-): Promise<NovelInfo[]> => {
-  let query = `
-    SELECT
-    * 
-    FROM Novel
-    JOIN (
-        SELECT novelId 
-            FROM NovelCategory WHERE categoryId = ?
-      ) as NC
-    ON Novel.id = NC.novelId
-  `;
-  if (onlyOngoingNovels) {
-    query += " AND status NOT LIKE 'Completed'";
-  }
-  return getAllTransaction(db, [[query, [categoryId]]]) as any;
-};
+import { LibraryFilter } from '@screens/library/constants/constants';
+import { LibraryNovelInfo, NovelInfo } from '../types';
+import { getAllSync } from '../utils/helpers';
+import { db } from '@database/db';
 
 export const getLibraryNovelsFromDb = (
   onlyOngoingNovels?: boolean,
-): Promise<NovelInfo[]> => {
+): NovelInfo[] => {
   let getLibraryNovelsQuery = 'SELECT * FROM Novel WHERE inLibrary = 1';
 
   if (onlyOngoingNovels) {
     getLibraryNovelsQuery += " AND status = 'Ongoing'";
   }
-  return getAllTransaction(db, [[getLibraryNovelsQuery]]) as any;
+  return getAllSync<NovelInfo>(db, [[getLibraryNovelsQuery]]) ?? [];
 };
 
 const getLibraryWithCategoryQuery = `
@@ -74,7 +52,7 @@ export const getLibraryWithCategory = ({
   filter?: string;
   searchText?: string;
   downloadedOnlyMode?: boolean;
-}): Promise<LibraryNovelInfo[]> => {
+}): LibraryNovelInfo[] => {
   let query = getLibraryWithCategoryQuery;
   let preparedArgument: (string | number | null)[] = [];
 
@@ -93,5 +71,5 @@ export const getLibraryWithCategory = ({
   if (sortOrder) {
     query += ` ORDER BY ${sortOrder} `;
   }
-  return getAllTransaction(db, [[query, preparedArgument]]) as any;
+  return getAllSync<LibraryNovelInfo>(db, [[query, preparedArgument]]) ?? [];
 };

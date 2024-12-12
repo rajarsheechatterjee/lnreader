@@ -15,7 +15,7 @@ import FileManager from '@native/FileManager';
 
 export const createBackup = async () => {
   try {
-    const novels = await getLibraryNovelsFromDb();
+    const novels = getLibraryNovelsFromDb();
 
     const folder = await FileManager.pickFolder();
     if (!folder) {

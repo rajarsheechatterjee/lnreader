@@ -77,14 +77,14 @@ export function getAllTransaction(
     }
   });
 }
-export function getAllSync(
+export function getAllSync<T>(
   db: SQLiteDatabase,
   queryObject: Array<[string] | [string, SQLiteBindParams | undefined]>,
 ) {
   // let res = [];
   for (const [query, params = []] of queryObject) {
     try {
-      return db.getAllSync(query, params);
+      return db.getAllSync<T>(query, params);
     } catch (error) {
       console.error(error);
     }

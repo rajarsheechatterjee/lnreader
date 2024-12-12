@@ -61,7 +61,7 @@ export const useLibraryNovels = () => {
   const [library, setLibrary] = useState<NovelInfo[]>([]);
 
   const getLibrary = async () => {
-    const novels = await getLibraryNovelsFromDb();
+    const novels = getLibraryNovelsFromDb();
 
     setLibrary(novels);
   };
