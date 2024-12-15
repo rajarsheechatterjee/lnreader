@@ -189,7 +189,7 @@ const NovelAppbar = ({
             }}
             onPress={() => {
               showExtraMenu(false);
-              setCustomNovelCover;
+              setCustomNovelCover();
             }}
           />
         </Menu>
