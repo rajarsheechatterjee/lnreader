@@ -100,7 +100,6 @@ const NovelInfoHeader = ({
   const showNotAvailable = async () => {
     showToast('Not available while loading');
   };
-  console.log(novel.cover);
 
   return (
     <>

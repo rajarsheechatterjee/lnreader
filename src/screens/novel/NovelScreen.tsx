@@ -49,7 +49,6 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     deleteChapters,
   } = useNovel(path, pluginId);
   const theme = useTheme();
-  console.log(loading, route);
 
   const { downloadQueue, downloadChapters } = useDownload();
 

@@ -133,16 +133,6 @@ export default function NovelScreenList({
         )
         .catch(error => showToast('Failed updating: ' + error.message))
         .finally(() => setUpdating(false));
-    } else {
-      console.log(
-        loading,
-        pageIndex,
-        pages,
-        novel,
-        chapters,
-        lastRead,
-        await getNovel(),
-      );
     }
   };
 
@@ -156,16 +146,6 @@ export default function NovelScreenList({
         .then(() => showToast(`Updated page: ${page}`))
         .catch(e => showToast('Failed updating: ' + e.message))
         .finally(() => setUpdating(false));
-    } else {
-      console.log(
-        loading,
-        pageIndex,
-        pages,
-        novel,
-        chapters,
-        lastRead,
-        await getNovel(),
-      );
     }
   };
 
@@ -253,7 +233,6 @@ export default function NovelScreenList({
       });
     }
   };
-  console.log([chapters.length, novel.id, loading]);
 
   return (
     <>
