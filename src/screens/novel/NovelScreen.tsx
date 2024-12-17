@@ -279,6 +279,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
                 pluginId={pluginId}
                 navigation={navigation}
                 openDrawer={openDrawer}
+                headerOpacity={headerOpacity}
               />
             </Suspense>
           </View>

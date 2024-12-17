@@ -1,14 +1,52 @@
 import React, { useState } from 'react';
 import { getString } from '@strings/translations';
-import { Appbar, Menu } from 'react-native-paper';
+import { Appbar, Menu as DefaultMenu } from 'react-native-paper';
 import { ThemeColors } from '@theme/types';
 import Animated, {
   SharedValue,
+  SlideInUp,
   interpolateColor,
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import EpubIconButton from './EpubIconButton';
 import { ChapterInfo, NovelInfo } from '@database/types';
+
+const Menu = ({
+  visible,
+  onDismiss,
+  anchor,
+  items,
+  theme,
+}: {
+  visible: boolean;
+  onDismiss: () => void;
+  anchor: React.ReactNode;
+  theme: ThemeColors;
+  items: { label: string; onPress: () => void }[];
+}) => {
+  return (
+    <DefaultMenu
+      visible={visible}
+      onDismiss={onDismiss}
+      anchor={anchor}
+      anchorPosition="bottom"
+      contentStyle={{ backgroundColor: theme.surface2 }}
+    >
+      {items.map((item, index) => (
+        <DefaultMenu.Item
+          key={index + item.label}
+          title={item.label}
+          style={{ backgroundColor: theme.surface2 }}
+          titleStyle={{ color: theme.onSurface }}
+          onPress={() => {
+            onDismiss();
+            item.onPress();
+          }}
+        />
+      ))}
+    </DefaultMenu>
+  );
+};
 
 const NovelAppbar = ({
   novel,
@@ -60,7 +98,10 @@ const NovelAppbar = ({
       <Appbar.Header theme={{ colors: { ...theme, surface: 'transparent' } }}>
         <Appbar.BackAction onPress={goBack} />
         {!isLoading && (
-          <>
+          <Animated.View
+            entering={SlideInUp.duration(150)}
+            style={{ flexDirection: 'row', position: 'absolute', right: 0 }}
+          >
             <Appbar.Content title="" />
             {novel && (
               <EpubIconButton theme={theme} novel={novel} chapters={chapters} />
@@ -79,6 +120,7 @@ const NovelAppbar = ({
             />
             {!isLocal && (
               <Menu
+                theme={theme}
                 visible={downloadMenu}
                 onDismiss={() => showDownloadMenu(false)}
                 anchor={
@@ -90,82 +132,37 @@ const NovelAppbar = ({
                     size={27}
                   />
                 }
-                contentStyle={{ backgroundColor: theme.surface2 }}
-              >
-                <Menu.Item
-                  title={getString('novelScreen.download.next')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{ color: theme.onSurface }}
-                  onPress={() => {
-                    showDownloadMenu(false);
-                    downloadChapters(1);
-                  }}
-                />
-                <Menu.Item
-                  title={getString('novelScreen.download.next5')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{
-                    color: theme.onSurface,
-                  }}
-                  onPress={() => {
-                    showDownloadMenu(false);
-                    downloadChapters(5);
-                  }}
-                />
-                <Menu.Item
-                  title={getString('novelScreen.download.next10')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{
-                    color: theme.onSurface,
-                  }}
-                  onPress={() => {
-                    showDownloadMenu(false);
-                    downloadChapters(10);
-                  }}
-                />
-                <Menu.Item
-                  title={getString('novelScreen.download.custom')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{ color: theme.onSurface }}
-                  onPress={() => {
-                    downloadCustomChapterModal();
-                    showDownloadMenu(false);
-                  }}
-                />
-                <Menu.Item
-                  title={getString('novelScreen.download.unread')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{
-                    color: theme.onSurface,
-                  }}
-                  onPress={() => {
-                    showDownloadMenu(false);
-                    downloadChapters('unread');
-                  }}
-                />
-                <Menu.Item
-                  title={getString('common.all')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{
-                    color: theme.onSurface,
-                  }}
-                  onPress={() => {
-                    showDownloadMenu(false);
-                    downloadChapters('all');
-                  }}
-                />
-                <Menu.Item
-                  title={getString('novelScreen.download.delete')}
-                  style={{ backgroundColor: theme.surface2 }}
-                  titleStyle={{
-                    color: theme.onSurface,
-                  }}
-                  onPress={() => {
-                    showDownloadMenu(false);
-                    deleteChapters();
-                  }}
-                />
-              </Menu>
+                items={[
+                  {
+                    label: getString('novelScreen.download.next'),
+                    onPress: () => downloadChapters(1),
+                  },
+                  {
+                    label: getString('novelScreen.download.next5'),
+                    onPress: () => downloadChapters(5),
+                  },
+                  {
+                    label: getString('novelScreen.download.next10'),
+                    onPress: () => downloadChapters(10),
+                  },
+                  {
+                    label: getString('novelScreen.download.custom'),
+                    onPress: () => downloadCustomChapterModal(),
+                  },
+                  {
+                    label: getString('novelScreen.download.unread'),
+                    onPress: () => downloadChapters('unread'),
+                  },
+                  {
+                    label: getString('common.all'),
+                    onPress: () => downloadChapters('all'),
+                  },
+                  {
+                    label: getString('novelScreen.download.delete'),
+                    onPress: () => deleteChapters(),
+                  },
+                ]}
+              />
             )}
             <Menu
               visible={extraMenu}
@@ -177,34 +174,23 @@ const NovelAppbar = ({
                   theme={{ colors: theme }}
                 />
               }
-              contentStyle={{
-                backgroundColor: theme.surface2,
-              }}
-            >
-              <Menu.Item
-                title={getString('novelScreen.edit.info')}
-                style={{ backgroundColor: theme.surface2 }}
-                titleStyle={{
-                  color: theme.onSurface,
-                }}
-                onPress={() => {
-                  showEditInfoModal(true);
-                  showExtraMenu(false);
-                }}
-              />
-              <Menu.Item
-                title={getString('novelScreen.edit.cover')}
-                style={{ backgroundColor: theme.surface2 }}
-                titleStyle={{
-                  color: theme.onSurface,
-                }}
-                onPress={() => {
-                  showExtraMenu(false);
-                  setCustomNovelCover();
-                }}
-              />
-            </Menu>
-          </>
+              theme={theme}
+              items={[
+                {
+                  label: getString('novelScreen.edit.info'),
+                  onPress: () => {
+                    showEditInfoModal(true);
+                  },
+                },
+                {
+                  label: getString('novelScreen.edit.cover'),
+                  onPress: () => {
+                    setCustomNovelCover();
+                  },
+                },
+              ]}
+            />
+          </Animated.View>
         )}
       </Appbar.Header>
     </Animated.View>

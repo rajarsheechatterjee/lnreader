@@ -23,23 +23,14 @@ import {
   NativeScrollEvent,
   RefreshControl,
   StyleSheet,
-  View,
-  StyleProp,
-  ViewStyle,
 } from 'react-native';
-import { useSharedValue } from 'react-native-reanimated';
+import { SharedValue } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import NovelScreenLoading, {
-  LoadingChapterItem,
-} from './LoadingAnimation/NovelScreenLoading';
+import { LoadingChapterItem } from './LoadingAnimation/NovelScreenLoading';
 import TrackSheet from './Tracker/TrackSheet';
 import NovelBottomSheet from './NovelBottomSheet';
 import * as Haptics from 'expo-haptics';
 import { AnimatedFAB } from 'react-native-paper';
-import useLoadingColors from '@utils/useLoadingColors';
-import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
-import { LinearGradient } from 'expo-linear-gradient';
-import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 
 export default function NovelScreenList({
   name,
@@ -48,6 +39,7 @@ export default function NovelScreenList({
   cover,
   navigation,
   openDrawer,
+  headerOpacity,
 }: {
   name: string;
   path: string;
@@ -55,6 +47,7 @@ export default function NovelScreenList({
   cover?: string;
   navigation: any;
   openDrawer: () => void;
+  headerOpacity: SharedValue<number>;
 }) {
   const routeNovel: Omit<NovelInfo, 'id'> & { id: 'NO_ID' } = {
     id: 'NO_ID',
@@ -106,8 +99,6 @@ export default function NovelScreenList({
   let trackerSheetRef = useRef(null);
 
   const deleteDownloadsSnackbar = useBoolean();
-
-  const headerOpacity = useSharedValue(0);
 
   const onPageScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const y = event.nativeEvent.contentOffset.y;
