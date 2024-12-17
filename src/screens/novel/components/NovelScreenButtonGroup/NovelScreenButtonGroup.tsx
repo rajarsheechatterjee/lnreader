@@ -12,7 +12,7 @@ import { NovelScreenProps } from '@navigators/types';
 import { useTrackedNovel, useTracker } from '@hooks/persisted';
 
 interface NovelScreenButtonGroupProps {
-  novel: NovelInfo;
+  novel: NovelInfo | (Omit<NovelInfo, 'id'> & { id: 'NO_ID' });
   theme: ThemeColors;
   handleTrackerSheet: () => void;
   handleFollowNovel: () => void;
@@ -41,6 +41,7 @@ const NovelScreenButtonGroup: React.FC<NovelScreenButtonGroupProps> = ({
     });
   };
   const handleMigrateNovel = () =>
+    novel.id !== 'NO_ID' &&
     navigate('MigrateNovel', {
       novel: novel,
     });
@@ -132,11 +133,13 @@ const NovelScreenButtonGroup: React.FC<NovelScreenButtonGroupProps> = ({
           </View>
         ) : null}
       </View>
-      <SetCategoryModal
-        novelIds={[novel.id]}
-        closeModal={closeSetCategoryModal}
-        visible={setCategoryModalVisible}
-      />
+      {novel.id !== 'NO_ID' && (
+        <SetCategoryModal
+          novelIds={[novel.id]}
+          closeModal={closeSetCategoryModal}
+          visible={setCategoryModalVisible}
+        />
+      )}
     </>
   );
 };

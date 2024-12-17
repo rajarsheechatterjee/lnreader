@@ -1,14 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import {
-  StyleSheet,
-  View,
-  RefreshControl,
-  StatusBar,
-  Text,
-  NativeSyntheticEvent,
-  NativeScrollEvent,
-  Share,
-} from 'react-native';
+import React, { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { StyleSheet, View, StatusBar, Text, Share } from 'react-native';
 import { Drawer } from 'react-native-drawer-layout';
 import { FlashList } from '@shopify/flash-list';
 import Animated, {
@@ -17,91 +8,55 @@ import Animated, {
   useSharedValue,
 } from 'react-native-reanimated';
 
-import { Portal, Appbar, Snackbar, AnimatedFAB } from 'react-native-paper';
-import * as Haptics from 'expo-haptics';
-import { showToast } from '../../utils/showToast';
-import {
-  useAppSettings,
-  useDownload,
-  useNovel,
-  useTheme,
-} from '@hooks/persisted';
-import NovelInfoHeader from './components/Info/NovelInfoHeader';
-import NovelBottomSheet from './components/NovelBottomSheet';
-import TrackSheet from './components/Tracker/TrackSheet';
+import { Portal, Appbar, Snackbar } from 'react-native-paper';
+import { useDownload, useNovel, useTheme } from '@hooks/persisted';
 import JumpToChapterModal from './components/JumpToChapterModal';
 import { Actionbar } from '../../components/Actionbar/Actionbar';
 import EditInfoModal from './components/EditInfoModal';
 import { pickCustomNovelCover } from '../../database/queries/NovelQueries';
 import DownloadCustomChapterModal from './components/DownloadCustomChapterModal';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useBoolean } from '@hooks';
 import NovelScreenLoading from './components/LoadingAnimation/NovelScreenLoading';
 import { NovelScreenProps } from '@navigators/types';
 import { ChapterInfo } from '@database/types';
-import ChapterItem from './components/ChapterItem';
 import { getString } from '@strings/translations';
 import NovelDrawer from './components/NovelDrawer';
-import {
-  updateNovel,
-  updateNovelPage,
-} from '@services/updates/LibraryUpdateQueries';
 import { useFocusEffect } from '@react-navigation/native';
 import { isNumber } from 'lodash-es';
 import NovelAppbar from './components/NovelAppbar';
 import { resolveUrl } from '@services/plugin/fetch';
 import { updateChapterProgressByIds } from '@database/queries/ChapterQueries';
 import { MaterialDesignIconName } from '@type/icon';
+import NovelScreenList from './components/NovelScreenList';
 
 const Novel = ({ route, navigation }: NovelScreenProps) => {
-  const { name, path, pluginId } = route.params;
-  const [updating, setUpdating] = useState(false);
-  const {
-    useFabForContinueReading,
-    defaultChapterSort,
-    disableHapticFeedback,
-    downloadNewChapters,
-    refreshNovelMetadata,
-  } = useAppSettings();
+  const { name, path, pluginId, cover } = route.params;
+
   const {
     loading,
     pageIndex,
     pages,
     novel,
     chapters,
-    lastRead,
-    novelSettings: {
-      sort = defaultChapterSort,
-      filter = '',
-      showChapterTitles = false,
-    },
     openPage,
     setNovel,
-    getNovel,
-    sortAndFilterChapters,
-    setShowChapterTitles,
     bookmarkChapters,
     markChaptersRead,
     markChaptersUnread,
     markPreviouschaptersRead,
     markPreviousChaptersUnread,
-    followNovel,
-    deleteChapter,
     refreshChapters,
     deleteChapters,
   } = useNovel(path, pluginId);
   const theme = useTheme();
-  const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
+  console.log(loading, route);
 
-  const { downloadQueue, downloadChapter, downloadChapters } = useDownload();
+  const { downloadQueue, downloadChapters } = useDownload();
 
   const [selected, setSelected] = useState<ChapterInfo[]>([]);
   const [editInfoModal, showEditInfoModal] = useState(false);
-  const [isFabExtended, setIsFabExtended] = useState(true);
 
   let flatlistRef = useRef<FlashList<ChapterInfo>>(null);
-  let novelBottomSheetRef = useRef(null);
-  let trackerSheetRef = useRef(null);
 
   const deleteDownloadsSnackbar = useBoolean();
 
@@ -112,61 +67,11 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     setFalse: closeDrawer,
   } = useBoolean();
 
-  const onPageScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const y = event.nativeEvent.contentOffset.y;
-    headerOpacity.value = y < 50 ? 0 : (y - 50) / 150;
-    const currentScrollPosition = Math.floor(y) ?? 0;
-    if (useFabForContinueReading && lastRead) {
-      setIsFabExtended(currentScrollPosition <= 0);
-    }
-  };
-
   useEffect(() => {
     refreshChapters();
   }, [downloadQueue]);
 
   useFocusEffect(refreshChapters);
-
-  const onRefresh = () => {
-    if (novel) {
-      setUpdating(true);
-      updateNovel(pluginId, novel.path, novel.id, {
-        downloadNewChapters,
-        refreshNovelMetadata,
-      })
-        .then(() => getNovel())
-        .then(() =>
-          showToast(
-            getString('novelScreen.updatedToast', { name: novel.name }),
-          ),
-        )
-        .catch(error => showToast('Failed updating: ' + error.message))
-        .finally(() => setUpdating(false));
-    }
-  };
-
-  const onRefreshPage = (page: string) => {
-    if (novel) {
-      setUpdating(true);
-      updateNovelPage(pluginId, novel.path, novel.id, page, {
-        downloadNewChapters,
-      })
-        .then(() => getNovel())
-        .then(() => showToast(`Updated page: ${page}`))
-        .catch(e => showToast('Failed updating: ' + e.message))
-        .finally(() => setUpdating(false));
-    }
-  };
-
-  const refreshControl = () => (
-    <RefreshControl
-      progressViewOffset={topInset + 32}
-      onRefresh={onRefresh}
-      refreshing={updating}
-      colors={[theme.primary]}
-      progressBackgroundColor={theme.onPrimary}
-    />
-  );
 
   const downloadChs = (amount: number | 'all' | 'unread') => {
     if (!novel) {
@@ -280,74 +185,10 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     return list;
   }, [selected]);
 
-  const isSelected = (id: number) => {
-    return selected.some(obj => obj.id === id);
-  };
-
-  const onSelectPress = (chapter: ChapterInfo) => {
-    if (selected.length === 0) {
-      navigateToChapter(chapter);
-    } else {
-      if (isSelected(chapter.id)) {
-        setSelected(sel => sel.filter(it => it.id !== chapter.id));
-      } else {
-        setSelected(sel => [...sel, chapter]);
-      }
-    }
-  };
-
-  const onSelectLongPress = (chapter: ChapterInfo) => {
-    if (selected.length === 0) {
-      if (!disableHapticFeedback) {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      }
-      setSelected(sel => [...sel, chapter]);
-    } else {
-      if (selected.length === chapters.length) {
-        return;
-      }
-
-      /**
-       * Select custom range
-       */
-      const lastSelectedChapter = selected[selected.length - 1];
-
-      if (lastSelectedChapter.id !== chapter.id) {
-        if (lastSelectedChapter.id > chapter.id) {
-          setSelected(sel => [
-            ...sel,
-            chapter,
-            ...chapters.filter(
-              (chap: ChapterInfo) =>
-                (chap.id <= chapter.id || chap.id >= lastSelectedChapter.id) ===
-                false,
-            ),
-          ]);
-        } else {
-          setSelected(sel => [
-            ...sel,
-            chapter,
-            ...chapters.filter(
-              (chap: ChapterInfo) =>
-                (chap.id >= chapter.id || chap.id <= lastSelectedChapter.id) ===
-                false,
-            ),
-          ]);
-        }
-      }
-    }
-  };
-  if (loading) {
-    return <NovelScreenLoading theme={theme} />;
-  }
-  if (!novel) {
-    return null;
-  }
-  const navigateToChapter = (chapter: ChapterInfo) => {
-    navigation.navigate('Chapter', { novel, chapter });
-  };
-
   const setCustomNovelCover = async () => {
+    if (!novel) {
+      return;
+    }
     const newCover = await pickCustomNovelCover(novel);
     if (newCover) {
       setNovel({
@@ -391,7 +232,8 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
                 showJumpToChapterModal={showJumpToChapterModal}
                 shareNovel={shareNovel}
                 theme={theme}
-                isLocal={novel.isLocal}
+                isLoading={loading}
+                isLocal={novel?.isLocal}
                 goBack={navigation.goBack}
                 headerOpacity={headerOpacity}
               />
@@ -430,76 +272,18 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
             )}
           </Portal>
           <View style={{ minHeight: 3, flex: 1 }}>
-            <FlashList
-              ref={flatlistRef}
-              estimatedItemSize={64}
-              data={chapters}
-              extraData={[chapters]}
-              removeClippedSubviews={true}
-              renderItem={({ item }) => (
-                <ChapterItem
-                  isDownloading={downloadQueue.some(
-                    c => c.data.chapterId === item.id,
-                  )}
-                  isLocal={novel.isLocal}
-                  theme={theme}
-                  chapter={item}
-                  showChapterTitles={showChapterTitles}
-                  deleteChapter={() => deleteChapter(item)}
-                  downloadChapter={() => downloadChapter(novel, item)}
-                  isSelected={isSelected}
-                  onSelectPress={onSelectPress}
-                  onSelectLongPress={onSelectLongPress}
-                  navigateToChapter={navigateToChapter}
-                  novelName={name}
-                />
-              )}
-              keyExtractor={item => 'chapter_' + item.id}
-              contentContainerStyle={{ paddingBottom: 100 }}
-              ListHeaderComponent={
-                <NovelInfoHeader
-                  novel={novel}
-                  theme={theme}
-                  filter={filter}
-                  lastRead={lastRead}
-                  setCustomNovelCover={setCustomNovelCover}
-                  chapters={chapters}
-                  navigation={navigation}
-                  navigateToChapter={navigateToChapter}
-                  followNovel={followNovel}
-                  trackerSheetRef={trackerSheetRef}
-                  novelBottomSheetRef={novelBottomSheetRef}
-                  deleteDownloadsSnackbar={deleteDownloadsSnackbar}
-                  page={pages.length > 1 ? pages[pageIndex] : undefined}
-                  onRefreshPage={onRefreshPage}
-                  openDrawer={openDrawer}
-                />
-              }
-              refreshControl={refreshControl()}
-              onScroll={onPageScroll}
-            />
+            <Suspense fallback={<NovelScreenLoading theme={theme} />}>
+              <NovelScreenList
+                name={name}
+                path={path}
+                cover={cover}
+                pluginId={pluginId}
+                navigation={navigation}
+                openDrawer={openDrawer}
+              />
+            </Suspense>
           </View>
-          {useFabForContinueReading && lastRead ? (
-            <AnimatedFAB
-              style={[
-                styles.fab,
-                { backgroundColor: theme.primary, marginBottom: bottomInset },
-              ]}
-              extended={isFabExtended}
-              color={theme.onPrimary}
-              uppercase={false}
-              label={getString('common.resume')}
-              icon="play"
-              onPress={() => {
-                if (lastRead) {
-                  navigation.navigate('Chapter', {
-                    novel: novel,
-                    chapter: lastRead,
-                  });
-                }
-              }}
-            />
-          ) : null}
+
           <Portal>
             <Actionbar active={selected.length > 0} actions={actions} />
             <Snackbar
@@ -520,44 +304,34 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
             </Snackbar>
           </Portal>
           <Portal>
-            <JumpToChapterModal
-              modalVisible={jumpToChapterModal}
-              hideModal={() => showJumpToChapterModal(false)}
-              chapters={chapters}
-              novel={novel}
-              chapterListRef={flatlistRef.current}
-              navigation={navigation}
-            />
-            <EditInfoModal
-              modalVisible={editInfoModal}
-              hideModal={() => showEditInfoModal(false)}
-              novel={novel}
-              setNovel={setNovel}
-              theme={theme}
-            />
-            <DownloadCustomChapterModal
-              modalVisible={downloadCustomChapterModal.value}
-              hideModal={downloadCustomChapterModal.setFalse}
-              novel={novel}
-              chapters={chapters}
-              theme={theme}
-              downloadChapters={downloadChapters}
-            />
+            {novel && (
+              <>
+                <JumpToChapterModal
+                  modalVisible={jumpToChapterModal}
+                  hideModal={() => showJumpToChapterModal(false)}
+                  chapters={chapters}
+                  novel={novel}
+                  chapterListRef={flatlistRef.current}
+                  navigation={navigation}
+                />
+                <EditInfoModal
+                  modalVisible={editInfoModal}
+                  hideModal={() => showEditInfoModal(false)}
+                  novel={novel}
+                  setNovel={setNovel}
+                  theme={theme}
+                />
+                <DownloadCustomChapterModal
+                  modalVisible={downloadCustomChapterModal.value}
+                  hideModal={downloadCustomChapterModal.setFalse}
+                  novel={novel}
+                  chapters={chapters}
+                  theme={theme}
+                  downloadChapters={downloadChapters}
+                />
+              </>
+            )}
           </Portal>
-          <NovelBottomSheet
-            bottomSheetRef={novelBottomSheetRef}
-            sortAndFilterChapters={sortAndFilterChapters}
-            setShowChapterTitles={setShowChapterTitles}
-            sort={sort}
-            theme={theme}
-            filter={filter}
-            showChapterTitles={showChapterTitles}
-          />
-          <TrackSheet
-            bottomSheetRef={trackerSheetRef}
-            novel={novel}
-            theme={theme}
-          />
         </View>
       </Portal.Host>
     </Drawer>
@@ -573,11 +347,5 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 0,
-    bottom: 16,
   },
 });

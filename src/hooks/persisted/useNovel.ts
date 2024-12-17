@@ -55,10 +55,19 @@ const defaultNovelSettings: NovelSettings = {
 };
 const defaultPageIndex = 0;
 
-export const useTrackedNovel = (novelId: number) => {
+export const useTrackedNovel = (novelId: number | 'NO_ID') => {
   const [trackedNovel, setValue] = useMMKVObject<TrackedNovel>(
     `${TRACKED_NOVEL_PREFIX}_${novelId}`,
   );
+  if (novelId === 'NO_ID') {
+    return {
+      trackedNovel: undefined,
+      trackNovel: () => {},
+      untrackNovel: () => {},
+      updateTrackedNovel: () => {},
+      updateNovelProgess: () => {},
+    };
+  }
 
   const trackNovel = (tracker: TrackerMetadata, novel: SearchResult) => {
     getTracker(tracker.name)
@@ -324,7 +333,7 @@ export const useNovel = (novelPath: string, pluginId: string) => {
     [novel, chapters],
   );
 
-  const getNovel = useCallback(async () => {
+  const getNovel = async () => {
     let novel = await getNovelByPath(novelPath, pluginId);
     if (!novel) {
       const sourceNovel = await fetchNovel(pluginId, novelPath).catch(() => {
@@ -350,8 +359,7 @@ export const useNovel = (novelPath: string, pluginId: string) => {
       setPages(['1']);
     }
     setNovel(novel);
-    setLoading(false);
-  }, []);
+  };
 
   const getChapters = useCallback(async () => {
     const page = pages[pageIndex];
@@ -386,7 +394,11 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   }, [novel, novelSettings, pageIndex]);
 
   useEffect(() => {
-    getNovel();
+    getNovel().finally(() => {
+      //? Sometimes loading state changes doesn't trigger rerender causing NovelScreen to be in endless loading state
+      setLoading(false);
+      getNovel();
+    });
   }, []);
 
   useEffect(() => {

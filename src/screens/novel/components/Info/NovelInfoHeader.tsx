@@ -33,14 +33,21 @@ import { NovelStatus, PluginItem } from '@plugins/types';
 import { translateNovelStatus } from '@utils/translateEnum';
 import { getMMKVObject } from '@utils/mmkv/mmkv';
 import { AVAILABLE_PLUGINS } from '@hooks/persisted/usePlugins';
+import {
+  LoadingChips,
+  LoadingDescription,
+  LoadingShimmer,
+} from '../LoadingAnimation/NovelScreenLoading';
+import { WINDOW_WIDTH } from '@gorhom/bottom-sheet';
 
 interface NovelInfoHeaderProps {
-  novel: NovelData;
+  novel: NovelData | (Omit<NovelData, 'id'> & { id: 'NO_ID' });
   theme: ThemeColors;
   filter: string;
   chapters: ChapterInfo[];
   lastRead?: ChapterInfo;
   navigation: NovelScreenProps['navigation'];
+  isLoading: boolean;
   trackerSheetRef: React.RefObject<BottomSheetModalMethods>;
   navigateToChapter: (chapter: ChapterInfo) => void;
   setCustomNovelCover: () => Promise<void>;
@@ -70,6 +77,7 @@ const NovelInfoHeader = ({
   lastRead,
   navigation,
   trackerSheetRef,
+  isLoading = false,
   navigateToChapter,
   setCustomNovelCover,
   followNovel,
@@ -89,6 +97,11 @@ const NovelInfoHeader = ({
     [],
   );
 
+  const showNotAvailable = async () => {
+    showToast('Not available while loading');
+  };
+  console.log(novel.cover);
+
   return (
     <>
       <CoverImage
@@ -100,7 +113,9 @@ const NovelInfoHeader = ({
           <NovelThumbnail
             source={{ uri: novel.cover }}
             theme={theme}
-            setCustomNovelCover={setCustomNovelCover}
+            setCustomNovelCover={
+              isLoading ? showNotAvailable : setCustomNovelCover
+            }
           />
           <View style={styles.novelDetails}>
             <Row>
@@ -124,7 +139,7 @@ const NovelInfoHeader = ({
                 {novel.name}
               </NovelTitle>
             </Row>
-            {novel.author ? (
+            {novel.id !== 'NO_ID' && novel.author ? (
               <Row>
                 <MaterialCommunityIcons
                   name="fountain-pen-tip"
@@ -135,7 +150,7 @@ const NovelInfoHeader = ({
                 <NovelInfo theme={theme}>{novel.author}</NovelInfo>
               </Row>
             ) : null}
-            {novel.artist ? (
+            {novel.id !== 'NO_ID' && novel.artist ? (
               <Row>
                 <MaterialCommunityIcons
                   name="palette-outline"
@@ -148,14 +163,17 @@ const NovelInfoHeader = ({
             ) : null}
             <Row>
               <MaterialCommunityIcons
-                name={getStatusIcon(novel.status)}
+                name={getStatusIcon(
+                  novel.id !== 'NO_ID' ? novel.status : undefined,
+                )}
                 size={14}
                 color={theme.onSurfaceVariant}
                 style={{ marginRight: 4 }}
               />
               <NovelInfo theme={theme}>
-                {(translateNovelStatus(novel.status) ||
-                  getString('novelScreen.unknownStatus')) +
+                {(novel.id !== 'NO_ID'
+                  ? translateNovelStatus(novel.status)
+                  : getString('novelScreen.unknownStatus')) +
                   ' • ' +
                   pluginName}
               </NovelInfo>
@@ -166,68 +184,95 @@ const NovelInfoHeader = ({
       <>
         <NovelScreenButtonGroup
           novel={novel}
-          handleFollowNovel={() => {
-            followNovel();
-            if (
-              novel.inLibrary &&
-              chapters.some(chapter => chapter.isDownloaded)
-            ) {
-              deleteDownloadsSnackbar.setTrue();
-            }
-          }}
+          handleFollowNovel={
+            isLoading
+              ? showNotAvailable
+              : () => {
+                  followNovel();
+                  if (
+                    novel.inLibrary &&
+                    chapters.some(chapter => chapter.isDownloaded)
+                  ) {
+                    deleteDownloadsSnackbar.setTrue();
+                  }
+                }
+          }
           handleTrackerSheet={() => trackerSheetRef.current?.present()}
           theme={theme}
         />
-        <NovelSummary
-          summary={novel.summary || getString('novelScreen.noSummary')}
-          isExpanded={!novel.inLibrary}
-          theme={theme}
-        />
-        {novel.genres ? (
-          <NovelGenres theme={theme} genres={novel.genres} />
-        ) : null}
+        {isLoading ? (
+          <>
+            <LoadingDescription />
+            <LoadingChips />
+          </>
+        ) : (
+          <>
+            <NovelSummary
+              summary={novel.summary || getString('novelScreen.noSummary')}
+              isExpanded={!novel.inLibrary}
+              theme={theme}
+            />
+            {novel.genres ? (
+              <NovelGenres theme={theme} genres={novel.genres} />
+            ) : null}
+          </>
+        )}
         <ReadButton
           navigateToChapter={navigateToChapter}
           chapters={chapters}
           lastRead={lastRead}
         />
-        <Pressable
-          style={styles.bottomsheet}
-          onPress={() =>
-            page ? openDrawer() : novelBottomSheetRef.current?.present()
-          }
-          android_ripple={{
-            color: color(theme.primary).alpha(0.12).string(),
-          }}
-        >
-          <View style={{ flex: 1 }}>
-            {page ? (
-              <Text
-                numberOfLines={2}
-                style={[{ color: theme.onSurface }, styles.pageTitle]}
-              >
-                Page: {page}
-              </Text>
-            ) : null}
-            <Text style={[{ color: theme.onSurface }, styles.chapters]}>
-              {`${chapters?.length} ${getString('novelScreen.chapters')}`}
-            </Text>
-          </View>
-          {page && Number(page) ? (
-            <IconButton
-              icon="reload"
-              iconColor={theme.onSurface}
-              size={24}
-              onPress={() => onRefreshPage(page)}
-            />
-          ) : null}
-          <IconButton
-            icon="filter-variant"
-            iconColor={filter ? filterColor(theme.isDark) : theme.onSurface}
-            size={24}
-            onPress={() => novelBottomSheetRef.current?.present()}
+        {isLoading ? (
+          <LoadingShimmer
+            style={{
+              marginHorizontal: 16,
+              marginVertical: 16,
+              alignSelf: 'center',
+              borderRadius: 4,
+            }}
+            height={24}
+            width={WINDOW_WIDTH - 32}
           />
-        </Pressable>
+        ) : (
+          <Pressable
+            style={styles.bottomsheet}
+            onPress={() =>
+              page ? openDrawer() : novelBottomSheetRef.current?.present()
+            }
+            android_ripple={{
+              color: color(theme.primary).alpha(0.12).string(),
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              {page ? (
+                <Text
+                  numberOfLines={2}
+                  style={[{ color: theme.onSurface }, styles.pageTitle]}
+                >
+                  Page: {page}
+                </Text>
+              ) : null}
+
+              <Text style={[{ color: theme.onSurface }, styles.chapters]}>
+                {`${chapters?.length} ${getString('novelScreen.chapters')}`}
+              </Text>
+            </View>
+            {page && Number(page) ? (
+              <IconButton
+                icon="reload"
+                iconColor={theme.onSurface}
+                size={24}
+                onPress={() => onRefreshPage(page)}
+              />
+            ) : null}
+            <IconButton
+              icon="filter-variant"
+              iconColor={filter ? filterColor(theme.isDark) : theme.onSurface}
+              size={24}
+              onPress={() => novelBottomSheetRef.current?.present()}
+            />
+          </Pressable>
+        )}
       </>
     </>
   );
