@@ -340,7 +340,7 @@ export const useNovel = (novelPath: string, pluginId: string) => {
     if (novel.totalPages > 0) {
       pages = Array(novel.totalPages)
         .fill(0)
-        .map((v, idx) => String(idx + 1));
+        .map((_, idx) => String(idx + 1));
     } else {
       pages = (await getCustomPages(novel.id)).map(c => c.page);
     }
@@ -356,14 +356,17 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   const getChapters = useCallback(async () => {
     const page = pages[pageIndex];
     if (novel && page) {
-      let chapters = await _getPageChapters(
-        novel.id,
-        sort,
-        novelSettings.filter,
-        page,
-      );
+      let chapters =
+        (await _getPageChapters(
+          novel.id,
+          sort,
+          novelSettings.filter,
+          page,
+        ).catch(e => console.log('error', e))) || [];
+
       if (!chapters.length && Number(page)) {
         const sourcePage = await fetchPage(pluginId, novelPath, page);
+
         const sourceChapters = sourcePage.chapters.map(ch => {
           return {
             ...ch,

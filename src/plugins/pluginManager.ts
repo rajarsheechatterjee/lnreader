@@ -142,6 +142,7 @@ const getPlugin = (pluginId: string) => {
       const plugin = initPlugin(pluginId, code);
       plugins[pluginId] = plugin;
     } catch {
+      console.warn('plugin not found', pluginId);
       // file doesnt exist
     }
   }

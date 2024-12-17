@@ -25,23 +25,18 @@ export const insertNovelAndChapters = async (
 ): Promise<number | undefined> => {
   const insertNovelQuery =
     'INSERT INTO Novel (path, pluginId, name, cover, summary, author, artist, status, genres, totalPages) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-  let novelId: number | undefined;
-  await db.withTransactionAsync(async () => {
-    db.runAsync(insertNovelQuery, [
-      sourceNovel.path,
-      pluginId,
-      sourceNovel.name,
-      sourceNovel.cover || null,
-      sourceNovel.summary || null,
-      sourceNovel.author || null,
-      sourceNovel.artist || null,
-      sourceNovel.status || null,
-      sourceNovel.genres || null,
-      sourceNovel.totalPages || 0,
-    ]).then(data => {
-      novelId = data.lastInsertRowId;
-    });
-  });
+  let novelId: number | undefined = db.runSync(insertNovelQuery, [
+    sourceNovel.path,
+    pluginId,
+    sourceNovel.name,
+    sourceNovel.cover || null,
+    sourceNovel.summary || null,
+    sourceNovel.author || null,
+    sourceNovel.artist || null,
+    sourceNovel.status || null,
+    sourceNovel.genres || null,
+    sourceNovel.totalPages || 0,
+  ]).lastInsertRowId;
 
   if (novelId) {
     if (sourceNovel.cover) {
@@ -83,12 +78,10 @@ export const getNovelByPath = async (
   novelPath: string,
   pluginId: string,
 ): Promise<NovelInfo | null> => {
-  return getFirstTransaction(db, [
-    [
-      'SELECT * FROM Novel WHERE path = ? AND pluginId = ?',
-      [novelPath, pluginId],
-    ],
-  ]) as any;
+  return db.getFirstAsync<NovelInfo>(
+    'SELECT * FROM Novel WHERE path = ? AND pluginId = ?',
+    [novelPath, pluginId],
+  );
 };
 
 // if query is insert novel || add to library => add default category name for it
