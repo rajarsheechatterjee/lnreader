@@ -93,7 +93,7 @@ const WebviewScreen = ({ route, navigation }: WebviewScreenProps) => {
       />
       <ProgressBar
         color={theme.primary}
-        progress={progress}
+        progress={Math.round(1000 * progress) / 1000}
         visible={progress !== 1}
       />
       <WebView

@@ -131,7 +131,10 @@ const MigrationNovels = ({ navigation, route }: MigrateNovelScreenProps) => {
         theme={theme}
       />
       {progress > 0 ? (
-        <ProgressBar color={theme.primary} progress={progress} />
+        <ProgressBar
+          color={theme.primary}
+          progress={Math.round(1000 * progress) / 1000}
+        />
       ) : null}
       <FlatList
         contentContainerStyle={{ flexGrow: 1, padding: 4 }}

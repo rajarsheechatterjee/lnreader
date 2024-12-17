@@ -44,7 +44,10 @@ const GlobalSearchScreen = (props: Props) => {
         theme={theme}
       />
       {progress ? (
-        <ProgressBar color={theme.primary} progress={progress} />
+        <ProgressBar
+          color={theme.primary}
+          progress={Math.round(1000 * progress) / 1000}
+        />
       ) : null}
       <GlobalSearchResultsList
         searchResults={searchResults}
