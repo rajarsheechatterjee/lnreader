@@ -24,7 +24,7 @@ interface SearcbarProps {
   onChangeText?: (text: string) => void;
   onSubmitEditing?: () => void;
   leftIcon: MaterialDesignIconName;
-  rightIcons?: RightIcon[];
+  rightIcons?: readonly RightIcon[];
   menuButtons?: MenuButton[];
   handleBackAction?: () => void;
   clearSearchbar: () => void;

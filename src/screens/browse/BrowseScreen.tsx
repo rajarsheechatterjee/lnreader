@@ -1,4 +1,4 @@
-import { Text } from 'react-native';
+/* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useMemo } from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
 
@@ -34,8 +34,8 @@ const BrowseScreen = ({ navigation }: BrowseScreenProps) => {
         iconName: 'cog-outline',
         onPress: () => navigation.navigate('BrowseSettings'),
       },
-    ],
-    [],
+    ] as const,
+    [navigation],
   );
 
   useEffect(
@@ -95,9 +95,6 @@ const BrowseScreen = ({ navigation }: BrowseScreenProps) => {
             style={{
               backgroundColor: theme.surface,
             }}
-            renderLabel={({ route, color }) => (
-              <Text style={{ color, fontWeight: '600' }}>{route.title}</Text>
-            )}
             inactiveColor={theme.secondary}
             activeColor={theme.primary}
             android_ripple={{ color: theme.rippleColor }}
