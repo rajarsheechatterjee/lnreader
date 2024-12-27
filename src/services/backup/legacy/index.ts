@@ -21,7 +21,7 @@ export const createBackup = async () => {
     if (!folder) {
       return;
     }
-    const datetime = dayjs().format('YYYY-MM-DD_HH:mm');
+    const datetime = dayjs().format('YYYY-MM-DD_HH_mm');
     const fileName = 'lnreader_backup_' + datetime + '.json';
     await FileManager.writeFile(
       folder + '/' + fileName,
