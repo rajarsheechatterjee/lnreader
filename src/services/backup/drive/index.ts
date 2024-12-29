@@ -1,71 +1,85 @@
 import { DriveFile } from '@api/drive/types';
 import { sleep } from '@utils/sleep';
-import BackgroundService from 'react-native-background-actions';
 import { exists } from '@api/drive';
 import { getString } from '@strings/translations';
 import { CACHE_DIR_PATH, prepareBackupData, restoreData } from '../utils';
 import { download, updateMetadata, uploadMedia } from '@api/drive/request';
 import { ZipBackupName } from '../types';
 import { ROOT_STORAGE } from '@utils/Storages';
+import { BackgroundTaskMetadata } from '@services/ServiceManager';
 
-export const createDriveBackup = (backupFolder: DriveFile) => {
-  return BackgroundService.updateNotification({
-    taskDesc: getString('backupScreen.preparingData'),
-    progressBar: {
-      indeterminate: true,
-      value: 0,
-      max: 3,
+export const createDriveBackup = async (
+  backupFolder: DriveFile,
+  setMeta: (
+    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
+  ) => void,
+) => {
+  setMeta(meta => ({
+    ...meta,
+    isRunning: true,
+    progress: 0 / 3,
+    progressText: getString('backupScreen.preparingData'),
+  }));
+
+  await prepareBackupData(CACHE_DIR_PATH);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 1 / 3,
+    progressText: getString('backupScreen.uploadingData'),
+  }));
+
+  await sleep(500);
+
+  let file = await uploadMedia(CACHE_DIR_PATH);
+
+  await updateMetadata(
+    file.id,
+    {
+      name: ZipBackupName.DATA,
+      mimeType: 'application/zip',
+      parents: [backupFolder.id],
     },
-  })
-    .then(() => prepareBackupData(CACHE_DIR_PATH))
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.uploadingData'),
-        progressBar: {
-          indeterminate: true,
-          value: 1,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => sleep(500))
-    .then(() => uploadMedia(CACHE_DIR_PATH))
-    .then(file =>
-      updateMetadata(
-        file.id,
-        {
-          name: ZipBackupName.DATA,
-          mimeType: 'application/zip',
-          parents: [backupFolder.id],
-        },
-        file.parents[0],
-      ),
-    )
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.uploadingDownloadedFiles'),
-        progressBar: {
-          indeterminate: true,
-          value: 2,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => uploadMedia(ROOT_STORAGE))
-    .then(file =>
-      updateMetadata(
-        file.id,
-        {
-          name: ZipBackupName.DOWNLOAD,
-          mimeType: 'application/zip',
-          parents: [backupFolder.id],
-        },
-        file.parents[0],
-      ),
-    );
+    file.parents[0],
+  );
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 2 / 3,
+    progressText: getString('backupScreen.uploadingDownloadedFiles'),
+  }));
+
+  let file2 = await uploadMedia(ROOT_STORAGE);
+  await updateMetadata(
+    file2.id,
+    {
+      name: ZipBackupName.DOWNLOAD,
+      mimeType: 'application/zip',
+      parents: [backupFolder.id],
+    },
+    file2.parents[0],
+  );
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 3 / 3,
+    isRunning: false,
+  }));
 };
 
-export const driveRestore = async (backupFolder: DriveFile) => {
+export const driveRestore = async (
+  backupFolder: DriveFile,
+  setMeta: (
+    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
+  ) => void,
+) => {
+  setMeta(meta => ({
+    ...meta,
+    isRunning: true,
+    progress: 0 / 3,
+    progressText: getString('backupScreen.downloadingData'),
+  }));
+
   const zipDataFile = await exists(ZipBackupName.DATA, false, backupFolder.id);
   const zipDownloadFile = await exists(
     ZipBackupName.DOWNLOAD,
@@ -75,37 +89,30 @@ export const driveRestore = async (backupFolder: DriveFile) => {
   if (!zipDataFile || !zipDownloadFile) {
     throw new Error(getString('backupScreen.invalidBackupFolder'));
   }
-  await BackgroundService.updateNotification({
-    taskDesc: getString('backupScreen.downloadingData'),
-    progressBar: {
-      indeterminate: true,
-      value: 0,
-      max: 3,
-    },
-  })
-    .then(() => download(zipDataFile, CACHE_DIR_PATH))
-    .then(() => sleep(500))
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.restoringData'),
-        progressBar: {
-          indeterminate: true,
-          value: 1,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => restoreData(CACHE_DIR_PATH))
-    .then(() => sleep(500))
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.downloadingDownloadedFiles'),
-        progressBar: {
-          indeterminate: true,
-          value: 2,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => download(zipDownloadFile, ROOT_STORAGE));
+
+  await download(zipDataFile, CACHE_DIR_PATH);
+  await sleep(500);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 1 / 3,
+    progressText: getString('backupScreen.restoringData'),
+  }));
+
+  await restoreData(CACHE_DIR_PATH);
+  await sleep(500);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 2 / 3,
+    progressText: getString('backupScreen.downloadingDownloadedFiles'),
+  }));
+
+  await download(zipDownloadFile, ROOT_STORAGE);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 3 / 3,
+    isRunning: false,
+  }));
 };

@@ -210,7 +210,10 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
               library[index].id !== 2 &&
               ServiceManager.manager.addTask({
                 name: 'UPDATE_LIBRARY',
-                data: library[index].id,
+                data: {
+                  categoryId: library[index].id,
+                  categoryName: library[index].name,
+                },
               }),
           },
           {
@@ -295,6 +298,7 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
               ) : null}
               <LibraryView
                 categoryId={route.id}
+                categoryName={route.name}
                 novels={route.novels}
                 selectedNovelIds={selectedNovelIds}
                 setSelectedNovelIds={setSelectedNovelIds}

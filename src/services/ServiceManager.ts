@@ -36,7 +36,10 @@ export type BackgroundTask =
     }
   | {
       name: 'UPDATE_LIBRARY';
-      data?: number;
+      data?: {
+        categoryId?: number;
+        categoryName?: string;
+      };
     }
   | { name: 'DRIVE_BACKUP'; data: DriveFile }
   | { name: 'DRIVE_RESTORE'; data: DriveFile }
@@ -47,6 +50,18 @@ export type BackgroundTask =
       name: 'DOWNLOAD_CHAPTER';
       data: { chapterId: number; novelName: string; chapterName: string };
     };
+
+export type BackgroundTaskMetadata = {
+  name: string;
+  isRunning: boolean;
+  progress: number | undefined;
+  progressText: string | undefined;
+};
+
+export type QueuedBackgroundTask = {
+  task: BackgroundTask;
+  meta: BackgroundTaskMetadata;
+};
 
 export default class ServiceManager {
   STORE_KEY = 'APP_SERVICE';
@@ -91,24 +106,47 @@ export default class ServiceManager {
       });
     }
   }
-  async executeTask(task: BackgroundTask) {
-    switch (task.name) {
+  setMeta(
+    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
+  ) {
+    let taskList = [...this.getTaskList()];
+    taskList[0] = {
+      ...taskList[0],
+      meta: transformer(taskList[0].meta),
+    };
+
+    if (taskList[0].meta.isRunning) {
+      BackgroundService.updateNotification({
+        taskTitle: taskList[0].meta.name,
+        taskDesc: taskList[0].meta.progressText,
+        progressBar: {
+          indeterminate: taskList[0].meta.progress === undefined,
+          value: (taskList[0].meta.progress || 0) * 100,
+          max: 100,
+        },
+      });
+    }
+
+    setMMKVObject(this.STORE_KEY, taskList);
+  }
+  async executeTask(task: QueuedBackgroundTask) {
+    switch (task.task.name) {
       case 'IMPORT_EPUB':
-        return importEpub(task.data);
+        return importEpub(task.task.data, this.setMeta);
       case 'UPDATE_LIBRARY':
-        return updateLibrary(task.data);
+        return updateLibrary(task.task.data || {}, this.setMeta);
       case 'DRIVE_BACKUP':
-        return createDriveBackup(task.data);
+        return createDriveBackup(task.task.data, this.setMeta);
       case 'DRIVE_RESTORE':
-        return driveRestore(task.data);
+        return driveRestore(task.task.data, this.setMeta);
       case 'SELF_HOST_BACKUP':
-        return createSelfHostBackup(task.data);
+        return createSelfHostBackup(task.task.data, this.setMeta);
       case 'SELF_HOST_RESTORE':
-        return selfHostRestore(task.data);
+        return selfHostRestore(task.task.data, this.setMeta);
       case 'MIGRATE_NOVEL':
-        return migrateNovel(task.data);
+        return migrateNovel(task.task.data, this.setMeta);
       case 'DOWNLOAD_CHAPTER':
-        return downloadChapter(task.data);
+        return downloadChapter(task.task.data, this.setMeta);
       default:
         return;
     }
@@ -134,11 +172,11 @@ export default class ServiceManager {
       }
       try {
         await manager.executeTask(currentTask);
-        doneTasks[currentTask.name] += 1;
+        doneTasks[currentTask.task.name] += 1;
       } catch (error: any) {
         await Notifications.scheduleNotificationAsync({
           content: {
-            title: currentTask.name,
+            title: currentTask.meta.name,
             body: error?.message || String(error),
           },
           trigger: null,
@@ -166,20 +204,35 @@ export default class ServiceManager {
       });
     }
   }
-  getTaskDescription(task: BackgroundTask) {
+  getTaskName(task: BackgroundTask) {
     switch (task.name) {
       case 'DOWNLOAD_CHAPTER':
-        return task.data.chapterName;
+        return (
+          'Download ' + task.data.novelName + ' - ' + task.data.chapterName
+        );
       case 'IMPORT_EPUB':
-        return task.data.filename;
+        return 'Import Epub ' + task.data.filename;
       case 'MIGRATE_NOVEL':
-        return task.data.fromNovel.name;
+        return 'Migrate Novel ' + task.data.fromNovel.name;
+      case 'UPDATE_LIBRARY':
+        if (task.data !== undefined) {
+          return 'Update Category ' + task.data.categoryName;
+        }
+        return 'Update Library';
+      case 'DRIVE_BACKUP':
+        return 'Drive Backup';
+      case 'DRIVE_RESTORE':
+        return 'Drive Restore';
+      case 'SELF_HOST_BACKUP':
+        return 'Self Host Backup';
+      case 'SELF_HOST_RESTORE':
+        return 'Self Host Restore';
       default:
-        return task.data?.toString() || 'No data';
+        return 'Unknown Task';
     }
   }
   getTaskList() {
-    return getMMKVObject<Array<BackgroundTask>>(this.STORE_KEY) || [];
+    return getMMKVObject<Array<QueuedBackgroundTask>>(this.STORE_KEY) || [];
   }
   addTask(tasks: BackgroundTask | BackgroundTask[]) {
     const currentTasks = this.getTaskList();
@@ -187,26 +240,36 @@ export default class ServiceManager {
     const addableTasks = (Array.isArray(tasks) ? tasks : [tasks]).filter(
       task =>
         this.isMultiplicableTask(task) ||
-        !currentTasks.some(_t => _t.name === task.name),
+        !currentTasks.some(_t => _t.task.name === task.name),
     );
     if (addableTasks.length) {
-      setMMKVObject(this.STORE_KEY, currentTasks.concat(addableTasks));
+      let newTasks: QueuedBackgroundTask[] = addableTasks.map(task => ({
+        task,
+        meta: {
+          name: this.getTaskName(task),
+          isRunning: false,
+          progress: undefined,
+          progressText: undefined,
+        },
+      }));
+
+      setMMKVObject(this.STORE_KEY, currentTasks.concat(newTasks));
       this.start();
     }
   }
   removeTasksByName(name: BackgroundTask['name']) {
     const taskList = this.getTaskList();
-    if (taskList[0]?.name === name) {
+    if (taskList[0]?.task?.name === name) {
       this.pause();
       setMMKVObject(
         this.STORE_KEY,
-        taskList.filter(t => t.name !== name),
+        taskList.filter(t => t.task.name !== name),
       );
       this.resume();
     } else {
       setMMKVObject(
         this.STORE_KEY,
-        taskList.filter(t => t.name !== name),
+        taskList.filter(t => t.task.name !== name),
       );
     }
   }

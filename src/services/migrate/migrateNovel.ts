@@ -1,5 +1,3 @@
-import BackgroundService from 'react-native-background-actions';
-
 import { NovelInfo, ChapterInfo } from '@database/types';
 import {
   getNovelByPath,
@@ -18,7 +16,9 @@ import {
   NOVEL_SETTINSG_PREFIX,
 } from '@hooks/persisted/useNovel';
 import { sleep } from '@utils/sleep';
-import ServiceManager from '@services/ServiceManager';
+import ServiceManager, {
+  BackgroundTaskMetadata,
+} from '@services/ServiceManager';
 import { db } from '@database/db';
 
 export interface MigrateNovelData {
@@ -49,11 +49,17 @@ const sortChaptersByNumber = (novelName: string, chapters: ChapterInfo[]) => {
   });
 };
 
-export const migrateNovel = async ({
-  pluginId,
-  fromNovel,
-  toNovelPath,
-}: MigrateNovelData) => {
+export const migrateNovel = async (
+  { pluginId, fromNovel, toNovelPath }: MigrateNovelData,
+  setMeta: (
+    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
+  ) => void,
+) => {
+  setMeta(meta => ({
+    ...meta,
+    isRunning: true,
+  }));
+
   let fromChapters = await getNovelChapters(fromNovel.id);
   let toNovel = await getNovelByPath(toNovelPath, pluginId);
   let toChapters: ChapterInfo[];
@@ -165,12 +171,12 @@ export const migrateNovel = async ({
       setLastRead(toChapter);
     }
 
-    await BackgroundService.updateNotification({
-      taskDesc: '(' + (fromPointer + 1) + '/' + fromChapters.length + ')',
-      progressBar: { max: fromChapters.length, value: fromPointer + 1 },
-    });
-
     ++fromPointer;
     ++toPointer;
   }
+
+  setMeta(meta => ({
+    ...meta,
+    isRunning: false,
+  }));
 };

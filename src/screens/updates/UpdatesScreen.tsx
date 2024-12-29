@@ -48,7 +48,7 @@ const UpdatesScreen = ({ navigation }: UpdateScreenProps) => {
           e.preventDefault();
 
           navigation.navigate('MoreStack', {
-            screen: 'Downloads',
+            screen: 'TaskQueue',
           });
         }
       }),

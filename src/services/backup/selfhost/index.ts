@@ -1,90 +1,96 @@
 import { sleep } from '@utils/sleep';
-import BackgroundService from 'react-native-background-actions';
 import { download, upload } from '@api/remote';
 import { getString } from '@strings/translations';
 import { CACHE_DIR_PATH, prepareBackupData, restoreData } from '../utils';
 import { ZipBackupName } from '../types';
 import { ROOT_STORAGE } from '@utils/Storages';
+import { BackgroundTaskMetadata } from '@services/ServiceManager';
 
 export interface SelfHostData {
   host: string;
   backupFolder: string;
 }
 
-export const createSelfHostBackup = ({ host, backupFolder }: SelfHostData) => {
-  return BackgroundService.updateNotification({
-    taskDesc: getString('backupScreen.preparingData'),
-    progressBar: {
-      indeterminate: true,
-      value: 0,
-      max: 3,
-    },
-  })
-    .then(() => prepareBackupData(CACHE_DIR_PATH))
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.uploadingData'),
-        progressBar: {
-          indeterminate: true,
-          value: 1,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => sleep(200))
-    .then(() => upload(host, backupFolder, ZipBackupName.DATA, CACHE_DIR_PATH))
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.uploadingDownloadedFiles'),
-        progressBar: {
-          indeterminate: true,
-          value: 2,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => sleep(200))
-    .then(() =>
-      upload(host, backupFolder, ZipBackupName.DOWNLOAD, ROOT_STORAGE),
-    );
+export const createSelfHostBackup = async (
+  { host, backupFolder }: SelfHostData,
+  setMeta: (
+    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
+  ) => void,
+) => {
+  setMeta(meta => ({
+    ...meta,
+    isRunning: true,
+    progress: 0 / 3,
+    progressText: getString('backupScreen.preparingData'),
+  }));
+
+  await prepareBackupData(CACHE_DIR_PATH);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 1 / 3,
+    progressText: getString('backupScreen.uploadingData'),
+  }));
+
+  await sleep(200);
+
+  await upload(host, backupFolder, ZipBackupName.DATA, CACHE_DIR_PATH);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 2 / 3,
+    progressText: getString('backupScreen.uploadingDownloadedFiles'),
+  }));
+
+  await sleep(200);
+
+  await upload(host, backupFolder, ZipBackupName.DOWNLOAD, ROOT_STORAGE);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 3 / 3,
+    isRunning: false,
+  }));
 };
 
-export const selfHostRestore = ({ host, backupFolder }: SelfHostData) => {
-  return BackgroundService.updateNotification({
-    taskDesc: getString('backupScreen.downloadingData'),
-    progressBar: {
-      indeterminate: true,
-      value: 0,
-      max: 3,
-    },
-  })
-    .then(() =>
-      download(host, backupFolder, ZipBackupName.DATA, CACHE_DIR_PATH),
-    )
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.restoringData'),
-        progressBar: {
-          indeterminate: true,
-          value: 1,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => sleep(200))
-    .then(() => restoreData(CACHE_DIR_PATH))
-    .then(() =>
-      BackgroundService.updateNotification({
-        taskDesc: getString('backupScreen.downloadingDownloadedFiles'),
-        progressBar: {
-          indeterminate: true,
-          value: 2,
-          max: 3,
-        },
-      }),
-    )
-    .then(() => sleep(200))
-    .then(() =>
-      download(host, backupFolder, ZipBackupName.DOWNLOAD, ROOT_STORAGE),
-    );
+export const selfHostRestore = async (
+  { host, backupFolder }: SelfHostData,
+  setMeta: (
+    transformer: (meta: BackgroundTaskMetadata) => BackgroundTaskMetadata,
+  ) => void,
+) => {
+  setMeta(meta => ({
+    ...meta,
+    isRunning: true,
+    progress: 0 / 3,
+    progressText: getString('backupScreen.downloadingData'),
+  }));
+
+  await download(host, backupFolder, ZipBackupName.DATA, CACHE_DIR_PATH);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 1 / 3,
+    progressText: getString('backupScreen.restoringData'),
+  }));
+
+  await sleep(200);
+
+  await restoreData(CACHE_DIR_PATH);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 2 / 3,
+    progressText: getString('backupScreen.downloadingDownloadedFiles'),
+  }));
+
+  await sleep(200);
+
+  await download(host, backupFolder, ZipBackupName.DOWNLOAD, ROOT_STORAGE);
+
+  setMeta(meta => ({
+    ...meta,
+    progress: 3 / 3,
+    isRunning: false,
+  }));
 };
