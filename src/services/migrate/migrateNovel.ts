@@ -8,8 +8,6 @@ import { getNovelChapters } from '@database/queries/ChapterQueries';
 import { fetchNovel } from '@services/plugin/fetch';
 import { parseChapterNumber } from '@utils/parseChapterNumber';
 
-import { noop } from 'lodash-es';
-import { txnErrorCallback } from '@database/utils/helpers';
 import { getMMKVObject, setMMKVObject } from '@utils/mmkv/mmkv';
 import {
   LAST_READ_PREFIX,
@@ -75,33 +73,24 @@ export const migrateNovel = async (
     toChapters = await getNovelChapters(toNovel.id);
   }
 
-  db.transaction(tx => {
-    tx.executeSql(
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
       migrateNovelMetaDataQuery,
-      [
-        fromNovel.cover || toNovel.cover || '',
-        fromNovel.summary || toNovel.summary || '',
-        fromNovel.author || toNovel.author || '',
-        fromNovel.artist || toNovel.artist || '',
-        fromNovel.status || toNovel.status || '',
-        fromNovel.genres || toNovel.genres || '',
-        toNovel.id,
-      ],
-      noop,
-      txnErrorCallback,
+      fromNovel.cover || toNovel.cover || '',
+      fromNovel.summary || toNovel.summary || '',
+      fromNovel.author || toNovel.author || '',
+      fromNovel.artist || toNovel.artist || '',
+      fromNovel.status || toNovel.status || '',
+      fromNovel.genres || toNovel.genres || '',
+      toNovel.id,
     );
-    tx.executeSql(
+
+    await db.runAsync(
       'UPDATE OR IGNORE NovelCategory SET novelId = ? WHERE novelId = ?',
-      [toNovel.id, fromNovel.id],
-      noop,
-      txnErrorCallback,
+      toNovel.id,
+      fromNovel.id,
     );
-    tx.executeSql(
-      'DELETE FROM Novel WHERE id = ?',
-      [fromNovel.id],
-      noop,
-      txnErrorCallback,
-    );
+    await db.runAsync('DELETE FROM Novel WHERE id = ?', fromNovel.id);
   });
 
   setMMKVObject(
@@ -144,15 +133,13 @@ export const migrateNovel = async (
       ++toPointer;
       continue;
     }
-
-    db.transaction(tx =>
-      tx.executeSql(migrateChapterQuery, [
-        Number(fromChapter.bookmark),
-        Number(fromChapter.unread),
-        fromChapter.readTime,
-        fromChapter.progress,
-        toChapter.id,
-      ]),
+    await db.runAsync(
+      migrateChapterQuery,
+      Number(fromChapter.bookmark),
+      Number(fromChapter.unread),
+      fromChapter.readTime,
+      fromChapter.progress,
+      toChapter.id,
     );
 
     if (fromChapter.isDownloaded) {
