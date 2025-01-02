@@ -22,14 +22,14 @@ import { parseChapterNumber } from '@utils/parseChapterNumber';
 import WebView from 'react-native-webview';
 import { useFullscreenMode } from '@hooks';
 import { Dimensions, NativeEventEmitter } from 'react-native';
-import VolumeButtonListener from '@native/volumeButtonListener';
 import * as Speech from 'expo-speech';
 import { defaultTo } from 'lodash-es';
 import { useChapterContext } from '../ChapterContext';
 import { showToast } from '@utils/showToast';
 import { getString } from '@strings/translations';
+import NativeVolumeButtonListener from '@specs/NativeVolumeButtonListener';
 
-const emmiter = new NativeEventEmitter(VolumeButtonListener);
+const emmiter = new NativeEventEmitter(NativeVolumeButtonListener);
 
 export default function useChapter(webViewRef: RefObject<WebView>) {
   const { novel, chapter, setChapter, loading, setLoading } =
@@ -49,8 +49,6 @@ export default function useChapter(webViewRef: RefObject<WebView>) {
   const { setImmersiveMode, showStatusAndNavBar } = useFullscreenMode();
 
   const connectVolumeButton = () => {
-    VolumeButtonListener.connect();
-    VolumeButtonListener.preventDefault();
     emmiter.addListener('VolumeUp', () => {
       webViewRef.current?.injectJavaScript(`(()=>{
           window.scrollBy({top: -${
@@ -71,13 +69,12 @@ export default function useChapter(webViewRef: RefObject<WebView>) {
     if (useVolumeButtons) {
       connectVolumeButton();
     } else {
-      VolumeButtonListener.disconnect();
       emmiter.removeAllListeners('VolumeUp');
       emmiter.removeAllListeners('VolumeDown');
       // this is just for sure, without it app still works properly
     }
+
     return () => {
-      VolumeButtonListener.disconnect();
       emmiter.removeAllListeners('VolumeUp');
       emmiter.removeAllListeners('VolumeDown');
       Speech.stop();

@@ -16,6 +16,14 @@
     "postinstall": "node scripts/patch.dependencies.cjs",
     "rebuild": "rm -rf node_modules/ ./android/build/ ./android/app/build/ ./android/app/.cxx && npm i && cd android/ && ./gradlew clean && cd .. && npm start -- --reset-cache"
   },
+  "codegenConfig": {
+    "name": "LNReaderSpec",
+    "type": "modules",
+    "jsSrcsDir": "specs",
+    "android": {
+      "javaPackageName": "com.lnreader.spec"
+    }
+  },
   "dependencies": {
     "@cd-z/react-native-epub-creator": "^2.0.4",
     "@gorhom/bottom-sheet": "^5.0.6",

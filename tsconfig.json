@@ -25,9 +25,6 @@
       "@strings/*": [
         "strings/*"
       ],
-      "@redux/*": [
-        "src/redux/*"
-      ],
       "@theme/*": [
         "src/theme/*"
       ],
@@ -51,7 +48,10 @@
       ],
       "@type/*": [
         "src/type/*"
-      ]
+      ],
+      "@specs/*": [
+        "specs/*"
+      ],
     }
   },
   "exclude": [

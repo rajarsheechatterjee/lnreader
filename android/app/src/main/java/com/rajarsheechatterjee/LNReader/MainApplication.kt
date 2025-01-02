@@ -14,7 +14,7 @@ import com.facebook.react.soloader.OpenSourceMergedSoMapping
 import com.facebook.soloader.SoLoader
 import com.rajarsheechatterjee.EpubUtil.EpubUtilPackage
 import com.rajarsheechatterjee.FileManager.FileManagerPackage
-import com.rajarsheechatterjee.VolumeButtonListener.VolumeButtonListenerPackage
+import com.rajarsheechatterjee.NativeVolumeButtonListener.NativeVolumeButtonListenerPackage
 import com.rajarsheechatterjee.ZipArchive.ZipArchivePackage
 import expo.modules.ApplicationLifecycleDispatcher
 
@@ -25,7 +25,7 @@ class MainApplication : Application(), ReactApplication {
                 PackageList(this).packages.apply {
                     add(EpubUtilPackage())
                     add(FileManagerPackage())
-                    add(VolumeButtonListenerPackage())
+                    add(NativeVolumeButtonListenerPackage())
                     add(ZipArchivePackage())
                 }
 

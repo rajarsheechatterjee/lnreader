@@ -135,6 +135,10 @@ const fetchPlugins = async (): Promise<PluginItem[]> => {
 };
 
 const getPlugin = (pluginId: string) => {
+  if (pluginId === LOCAL_PLUGIN_ID) {
+    return undefined;
+  }
+
   if (!plugins[pluginId]) {
     const filePath = `${PLUGIN_STORAGE}/${pluginId}/index.js`;
     try {
