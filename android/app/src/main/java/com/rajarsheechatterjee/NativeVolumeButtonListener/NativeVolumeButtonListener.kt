@@ -21,7 +21,6 @@ class NativeVolumeButtonListener(appContext: ReactApplicationContext) :
     companion object {
         lateinit var appContext: ReactApplicationContext
         var isActive = false
-            private set
 
         fun sendEvent(up: Boolean) {
             if (isActive) {
