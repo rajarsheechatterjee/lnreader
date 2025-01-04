@@ -11,23 +11,40 @@ import { NovelInfo } from '@database/types';
 import { sleep } from '@utils/sleep';
 import { getString } from '@strings/translations';
 import * as FileSystem from 'expo-file-system';
-import FileManager from '@native/FileManager';
 
 export const createBackup = async () => {
   try {
     const novels = getLibraryNovelsFromDb();
 
-    const folder = await FileManager.pickFolder();
-    if (!folder) {
-      return;
-    }
     const datetime = dayjs().format('YYYY-MM-DD_HH_mm');
     const fileName = 'lnreader_backup_' + datetime + '.json';
-    await FileManager.writeFile(
-      folder + '/' + fileName,
-      JSON.stringify(novels),
-    );
-    showToast(getString('backupScreen.legacy.backupCreated', { fileName }));
+    const fileContent = JSON.stringify(novels);
+    const permissions =
+      await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+
+    if (!permissions.granted) {
+      showToast(getString('backupScreen.legacy.permissionDenied'));
+      return;
+    }
+    const directoryUri = permissions.directoryUri;
+    await FileSystem.StorageAccessFramework.createFileAsync(
+      directoryUri,
+      fileName,
+      'application/json',
+    )
+      .then(async uri => {
+        await FileSystem.writeAsStringAsync(uri, fileContent, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+        showToast(getString('backupScreen.legacy.backupCreated', { fileName }));
+      })
+      .catch(error => {
+        showToast(
+          getString('backupScreen.legacy.failedToSave', {
+            message: error.message,
+          }),
+        );
+      });
   } catch (error: any) {
     showToast(error.message);
   } finally {

@@ -132,21 +132,21 @@ export default class ServiceManager {
   async executeTask(task: QueuedBackgroundTask) {
     switch (task.task.name) {
       case 'IMPORT_EPUB':
-        return importEpub(task.task.data, this.setMeta);
+        return importEpub(task.task.data, this.setMeta.bind(this));
       case 'UPDATE_LIBRARY':
-        return updateLibrary(task.task.data || {}, this.setMeta);
+        return updateLibrary(task.task.data || {}, this.setMeta.bind(this));
       case 'DRIVE_BACKUP':
-        return createDriveBackup(task.task.data, this.setMeta);
+        return createDriveBackup(task.task.data, this.setMeta.bind(this));
       case 'DRIVE_RESTORE':
-        return driveRestore(task.task.data, this.setMeta);
+        return driveRestore(task.task.data, this.setMeta.bind(this));
       case 'SELF_HOST_BACKUP':
-        return createSelfHostBackup(task.task.data, this.setMeta);
+        return createSelfHostBackup(task.task.data, this.setMeta.bind(this));
       case 'SELF_HOST_RESTORE':
-        return selfHostRestore(task.task.data, this.setMeta);
+        return selfHostRestore(task.task.data, this.setMeta.bind(this));
       case 'MIGRATE_NOVEL':
-        return migrateNovel(task.task.data, this.setMeta);
+        return migrateNovel(task.task.data, this.setMeta.bind(this));
       case 'DOWNLOAD_CHAPTER':
-        return downloadChapter(task.task.data, this.setMeta);
+        return downloadChapter(task.task.data, this.setMeta.bind(this));
       default:
         return;
     }
