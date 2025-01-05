@@ -5,12 +5,12 @@ import {
   Pressable,
   StyleProp,
   StyleSheet,
-  View,
   ViewProps,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import MaterialCommunityIcons from '@react-native-vector-icons/material-design-icons';
 import { MaterialDesignIconName } from '@type/icon';
+import Animated ,{ SlideInDown, SlideOutDown } from 'react-native-reanimated';
 
 type Action = {
   icon: MaterialDesignIconName;
@@ -32,9 +32,9 @@ export const Actionbar: React.FC<ActionbarProps> = ({
 
   const { bottom } = useSafeAreaInsets();
 
-  if (active) {
+  if (!active) { return null; }
     return (
-      <View
+      <Animated.View entering={SlideInDown.duration(150)} exiting={SlideOutDown.duration(150)}
         style={[
           styles.actionbarContainer,
           {
@@ -62,11 +62,9 @@ export const Actionbar: React.FC<ActionbarProps> = ({
             />
           </Pressable>
         ))}
-      </View>
+      </Animated.View>
     );
-  } else {
-    return null;
-  }
+  
 };
 
 const styles = StyleSheet.create({

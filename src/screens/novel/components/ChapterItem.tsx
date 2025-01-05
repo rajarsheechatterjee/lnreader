@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React, { memo, ReactNode } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import color from 'color';
@@ -13,6 +14,7 @@ import { useBoolean } from '@hooks';
 
 interface ChapterItemProps {
   isDownloading?: boolean;
+  isBookmarked?: boolean;
   chapter: ChapterInfo;
   theme: ThemeColors;
   showChapterTitles: boolean;
@@ -30,6 +32,7 @@ interface ChapterItemProps {
 
 const ChapterItem: React.FC<ChapterItemProps> = ({
   isDownloading,
+  isBookmarked,
   chapter,
   theme,
   showChapterTitles,
@@ -51,6 +54,10 @@ const ChapterItem: React.FC<ChapterItemProps> = ({
     setTrue: showMenu,
     setFalse: hideMenu,
   } = useBoolean();
+
+  isBookmarked ??= bookmark
+
+  
   return (
     <Pressable
       key={'chapterItem' + id}
@@ -68,7 +75,7 @@ const ChapterItem: React.FC<ChapterItemProps> = ({
     >
       <View style={styles.row}>
         {left}
-        {bookmark ? <ChapterBookmarkButton theme={theme} /> : null}
+        {isBookmarked ? <ChapterBookmarkButton theme={theme} /> : null}
         <View style={{ flex: 1 }}>
           {isUpdateCard ? (
             <Text
@@ -147,8 +154,8 @@ const ChapterItem: React.FC<ChapterItemProps> = ({
               <Text
                 style={{
                   color: theme.outline,
-                  fontSize: 12,
                   marginLeft: chapter.releaseTime ? 5 : 0,
+                  fontSize: 12,
                   marginTop: 4,
                 }}
                 numberOfLines={1}

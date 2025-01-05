@@ -124,11 +124,16 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   const [novel, setNovel] = useState<NovelInfo>();
   const [chapters, _setChapters] = useState<ChapterInfo[]>([]);
   const [pages, setPages] = useState<string[]>([]);
+
+  const mutateChapters = (mutation: (chs:ChapterInfo[]) => ChapterInfo[]) => {
+    if (novel) {
+      _setChapters(mutation)
+    }}
   const setChapters = useCallback(
-    (chapters: ChapterInfo[]) => {
+    (chs: ChapterInfo[]) => {
       if (novel) {
         _setChapters(
-          chapters.map(chapter => {
+          chs.map(chapter => {
             const parsedTime = dayjs(chapter.releaseTime);
             return {
               ...chapter,
@@ -171,9 +176,9 @@ export const useNovel = (novelPath: string, pluginId: string) => {
         sort,
         novelSettings.filter,
         pages[pageIndex],
-      ).then(chapters => setChapters(chapters));
+      ).then(chs => setChapters(chs));
     }
-  }, [novel, pageIndex, sort, novelSettings]);
+  }, [novel, sort, novelSettings.filter, pages, pageIndex, setChapters]);
 
   const sortAndFilterChapters = async (sort?: string, filter?: string) => {
     if (novel) {
@@ -204,8 +209,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
     _chapters.map(_chapter => {
       _bookmarkChapter(_chapter.id);
     });
-    setChapters(
-      chapters.map(chapter => {
+    mutateChapters( chs=>
+      chs.map(chapter => {
         if (_chapters.some(_c => _c.id === chapter.id)) {
           return {
             ...chapter,
@@ -220,8 +225,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   const markPreviouschaptersRead = (chapterId: number) => {
     if (novel) {
       _markPreviuschaptersRead(chapterId, novel.id);
-      setChapters(
-        chapters.map(chapter =>
+      mutateChapters( chs=>
+        chs.map(chapter =>
           chapter.id <= chapterId ? { ...chapter, unread: false } : chapter,
         ),
       );
@@ -230,8 +235,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
 
   const markChapterRead = (chapterId: number) => {
     _markChapterRead(chapterId);
-    setChapters(
-      chapters.map(c => {
+    mutateChapters( chs=>
+      chs.map(c => {
         if (c.id !== chapterId) {
           return c;
         }
@@ -247,8 +252,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
     const chapterIds = _chapters.map(chapter => chapter.id);
     _markChaptersRead(chapterIds);
 
-    setChapters(
-      chapters.map(chapter => {
+    mutateChapters( chs=>
+      chs.map(chapter => {
         if (chapterIds.includes(chapter.id)) {
           return {
             ...chapter,
@@ -263,8 +268,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   const markPreviousChaptersUnread = (chapterId: number) => {
     if (novel) {
       _markPreviousChaptersUnread(chapterId, novel.id);
-      setChapters(
-        chapters.map(chapter =>
+      mutateChapters( chs=>
+        chs.map(chapter =>
           chapter.id <= chapterId ? { ...chapter, unread: true } : chapter,
         ),
       );
@@ -275,8 +280,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
     const chapterIds = _chapters.map(chapter => chapter.id);
     _markChaptersUnread(chapterIds);
 
-    setChapters(
-      chapters.map(chapter => {
+    mutateChapters( chs=>
+      chs.map(chapter => {
         if (chapterIds.includes(chapter.id)) {
           return {
             ...chapter,
@@ -291,8 +296,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   const deleteChapter = (_chapter: ChapterInfo) => {
     if (novel) {
       _deleteChapter(novel.pluginId, novel.id, _chapter.id).then(() => {
-        setChapters(
-          chapters.map(chapter => {
+        mutateChapters( chs=>
+          chs.map(chapter => {
             if (chapter.id !== _chapter.id) {
               return chapter;
             }
@@ -316,8 +321,8 @@ export const useNovel = (novelPath: string, pluginId: string) => {
               num: _chaters.length,
             }),
           );
-          setChapters(
-            chapters.map(chapter => {
+          mutateChapters( chs=>
+            chs.map(chapter => {
               if (_chaters.some(_c => _c.id === chapter.id)) {
                 return {
                   ...chapter,
@@ -364,15 +369,15 @@ export const useNovel = (novelPath: string, pluginId: string) => {
   const getChapters = useCallback(async () => {
     const page = pages[pageIndex];
     if (novel && page) {
-      let chapters =
+      let newChapters =
         (await _getPageChapters(
           novel.id,
           sort,
           novelSettings.filter,
           page,
-        ).catch(e => console.log('error', e))) || [];
+        ).catch(e => console.error('_getPageChapters failed:', e))) || [];
 
-      if (!chapters.length && Number(page)) {
+      if (!newChapters.length && Number(page)) {
         const sourcePage = await fetchPage(pluginId, novelPath, page);
 
         const sourceChapters = sourcePage.chapters.map(ch => {
@@ -382,14 +387,14 @@ export const useNovel = (novelPath: string, pluginId: string) => {
           };
         });
         await insertChapters(novel.id, sourceChapters);
-        chapters = await _getPageChapters(
+        newChapters = await _getPageChapters(
           novel.id,
           sort,
           novelSettings.filter,
           page,
         );
       }
-      setChapters(chapters);
+      setChapters(newChapters);
     }
   }, [novel, novelSettings, pageIndex]);
 

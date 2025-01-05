@@ -5,6 +5,7 @@ import { ThemeColors } from '@theme/types';
 import Animated, {
   SharedValue,
   SlideInUp,
+  SlideOutUp,
   interpolateColor,
   useAnimatedStyle,
 } from 'react-native-reanimated';
@@ -94,7 +95,7 @@ const NovelAppbar = ({
   const [extraMenu, showExtraMenu] = useState(false);
 
   return (
-    <Animated.View style={[headerOpacityStyle]}>
+    <Animated.View exiting={SlideOutUp.duration(150)} entering={SlideInUp.duration(150)} style={[headerOpacityStyle]}>
       <Appbar.Header theme={{ colors: { ...theme, surface: 'transparent' } }}>
         <Appbar.BackAction onPress={goBack} />
         {!isLoading && (

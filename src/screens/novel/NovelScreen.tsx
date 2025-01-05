@@ -3,8 +3,8 @@ import { StyleSheet, View, StatusBar, Text, Share } from 'react-native';
 import { Drawer } from 'react-native-drawer-layout';
 import { FlashList } from '@shopify/flash-list';
 import Animated, {
-  FadeIn,
-  FadeOut,
+  SlideInUp,
+  SlideOutUp,
   useSharedValue,
 } from 'react-native-reanimated';
 
@@ -68,7 +68,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
 
   useEffect(() => {
     refreshChapters();
-  }, [downloadQueue]);
+  }, [downloadQueue, refreshChapters]);
 
   useFocusEffect(refreshChapters);
 
@@ -101,6 +101,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
 
   const [jumpToChapterModal, showJumpToChapterModal] = useState(false);
   const downloadCustomChapterModal = useBoolean();
+  
 
   const actions = useMemo(() => {
     const list: { icon: MaterialDesignIconName; onPress: () => void }[] = [];
@@ -131,7 +132,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
 
     list.push({
       icon: 'bookmark-outline',
-      onPress: () => {
+      onPress: () => {        
         bookmarkChapters(selected);
         setSelected([]);
       },
@@ -238,8 +239,8 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
               />
             ) : (
               <Animated.View
-                entering={FadeIn.duration(150)}
-                exiting={FadeOut.duration(150)}
+                entering={SlideInUp.duration(150)}
+                exiting={SlideOutUp.duration(150)}
                 style={{
                   position: 'absolute',
                   width: '100%',
@@ -280,12 +281,15 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
                 navigation={navigation}
                 openDrawer={openDrawer}
                 headerOpacity={headerOpacity}
+                selected={selected}
+                setSelected={setSelected}
+                chapters={chapters}
               />
             </Suspense>
           </View>
 
           <Portal>
-            <Actionbar active={selected.length > 0} actions={actions} />
+          <Actionbar active={selected.length > 0} actions={actions} />
             <Snackbar
               visible={deleteDownloadsSnackbar.value}
               onDismiss={deleteDownloadsSnackbar.setFalse}

@@ -32,6 +32,14 @@ import NovelBottomSheet from './NovelBottomSheet';
 import * as Haptics from 'expo-haptics';
 import { AnimatedFAB } from 'react-native-paper';
 
+const ListEmptyComponent = () => (
+  <>
+    {[...Array(7)].map((_, i) => (
+      <LoadingChapterItem key={i} />
+    ))}
+  </>
+)
+
 export default function NovelScreenList({
   name,
   path,
@@ -40,6 +48,9 @@ export default function NovelScreenList({
   navigation,
   openDrawer,
   headerOpacity,
+  selected,
+  setSelected,
+  chapters,
 }: {
   name: string;
   path: string;
@@ -48,6 +59,9 @@ export default function NovelScreenList({
   navigation: any;
   openDrawer: () => void;
   headerOpacity: SharedValue<number>;
+  selected: ChapterInfo[];
+  setSelected: React.Dispatch<React.SetStateAction<ChapterInfo[]>>;
+  chapters: ChapterInfo[];
 }) {
   const routeNovel: Omit<NovelInfo, 'id'> & { id: 'NO_ID' } = {
     id: 'NO_ID',
@@ -72,7 +86,6 @@ export default function NovelScreenList({
     pageIndex,
     pages,
     novel = routeNovel,
-    chapters,
     lastRead,
     novelSettings: {
       sort = defaultChapterSort,
@@ -86,12 +99,13 @@ export default function NovelScreenList({
     followNovel,
     deleteChapter,
   } = useNovel(path, pluginId);
+  
   const theme = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
 
   const { downloadQueue, downloadChapter } = useDownload();
 
-  const [selected, setSelected] = useState<ChapterInfo[]>([]);
+  // const [selected, setSelected] = useState<ChapterInfo[]>([]);
   const [isFabExtended, setIsFabExtended] = useState(true);
 
   let flatlistRef = useRef<FlashList<ChapterInfo>>(null);
@@ -233,14 +247,8 @@ export default function NovelScreenList({
         data={chapters}
         extraData={[chapters.length, novel.id, loading]}
         removeClippedSubviews={true}
-        ListEmptyComponent={() => (
-          <>
-            {[...Array(7)].map((_, i) => (
-              <LoadingChapterItem key={i} />
-            ))}
-          </>
-        )}
-        renderItem={({ item }) => {
+        ListEmptyComponent={ListEmptyComponent}
+        renderItem={({ item }) => {          
           if (novel.id === 'NO_ID') {
             return null;
           }
@@ -249,6 +257,7 @@ export default function NovelScreenList({
               isDownloading={downloadQueue.some(
                 c => c.data.chapterId === item.id,
               )}
+              isBookmarked={!!item.bookmark}
               isLocal={novel.isLocal}
               theme={theme}
               chapter={item}
