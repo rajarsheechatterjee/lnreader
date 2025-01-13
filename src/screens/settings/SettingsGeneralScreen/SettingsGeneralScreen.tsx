@@ -14,11 +14,9 @@ import DefaultChapterSortModal from '../components/DefaultChapterSortModal';
 import {
   DisplayModes,
   displayModesList,
-  LibrarySortOrder,
 } from '@screens/library/constants/constants';
 import { useBoolean } from '@hooks';
 import { Appbar, List } from '@components';
-import NovelSortModal from './modals/NovelSortModal';
 import NovelBadgesModal from './modals/NovelBadgesModal';
 import { NavigationState } from '@react-navigation/native';
 import { getString } from '@strings/translations';
@@ -37,18 +35,8 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
     showDownloadBadges = true,
     showNumberOfNovels = false,
     showUnreadBadges = true,
-    sortOrder = LibrarySortOrder.DateAdded_DESC,
   } = useLibrarySettings();
 
-  const sortOrderDisplay: string[] = sortOrder.split(' ');
-  const sortOrderNameMap = new Map<string, string>([
-    ['name', 'libraryScreen.bottomSheet.sortOrders.alphabetically'],
-    ['chaptersDownloaded', 'libraryScreen.bottomSheet.sortOrders.download'],
-    ['chaptersUnread', 'libraryScreen.bottomSheet.sortOrders.totalChapters'],
-    ['id', 'libraryScreen.bottomSheet.sortOrders.dateAdded'],
-    ['lastReadAt', 'libraryScreen.bottomSheet.sortOrders.lastRead'],
-    ['lastUpdatedAt', 'libraryScreen.bottomSheet.sortOrders.lastUpdated'],
-  ]);
   const {
     disableLoadingAnimations,
     updateLibraryOnLaunch,
@@ -93,10 +81,6 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
   const novelBadgesModalRef = useBoolean();
   const novelBadgesDescription = generateNovelBadgesDescription();
   /**
-   * Novel Sort Modal
-   */
-  const novelSortModalRef = useBoolean();
-  /**
    * Chapter Sort Modal
    */
   const defaultChapterSortModal = useBoolean();
@@ -134,17 +118,6 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
             // @ts-ignore
             description={novelBadgesDescription}
             onPress={novelBadgesModalRef.setTrue}
-            theme={theme}
-          />
-          <List.Item
-            title={getString('generalSettingsScreen.novelSort')}
-            description={
-              // @ts-ignore
-              getString(sortOrderNameMap.get(sortOrderDisplay[0])) +
-              ' ' +
-              sortOrderDisplay[1]
-            }
-            onPress={novelSortModalRef.setTrue}
             theme={theme}
           />
           <List.Divider theme={theme} />
@@ -273,11 +246,6 @@ const GenralSettings: React.FC<GenralSettingsProps> = ({ navigation }) => {
       <NovelBadgesModal
         novelBadgesModalVisible={novelBadgesModalRef.value}
         hideNovelBadgesModal={novelBadgesModalRef.setFalse}
-        theme={theme}
-      />
-      <NovelSortModal
-        novelSortModalVisible={novelSortModalRef.value}
-        hideNovelSortModal={novelSortModalRef.setFalse}
         theme={theme}
       />
     </>

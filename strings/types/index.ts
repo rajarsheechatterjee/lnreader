@@ -249,6 +249,7 @@ export interface StringMap {
   'libraryScreen.bottomSheet.filters.unread': 'string';
   'libraryScreen.bottomSheet.sortOrders.alphabetically': 'string';
   'libraryScreen.bottomSheet.sortOrders.dateAdded': 'string';
+  'libraryScreen.bottomSheet.sortOrders.random': 'string';
   'libraryScreen.bottomSheet.sortOrders.download': 'string';
   'libraryScreen.bottomSheet.sortOrders.lastRead': 'string';
   'libraryScreen.bottomSheet.sortOrders.lastUpdated': 'string';

@@ -1,7 +1,6 @@
 import {
   DisplayModes,
   LibraryFilter,
-  LibrarySortOrder,
 } from '@screens/library/constants/constants';
 import { useMMKVObject } from 'react-native-mmkv';
 import { Voice } from 'expo-speech';
@@ -61,7 +60,7 @@ export interface BrowseSettings {
 }
 
 export interface LibrarySettings {
-  sortOrder?: LibrarySortOrder;
+  sortOrderId?: number; //increases when sorts are modified so they get updated
   filter?: LibraryFilter;
   showDownloadBadges?: boolean;
   showUnreadBadges?: boolean;

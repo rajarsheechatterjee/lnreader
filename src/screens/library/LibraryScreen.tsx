@@ -340,7 +340,10 @@ const LibraryScreen = ({ navigation }: LibraryScreenProps) => {
           refetchLibrary();
         }}
       />
-      <LibraryBottomSheet bottomSheetRef={bottomSheetRef} />
+      <LibraryBottomSheet
+        bottomSheetRef={bottomSheetRef}
+        category={library[index]}
+      />
       <Portal>
         <Actionbar
           active={selectedNovelIds.length > 0}

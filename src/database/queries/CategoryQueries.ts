@@ -4,6 +4,7 @@ import { showToast } from '@utils/showToast';
 import { txnErrorCallback } from '../utils/helpers';
 import { getString } from '@strings/translations';
 import { db } from '@database/db';
+import { LibrarySortOrder } from '@screens/library/constants/constants';
 
 const getCategoriesQuery = `
   SELECT * FROM Category ORDER BY sort
@@ -98,6 +99,22 @@ export const updateCategory = (
     ),
   );
 
+const updateCategorySortContentsQuery =
+  'UPDATE Category SET sortContents = ? WHERE id = ?';
+
+export const updateCategorySortContents = (
+  categoryId: number,
+  sortContents: LibrarySortOrder,
+): void =>
+  db.transaction(tx =>
+    tx.executeSql(
+      updateCategorySortContentsQuery,
+      [sortContents, categoryId],
+      noop,
+      txnErrorCallback,
+    ),
+  );
+
 const isCategoryNameDuplicateQuery = `
   SELECT COUNT(*) as isDuplicate FROM Category WHERE name = ?
 	`;
@@ -160,11 +177,10 @@ export const _restoreCategory = (category: BackupCategory) => {
     ]);
   });
   db.transaction(tx => {
-    tx.executeSql('INSERT INTO Category (id, name, sort) VALUES (?, ?, ?)', [
-      category.id,
-      category.name,
-      category.sort,
-    ]);
+    tx.executeSql(
+      'INSERT INTO Category (id, name, sort, sortContents) VALUES (?, ?, ?)',
+      [category.id, category.name, category.sort, category.sortContents],
+    );
     for (const novelId of category.novelIds) {
       tx.executeSql(
         'INSERT INTO NovelCategory (categoryId, novelId) VALUES (?, ?)',
