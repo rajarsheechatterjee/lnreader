@@ -6,6 +6,7 @@ import { NOVEL_STORAGE } from '@utils/Storages';
 import { downloadFile } from '@plugins/helpers/fetch';
 import ServiceManager from '@services/ServiceManager';
 import { db } from '@database/db';
+import { getPageChapters } from '@database/queries/ChapterQueries';
 
 const updateNovelMetadata = (
   pluginId: string,
@@ -73,13 +74,23 @@ const updateNovelTotalPages = (novelId: number, totalPages: number) => {
   });
 };
 
-const updateNovelChapters = (
+const updateNovelChapters = async (
   novelName: string,
   novelId: number,
   chapters: ChapterItem[],
   downloadNewChapters?: boolean,
   page?: string,
 ) => {
+  const existingChapters = await getPageChapters(
+    novelId,
+    '',
+    '',
+    chapters[0].page || '1',
+  );
+  const chaptersToHide = existingChapters.filter(
+    c => !chapters.some(ch => ch.path === c.path),
+  );
+
   return new Promise((resolve, reject) => {
     db.transaction(async tx => {
       for (let position = 0; position < chapters.length; position++) {
@@ -124,8 +135,8 @@ const updateNovelChapters = (
               tx.executeSql(
                 `
                   UPDATE Chapter SET 
-                    name = ?, releaseTime = ?, updatedTime = datetime('now','localtime'), page = ?, position = ?
-                  WHERE path = ? AND novelId = ? AND (name != ? OR releaseTime != ? OR page != ? OR position != ?);
+                    name = ?, releaseTime = ?, updatedTime = datetime('now','localtime'), page = ?, position = ?, hidden = 0
+                  WHERE path = ? AND novelId = ? AND (name != ? OR releaseTime != ? OR page != ? OR position != ? OR hidden != 0);
                 `,
                 [
                   name,
@@ -153,6 +164,12 @@ const updateNovelChapters = (
           },
         );
       }
+      chaptersToHide.forEach(chapter => {
+        tx.executeSql(
+          'UPDATE Chapter SET hidden = 1 WHERE path = ? AND novelId = ?',
+          [chapter.path, novelId],
+        );
+      });
       resolve(null);
     });
   });

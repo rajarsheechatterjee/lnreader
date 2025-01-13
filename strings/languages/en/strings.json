@@ -124,7 +124,7 @@
     "updatedTo": "Updated to %{version}",
     "settings": {
       "title": "Plugin Settings",
-      "description": "Fill in the plugin settings. Restart app to apply the settings."
+      "description": "Fill in the plugin settings."
     }
   },
   "browseSettings": "Browse Settings",
@@ -333,7 +333,8 @@
       "filters": {
         "bookmarked": "Bookmarked",
         "downloaded": "Downloaded",
-        "unread": "Unread"
+        "unread": "Unread",
+        "dontExist": "Show chapters that no longer exist"
       },
       "order": {
         "byChapterName": "By chapter name",

@@ -9,6 +9,7 @@ import { createNovelCategoryTableQuery } from './tables/NovelCategoryTable';
 import {
   createChapterTableQuery,
   createChapterNovelIdIndexQuery,
+  addHiddenColumnQuery,
 } from './tables/ChapterTable';
 import { dbTxnErrorCallback } from './utils/helpers';
 import { noop } from 'lodash-es';
@@ -32,6 +33,7 @@ export const createTables = () => {
 
   db.transaction(tx => {
     tx.executeSql(createRepositoryTableQuery);
+    tx.executeSql(addHiddenColumnQuery);
   });
 };
 

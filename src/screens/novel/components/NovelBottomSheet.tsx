@@ -92,6 +92,16 @@ const ChaptersSettingsSheet = ({
             : filterChapters(filter + ' AND bookmark=1');
         }}
       />
+      <Checkbox
+        theme={theme}
+        label={getString('novelScreen.bottomSheet.filters.dontExist')}
+        status={!filter.match('AND hidden=0')}
+        onPress={() => {
+          filter.match('AND hidden=0')
+            ? filterChapters(filter.replace(/ ?AND hidden=0/, ''))
+            : filterChapters(filter + ' AND hidden=0');
+        }}
+      />
     </View>
   );
 
@@ -184,7 +194,7 @@ const ChaptersSettingsSheet = ({
   );
 
   return (
-    <BottomSheet snapPoints={[240]} bottomSheetRef={bottomSheetRef}>
+    <BottomSheet snapPoints={[280]} bottomSheetRef={bottomSheetRef}>
       <BottomSheetView
         style={[
           styles.contentContainer,

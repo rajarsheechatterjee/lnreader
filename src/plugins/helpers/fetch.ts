@@ -44,8 +44,24 @@ export const fetchApi = async (
   init?: FetchInit,
 ): Promise<Response> => {
   init = makeInit(init);
-  return await fetch(url, init);
+  return await fetch(url, init).then(checkCloudflareError);
 };
+
+async function checkCloudflareError(res: Response) {
+  const text = await res.clone().text();
+  const title = text.match(/<title>(.*?)<\/title>/)?.[1];
+  if (
+    title == 'Bot Verification' ||
+    title == 'You are being redirected...' ||
+    title == 'Un instant...' ||
+    title == 'Just a moment...' ||
+    title == 'Redirecting...'
+  ) {
+    throw new Error('Captcha error, please open in webview');
+  }
+
+  return res;
+}
 
 const FILE_READER_PREFIX_LENGTH = 'data:application/octet-stream;base64,'
   .length;
@@ -79,7 +95,7 @@ export const fetchText = async (
 ): Promise<string> => {
   init = makeInit(init);
   try {
-    const res = await fetch(url, init);
+    const res = await fetch(url, init).then(checkCloudflareError);
     if (!res.ok) {
       throw new Error();
     }
@@ -163,6 +179,7 @@ export const fetchProto = async function (
     ...init,
     body: bodyArray,
   } as RequestInit)
+    .then(checkCloudflareError)
     .then(r => r.blob())
     .then(blob => {
       // decode response data

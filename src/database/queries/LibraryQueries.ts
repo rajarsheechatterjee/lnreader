@@ -77,6 +77,7 @@ const getLibraryWithCategoryQuery = `
         SUM(unread) as chaptersUnread, SUM(isDownloaded) as chaptersDownloaded, 
         novelId, MAX(readTime) as lastReadAt, MAX(updatedTime) as lastUpdatedAt
       FROM Chapter
+      WHERE hidden = 0
       GROUP BY novelId
     ) as C ON NIL.id = C.novelId
   ) WHERE 1 = 1 

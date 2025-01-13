@@ -14,9 +14,14 @@ export const createChapterTableQuery = `
         page TEXT DEFAULT "1",
         position INTEGER DEFAULT 0,
         progress INTEGER,
+        hidden INTEGER DEFAULT 0,
         UNIQUE(path, novelId),
         FOREIGN KEY (novelId) REFERENCES Novel(id) ON DELETE CASCADE
     )
+`;
+
+export const addHiddenColumnQuery = `
+    ALTER TABLE Chapter ADD COLUMN hidden INTEGER DEFAULT 0
 `;
 
 export const createChapterNovelIdIndexQuery = `

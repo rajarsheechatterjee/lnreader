@@ -71,7 +71,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     lastRead,
     novelSettings: {
       sort = defaultChapterSort,
-      filter = '',
+      filter = 'AND hidden=0',
       showChapterTitles = false,
     },
     openPage,
@@ -89,6 +89,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     refreshChapters,
     deleteChapters,
   } = useNovel(path, pluginId);
+
   const theme = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
 

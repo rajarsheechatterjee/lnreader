@@ -148,12 +148,17 @@ const getPlugin = (pluginId: string) => {
   return plugins[pluginId];
 };
 
+const unloadPlugin = (pluginId: string) => {
+  plugins[pluginId] = undefined;
+};
+
 const LOCAL_PLUGIN_ID = 'local';
 
 export {
   getPlugin,
   installPlugin,
   uninstallPlugin,
+  unloadPlugin,
   updatePlugin,
   fetchPlugins,
   LOCAL_PLUGIN_ID,
