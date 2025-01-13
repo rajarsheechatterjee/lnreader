@@ -438,7 +438,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
               renderItem={({ item }) => (
                 <ChapterItem
                   isDownloading={downloadQueue.some(
-                    c => c.data.chapterId === item.id,
+                    c => c.task.data.chapterId === item.id,
                   )}
                   isLocal={novel.isLocal}
                   theme={theme}

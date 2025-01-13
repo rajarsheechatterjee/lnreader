@@ -35,10 +35,11 @@ export type BackgroundTask =
   | { name: 'SELF_HOST_BACKUP'; data: SelfHostData }
   | { name: 'SELF_HOST_RESTORE'; data: SelfHostData }
   | { name: 'MIGRATE_NOVEL'; data: MigrateNovelData }
-  | {
-      name: 'DOWNLOAD_CHAPTER';
-      data: { chapterId: number; novelName: string; chapterName: string };
-    };
+  | DownloadChapterTask;
+export type DownloadChapterTask = {
+  name: 'DOWNLOAD_CHAPTER';
+  data: { chapterId: number; novelName: string; chapterName: string };
+};
 
 export type BackgroundTaskMetadata = {
   name: string;
@@ -105,7 +106,7 @@ export default class ServiceManager {
     if (taskList[0].meta.isRunning) {
       BackgroundService.updateNotification({
         taskTitle: taskList[0].meta.name,
-        taskDesc: taskList[0].meta.progressText,
+        taskDesc: taskList[0].meta.progressText ?? '',
         progressBar: {
           indeterminate: taskList[0].meta.progress === undefined,
           value: (taskList[0].meta.progress || 0) * 100,
@@ -117,6 +118,16 @@ export default class ServiceManager {
     setMMKVObject(this.STORE_KEY, taskList);
   }
   async executeTask(task: QueuedBackgroundTask) {
+    await BackgroundService.updateNotification({
+      taskTitle: task.meta.name,
+      taskDesc: task.meta.progressText ?? '',
+      progressBar: {
+        indeterminate: true,
+        max: 100,
+        value: 0,
+      },
+    });
+
     switch (task.task.name) {
       case 'IMPORT_EPUB':
         return importEpub(task.task.data, this.setMeta.bind(this));
