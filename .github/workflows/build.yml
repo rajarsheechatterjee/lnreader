@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - master
+      - dev
 jobs:
   build-android:
     name: Build App
@@ -25,7 +25,7 @@ jobs:
           key: ${{ runner.os }}-cache-npm-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-cache-npm-
-    
+
       - name: Install Dependencies
         run: |
           npm install
@@ -70,7 +70,7 @@ jobs:
       - name: Build Android Release
         run: |
           cd android && ./gradlew assembleRelease --no-daemon
-          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/LNReader.apk
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/LNReaderDev.apk
 
       - name: Set Env
         run: |
@@ -83,23 +83,23 @@ jobs:
           COMMIT_COUNT: ${{ env.COMMIT_COUNT }}
         uses: actions/upload-artifact@v4
         with:
-          name: LNReader-r${{ env.COMMIT_COUNT }}
-          path: android/app/build/outputs/apk/release/LNReader.apk
+          name: LNReaderDev-r${{ env.COMMIT_COUNT }}
+          path: android/app/build/outputs/apk/release/LNReaderDev.apk
 
       - name: Build Custom APK
         env:
           COMMIT_COUNT: ${{ env.COMMIT_COUNT }}
           COMMIT_ID: ${{ env.COMMIT_ID }}
         run: |
-          sed -i 's/LNReader/LNReader-r${{ env.COMMIT_COUNT }}(${{ env.COMMIT_ID }})/g' android/app/src/main/res/values/strings.xml
-          cd android && ./gradlew assembleRelease --no-daemon -PcustomAppId=com.rajarsheechatterjee.LNReader.commit_${{ env.COMMIT_ID }}
-          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/LNReader-r${{ env.COMMIT_COUNT }}\(${{ env.COMMIT_ID }}\)-customID.apk
-  
+          sed -i 's/LNReaderDev/LNReaderDev-r${{ env.COMMIT_COUNT }}(${{ env.COMMIT_ID }})/g' android/app/src/main/res/values/strings.xml
+          cd android && ./gradlew assembleRelease --no-daemon -PcustomAppId=com.rajarsheechatterjee.LNReaderDev.commit_${{ env.COMMIT_ID }}
+          mv app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/LNReaderDev-r${{ env.COMMIT_COUNT }}\(${{ env.COMMIT_ID }}\)-customID.apk
+
       - name: Upload Custom APK
         env:
           COMMIT_COUNT: ${{ env.COMMIT_COUNT }}
           COMMIT_ID: ${{ env.COMMIT_ID }}
         uses: actions/upload-artifact@v4
         with:
-          name: LNReader-r${{ env.COMMIT_COUNT }}(${{ env.COMMIT_ID }})-customID
-          path: android/app/build/outputs/apk/release/LNReader-r${{ env.COMMIT_COUNT }}(${{ env.COMMIT_ID }})-customID.apk
+          name: LNReaderDev-r${{ env.COMMIT_COUNT }}(${{ env.COMMIT_ID }})-customID
+          path: android/app/build/outputs/apk/release/LNReaderDev-r${{ env.COMMIT_COUNT }}(${{ env.COMMIT_ID }})-customID.apk
