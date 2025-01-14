@@ -1,9 +1,9 @@
 {
   "aboutScreen": {
-    "website": "Website",
+    "website": "",
     "discord": "Discord",
     "github": "Github",
-    "helpTranslate": "Help translate",
+    "helpTranslate": "INDONESIA",
     "sources": "Sources",
     "version": "Version",
     "whatsNew": "What's new"
@@ -309,7 +309,7 @@
     "empty": "Pustaka kamu kosong. Tambahkan serial ke pustaka kamu dari Jelajah.\n",
     "extraMenu": {
       "importEpub": "Import Epub",
-      "openRandom": "Open Random Entry",
+      "openRandom": "",
       "updateCategory": "Update Category",
       "updateLibrary": "Update Library"
     },
