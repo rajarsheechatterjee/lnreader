@@ -27,6 +27,9 @@ const ReaderTab: React.FC = () => {
       <ReaderValueChange
         label={getString('readerScreen.bottomSheet.lineHeight')}
         valueKey="lineHeight"
+        min={1}
+        max={4}
+        unit="rem"
       />
       <ReaderValueChange
         label={getString('readerScreen.bottomSheet.padding')}

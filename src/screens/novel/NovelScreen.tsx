@@ -89,6 +89,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     refreshChapters,
     deleteChapters,
   } = useNovel(path, pluginId);
+
   const theme = useTheme();
   const { top: topInset, bottom: bottomInset } = useSafeAreaInsets();
 
@@ -381,7 +382,9 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
             {selected.length === 0 ? (
               <NovelAppbar
                 novel={novel}
-                chapters={chapters}
+                chapters={
+                  sort.includes('DESC') ? chapters.slice().reverse() : chapters
+                }
                 deleteChapters={deleteChs}
                 downloadChapters={downloadChs}
                 showEditInfoModal={showEditInfoModal}

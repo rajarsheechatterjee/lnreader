@@ -9,7 +9,6 @@ import ReaderFooter from './components/ReaderFooter';
 import WebViewReader from './components/WebViewReader';
 import ReaderBottomSheetV2 from './components/ReaderBottomSheet/ReaderBottomSheet';
 import ChapterDrawer from './components/ChapterDrawer';
-import ChapterLoadingScreen from './ChapterLoadingScreen/ChapterLoadingScreen';
 import { ErrorScreenV2 } from '@components';
 import { ChapterScreenProps } from '@navigators/types';
 import WebView from 'react-native-webview';

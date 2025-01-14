@@ -8,6 +8,7 @@ import { useTheme } from '@hooks/persisted';
 
 interface ButtonProps extends Partial<PaperButtonProps> {
   title?: string;
+  children?: string;
 }
 
 const Button: React.FC<ButtonProps> = props => {
