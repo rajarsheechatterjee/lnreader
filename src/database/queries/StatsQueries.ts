@@ -14,7 +14,7 @@ const getChaptersReadCountQuery = `
   FROM Chapter
   JOIN Novel
   ON Chapter.novelId = Novel.id
-  WHERE Chapter.unread = 0 AND Novel.inLibrary = 1
+  WHERE Chapter.unread = 0 AND Novel.inLibrary = 1 AND Chapter.hidden = 0
   `;
 
 const getChaptersTotalCountQuery = `
@@ -22,7 +22,7 @@ const getChaptersTotalCountQuery = `
   FROM Chapter
   JOIN Novel
   ON Chapter.novelId = Novel.id
-  WHERE Novel.inLibrary = 1
+  WHERE Novel.inLibrary = 1 AND Chapter.hidden = 0
   `;
 
 const getChaptersUnreadCountQuery = `
@@ -30,7 +30,7 @@ const getChaptersUnreadCountQuery = `
   FROM Chapter
   JOIN Novel
   ON Chapter.novelId = Novel.id
-  WHERE Chapter.unread = 1 AND Novel.inLibrary = 1
+  WHERE Chapter.unread = 1 AND Novel.inLibrary = 1 AND Chapter.hidden = 0
   `;
 
 const getChaptersDownloadedCountQuery = `

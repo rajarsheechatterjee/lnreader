@@ -22,6 +22,16 @@ export const insertChapters = async (
   if (!chapters?.length) {
     return;
   }
+  const existingChapters = await getPageChapters(
+    novelId,
+    '',
+    '',
+    chapters[0].page || '1',
+  );
+  const chaptersToHide = existingChapters.filter(
+    c => !chapters.some(ch => ch.path === c.path),
+  );
+
   db.transaction(tx => {
     chapters.forEach((chapter, index) => {
       tx.executeSql(
@@ -40,8 +50,8 @@ export const insertChapters = async (
             tx.executeSql(
               `
                 UPDATE Chapter SET
-                  page = ?, position = ?
-                WHERE path = ? AND novelId = ? AND (page != ? OR position != ?)
+                  page = ?, position = ?, hidden = 0
+                WHERE path = ? AND novelId = ? AND (page != ? OR position != ? OR hidden != 0)
               `,
               [
                 chapter.page || '1',
@@ -54,6 +64,12 @@ export const insertChapters = async (
             );
           }
         },
+      );
+    });
+    chaptersToHide.forEach(chapter => {
+      tx.executeSql(
+        'UPDATE Chapter SET hidden = 1 WHERE path = ? AND novelId = ?',
+        [chapter.path, novelId],
       );
     });
   });

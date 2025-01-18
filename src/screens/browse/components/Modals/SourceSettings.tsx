@@ -5,10 +5,13 @@ import { Button } from '@components/index';
 import { useTheme } from '@hooks/persisted';
 import { getString } from '@strings/translations';
 import { Storage } from '@plugins/helpers/storage';
+import { unloadPlugin } from '@plugins/pluginManager';
+import { SwitchItem } from '@components';
 
 interface PluginSetting {
   value: string;
   label: string;
+  type?: 'Switch';
 }
 
 interface PluginSettings {
@@ -75,6 +78,7 @@ const SourceSettingsModal: React.FC<SourceSettingsModal> = ({
     Object.entries(formValues).forEach(([key, value]) => {
       storage.set(key, value);
     });
+    unloadPlugin(pluginId);
     onDismiss();
   };
 
@@ -112,20 +116,30 @@ const SourceSettingsModal: React.FC<SourceSettingsModal> = ({
       </Text>
       <Text style={[{ color: theme.onSurfaceVariant }]}>{description}</Text>
 
-      {Object.entries(pluginSettings).map(([key, setting]) => (
-        <TextInput
-          key={key}
-          mode="outlined"
-          label={setting.label}
-          value={formValues[key] || ''}
-          onChangeText={value => handleChange(key, value)}
-          placeholder={`Enter ${setting.label}`}
-          placeholderTextColor={theme.onSurfaceDisabled}
-          underlineColor={theme.outline}
-          style={[{ color: theme.onSurface }, styles.textInput]}
-          theme={{ colors: { ...theme } }}
-        />
-      ))}
+      {Object.entries(pluginSettings).map(([key, setting]) =>
+        setting?.type === 'Switch' ? (
+          <SwitchItem
+            key={key}
+            label={setting.label}
+            value={!!formValues[key]}
+            onPress={() => handleChange(key, formValues[key] ? '' : 'true')}
+            theme={theme}
+          />
+        ) : (
+          <TextInput
+            key={key}
+            mode="outlined"
+            label={setting.label}
+            value={formValues[key] || ''}
+            onChangeText={value => handleChange(key, value)}
+            placeholder={`Enter ${setting.label}`}
+            placeholderTextColor={theme.onSurfaceDisabled}
+            underlineColor={theme.outline}
+            style={[{ color: theme.onSurface }, styles.textInput]}
+            theme={{ colors: { ...theme } }}
+          />
+        ),
+      )}
 
       <View style={styles.customCSSButtons}>
         <Button

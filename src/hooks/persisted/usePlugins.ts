@@ -157,6 +157,7 @@ export default function usePlugins() {
               name: _plg.name,
               version: _plg.version,
               hasUpdate: false,
+              hasSettings: !!_plg.pluginSettings,
             };
             if (newPlugin.id === lastUsedPlugin?.id) {
               setLastUsedPlugin(newPlugin);

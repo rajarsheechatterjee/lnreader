@@ -223,7 +223,11 @@ const NovelInfoHeader = ({
           ) : null}
           <IconButton
             icon="filter-variant"
-            iconColor={filter ? filterColor(theme.isDark) : theme.onSurface}
+            iconColor={
+              filter.trim() !== 'AND hidden=0'
+                ? filterColor(theme.isDark)
+                : theme.onSurface
+            }
             size={24}
             onPress={() => novelBottomSheetRef.current?.present()}
           />
