@@ -86,7 +86,7 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: If this is an issue with a source, I should be opening an issue in the [sources repository](https://github.com/lnreader/lnreader-sources/issues/new/choose).
+        - label: IF THIS IS AN ISSUE WITH A SOURCE, I SHOULD BE OPENING AN ISSUE IN THE [SOURCES REPOSITORY](https://github.com/lnreader/lnreader-sources/issues/new/choose).
           required: true
         - label: I have updated the app to version **[2.0.0](https://github.com/lnreader/lnreader/releases/latest)**.
           required: true
