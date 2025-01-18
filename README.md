@@ -1,8 +1,10 @@
 <p align="center">
-  <img src="./.github/readme-images/icon_alt.png" align="center" width="128" />
+  <img src="./.github/readme-images/icon_alt.png" align="center" width="128" style="border-radius: 64px"/>
 <p>
 <h1 align="center">
-  LNReader
+
+  [LN](#)Reader
+
 </h1>
 <p align="center">
   LNReader is a Tachiyomi-like, free and open source light novel reader for Android.
@@ -35,13 +37,13 @@
 
 ## Download
 
-Get the app from our [releases page](https://github.com/rajarsheechatterjee/LNReader/releases).
+Get the app from our [releases page](https://github.com/LNReader/lnreader/releases).
 
-## Sources
+## Plugins (extensions)
 
 LNReader does not have any affiliation with the content providers available.
 
-Source requests should be created at [LNReader/lnreader-sources](https://github.com/LNReader/lnreader-sources).
+Plugin requests should be created at [LNReader/lnreader-plugins](https://github.com/LNReader/lnreader-plugins).
 
 ## Building & Contributing
 
@@ -50,3 +52,11 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md)
 ## License
 
 [MIT](https://github.com/rajarsheechatterjee/lnreader/blob/main/LICENSE)
+
+## Tools
+
+[Migration helper](https://lnreader.github.io/plugins-migration/)
+
+[Backup tools](https://github.com/LNReader/remote-service)
+
+[Discord Bot](https://github.com/LNReader/lnreader-bot)
