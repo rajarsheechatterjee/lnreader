@@ -82,7 +82,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
     bookmarkChapters,
     markChaptersRead,
     markChaptersUnread,
-    markPreviouschaptersRead,
+    markPreviousChaptersRead,
     markPreviousChaptersUnread,
     followNovel,
     deleteChapter,
@@ -261,7 +261,7 @@ const Novel = ({ route, navigation }: NovelScreenProps) => {
         list.push({
           icon: 'playlist-check',
           onPress: () => {
-            markPreviouschaptersRead(selected[0].id);
+            markPreviousChaptersRead(selected[0].id);
             setSelected([]);
           },
         });

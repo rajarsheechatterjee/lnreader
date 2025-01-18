@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.rajarsheechatterjee.LNReader",
+    package = "com.rajarsheechatterjee.LNReaderDev",
 )
 
 android_resource(
     name = "res",
-    package = "com.rajarsheechatterjee.LNReader",
+    package = "com.rajarsheechatterjee.LNReaderDev",
     res = "src/main/res",
 )
 

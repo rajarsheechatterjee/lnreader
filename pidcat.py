@@ -63,7 +63,7 @@ if (args.no_color):
 
 package = args.package
 if len(package) == 0:
-  package.append('com.rajarsheechatterjee.LNReader')
+  package.append('com.rajarsheechatterjee.LNReaderDev')
 
 # enabling Windows 10 VT100 support
 def enableVT100():
@@ -296,7 +296,7 @@ def parse_start_proc(line):
     return line_package, '', line_pid, line_uid, ''
   return None
 
-def tag_in_tags_regex(tag, tags):  
+def tag_in_tags_regex(tag, tags):
   return any(re.match(r'^' + t + r'$', tag) for t in map(str.strip, tags))
 
 ps_command = base_adb_command + ['shell', 'ps']
