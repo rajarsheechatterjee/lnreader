@@ -41,6 +41,7 @@ export enum LibrarySortOrder {
   LastRead_DESC = 'lastReadAt DESC',
   LastUpdated_ASC = 'lastUpdatedAt ASC',
   LastUpdated_DESC = 'lastUpdatedAt DESC',
+  RANDOM = 'RANDOM',
 }
 
 export const librarySortOrderList = [
@@ -73,6 +74,12 @@ export const librarySortOrderList = [
     label: getString('libraryScreen.bottomSheet.sortOrders.dateAdded'),
     ASC: LibrarySortOrder.DateAdded_ASC,
     DESC: LibrarySortOrder.DateAdded_DESC,
+  },
+  {
+    label: getString('libraryScreen.bottomSheet.sortOrders.random'),
+    ASC: LibrarySortOrder.RANDOM,
+    DESC: LibrarySortOrder.RANDOM,
+    isRandom: true,
   },
 ];
 

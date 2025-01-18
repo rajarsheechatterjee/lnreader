@@ -85,10 +85,8 @@ const getLibraryWithCategoryQuery = `
 export const getLibraryWithCategory = ({
   filter,
   searchText,
-  sortOrder,
   downloadedOnlyMode,
 }: {
-  sortOrder?: string;
   filter?: string;
   searchText?: string;
   downloadedOnlyMode?: boolean;
@@ -106,10 +104,6 @@ export const getLibraryWithCategory = ({
   if (searchText) {
     query += ' AND name LIKE ? ';
     preparedArgument.push(`%${searchText}%`);
-  }
-
-  if (sortOrder) {
-    query += ` ORDER BY ${sortOrder} `;
   }
 
   return new Promise(resolve =>

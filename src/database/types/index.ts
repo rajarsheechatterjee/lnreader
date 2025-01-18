@@ -1,4 +1,5 @@
 import { NovelStatus } from '@plugins/types';
+import { LibrarySortOrder } from '@screens/library/constants/constants';
 export interface NovelInfo {
   id: number;
   path: string;
@@ -65,6 +66,7 @@ export interface Category {
   id: number;
   name: string;
   sort: number;
+  sortContents: LibrarySortOrder;
 }
 
 export interface NovelCategory {

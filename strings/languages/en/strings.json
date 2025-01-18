@@ -303,7 +303,8 @@
         "lastRead": "Last read",
         "lastUpdated": "Last updated",
         "totalChapters": "Total chapters",
-        "unread": "Unread"
+        "unread": "Unread",
+        "random": "Random"
       }
     },
     "empty": "Your library is empty. Add series to your library from Browse.",

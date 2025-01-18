@@ -73,7 +73,13 @@ export const SortItem = ({ label, status, onPress, theme }: SortItemProps) => (
   >
     {status ? (
       <MaterialCommunityIcons
-        name={status === 'asc' ? 'arrow-up' : 'arrow-down'}
+        name={
+          status === 'random'
+            ? 'reload'
+            : status === 'asc'
+            ? 'arrow-up'
+            : 'arrow-down'
+        }
         color={theme.primary}
         size={21}
         style={styles.icon}

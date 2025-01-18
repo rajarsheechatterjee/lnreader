@@ -1,10 +1,13 @@
 import { getString } from '@strings/translations';
+import { SQLiteDatabase } from 'expo-sqlite';
+import { txnErrorCallback } from '@database/utils/helpers';
 
 export const createCategoriesTableQuery = `
   CREATE TABLE IF NOT EXISTS Category (
     id INTEGER PRIMARY KEY AUTOINCREMENT, 
     name TEXT NOT NULL UNIQUE,
-    sort INTEGER
+    sort INTEGER,
+    sortContents TEXT
   );
 `;
 
@@ -21,3 +24,21 @@ INSERT INTO Category (id, name, sort) VALUES
   (1, "${getString('categories.default')}", 1),
   (2, "${getString('categories.local')}", 2)
 `;
+
+export const addSortContentsToTable = (db: SQLiteDatabase) => {
+  db.transaction(tx => {
+    tx.executeSql(
+      'PRAGMA table_info("Category");',
+      [],
+      (tx2, resultSet) => {
+        const hasSortContents = !!resultSet.rows._array.find(
+          v => v.name === 'sortContents',
+        );
+        if (!hasSortContents) {
+          tx.executeSql('ALTER TABLE Category ADD COLUMN sortContents TEXT;');
+        }
+      },
+      txnErrorCallback,
+    );
+  });
+};
