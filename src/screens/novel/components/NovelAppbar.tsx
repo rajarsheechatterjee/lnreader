@@ -7,8 +7,9 @@ import Animated, {
   interpolateColor,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import EpubIconButton from './EpubIconButton';
+import ExportEpubModal from './ExportToEpub/ExportEpubModal';
 import { ChapterInfo, NovelInfo } from '@database/types';
+import { useBoolean } from '@hooks/index';
 
 const NovelAppbar = ({
   novel,
@@ -43,7 +44,7 @@ const NovelAppbar = ({
     const backgroundColor = interpolateColor(
       headerOpacity.value,
       [0, 1],
-      ['transparent', theme.surface2],
+      ['transparent', theme.surface2!],
     );
     return {
       backgroundColor,
@@ -52,13 +53,24 @@ const NovelAppbar = ({
 
   const [downloadMenu, showDownloadMenu] = useState(false);
   const [extraMenu, showExtraMenu] = useState(false);
+  const exportEpubModal = useBoolean(false);
 
   return (
     <Animated.View style={[headerOpacityStyle]}>
       <Appbar.Header theme={{ colors: { ...theme, surface: 'transparent' } }}>
         <Appbar.BackAction onPress={goBack} />
         <Appbar.Content title="" />
-        <EpubIconButton theme={theme} novel={novel} chapters={chapters} />
+        <Appbar.Action
+          icon="book-arrow-down-outline"
+          onPress={exportEpubModal.setTrue}
+        />
+        <ExportEpubModal
+          theme={theme}
+          novel={novel}
+          chapters={chapters}
+          isVisible={exportEpubModal.value}
+          onClose={exportEpubModal.setFalse}
+        />
         <Appbar.Action icon="share-variant" onPress={shareNovel} />
         <Appbar.Action
           icon="text-box-search-outline"

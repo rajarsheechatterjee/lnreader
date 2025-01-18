@@ -21,6 +21,7 @@ import { getBatteryLevelSync } from 'react-native-device-info';
 import * as Speech from 'expo-speech';
 import { PLUGIN_STORAGE } from '@utils/Storages';
 import { useChapterContext } from '../ChapterContext';
+import ChapterLoadingScreen from '../ChapterLoadingScreen/ChapterLoadingScreen';
 
 type WebViewPostEvent = {
   type: string;
@@ -31,6 +32,7 @@ type WebViewReaderProps = {
   html: string;
   nextChapter?: ChapterInfo;
   webViewRef: React.RefObject<WebView>;
+  loading: boolean;
   saveProgress(percentage: number): void;
   onPress(): void;
   navigateChapter(position: 'NEXT' | 'PREV'): void;
@@ -47,6 +49,7 @@ const onLogMessage = (payload: { nativeEvent: { data: string } }) => {
     }
   }
 };
+
 
 const { RNDeviceInfo } = NativeModules;
 const deviceInfoEmitter = new NativeEventEmitter(RNDeviceInfo);
@@ -176,10 +179,10 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
               <link rel="stylesheet" href="${assetsUriPrefix}/css/index.css">
               <style>
               :root {
-                --StatusBar-currentHeight: ${StatusBar.currentHeight}px;
+                --StatusBar-currentHeight: ${StatusBar.currentHeight};
                 --readerSettings-theme: ${readerSettings.theme};
-                --readerSettings-padding: ${readerSettings.padding}px;
-                --readerSettings-textSize: ${readerSettings.textSize}px;
+                --readerSettings-padding: ${readerSettings.padding}%;
+                --readerSettings-textSize: ${readerSettings.textSize}rem;
                 --readerSettings-textColor: ${readerSettings.textColor};
                 --readerSettings-textAlign: ${readerSettings.textAlign};
                 --readerSettings-lineHeight: ${readerSettings.lineHeight};

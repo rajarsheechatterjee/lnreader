@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { IconButton, Portal } from 'react-native-paper';
+import { Portal } from 'react-native-paper';
 import ChooseEpubLocationModal from './ChooseEpubLocationModal';
 import { StatusBar } from 'react-native';
 import { ThemeColors } from '@theme/types';
@@ -8,27 +8,29 @@ import EpubBuilder from '@cd-z/react-native-epub-creator';
 import { ChapterInfo, NovelInfo } from '@database/types';
 
 import { useChapterReaderSettings } from '@hooks/persisted';
-import { useBoolean } from '@hooks/index';
 import { showToast } from '@utils/showToast';
 import { NOVEL_STORAGE } from '@utils/Storages';
 import FileManager from '@native/FileManager';
+import color from 'color';
+//@ts-ignore
+import css from '../../../../../android/app/src/main/assets/css/index';
+// import style from './index.css';
 
-interface EpubIconButtonProps {
+interface ExportEpubModalProps {
   theme: ThemeColors;
   novel: NovelInfo;
   chapters: ChapterInfo[];
+  isVisible: boolean;
+  onClose: () => void;
 }
 
-const EpubIconButton: React.FC<EpubIconButtonProps> = ({
+const ExportEpubModal: React.FC<ExportEpubModalProps> = ({
   theme,
   novel,
   chapters,
+  isVisible,
+  onClose,
 }) => {
-  const {
-    value: isVisible,
-    setTrue: showModal,
-    setFalse: hideModal,
-  } = useBoolean(false);
   const readerSettings = useChapterReaderSettings();
   const {
     epubUseAppTheme = false,
@@ -41,36 +43,31 @@ const EpubIconButton: React.FC<EpubIconButtonProps> = ({
       `${
         epubUseAppTheme
           ? `
-              html {
-                scroll-behavior: smooth;
-                overflow-x: hidden;
-                padding-top: ${StatusBar.currentHeight};
-                word-wrap: break-word;
-              }
-              body {
-                padding-left: ${readerSettings.padding}%;
-                padding-right: ${readerSettings.padding}%;
-                padding-bottom: 40px;
-                font-size: ${readerSettings.textSize}px;
-                color: ${readerSettings.textColor};
-                text-align: ${readerSettings.textAlign};
-                line-height: ${readerSettings.lineHeight};
-                font-family: "${readerSettings.fontFamily}";
-                background-color: "${readerSettings.theme}";
-              }
-              hr {
-                margin-top: 20px;
-                margin-bottom: 20px;
-              }
-              a {
-                color: ${theme.primary};
-              }
-              img {
-                display: block;
-                width: auto;
-                height: auto;
-                max-width: 100%;
-            }`
+             :root {
+               --StatusBar-currentHeight: ${StatusBar.currentHeight};
+               --readerSettings-theme: ${readerSettings.theme};
+               --readerSettings-padding: ${readerSettings.padding}%;
+               --readerSettings-textSize: ${readerSettings.textSize / 10}rem;
+               --readerSettings-textColor: ${readerSettings.textColor};
+               --readerSettings-textAlign: ${readerSettings.textAlign};
+               --readerSettings-lineHeight: ${readerSettings.lineHeight}rem;
+               --theme-primary: ${theme.primary};
+               --theme-onPrimary: ${theme.onPrimary};
+               --theme-secondary: ${theme.secondary};
+               --theme-tertiary: ${theme.tertiary};
+               --theme-onTertiary: ${theme.onTertiary};
+               --theme-onSecondary: ${theme.onSecondary};
+               --theme-surface: ${theme.surface};
+               --theme-surface-0-9: ${color(theme.surface)
+                 .alpha(0.9)
+                 .toString()};
+               --theme-onSurface: ${theme.onSurface};
+               --theme-surfaceVariant: ${theme.surfaceVariant};
+               --theme-onSurfaceVariant: ${theme.onSurfaceVariant};
+               --theme-outline: ${theme.outline};
+               --theme-rippleColor: ${theme.rippleColor};
+             }
+             ` + (css as string).replace(/chapter/g, '#chapter')
           : ''
       }
       ${
@@ -97,7 +94,7 @@ const EpubIconButton: React.FC<EpubIconButtonProps> = ({
         let sourceId =${novel.pluginId};
         let chapterId ="";
         let novelId =${novel.id};
-        let html = document.querySelector("chapter").innerHTML;
+        let html = document.querySelector("#chapter").innerHTML;
           
         ${readerSettings.customJS}
         `,
@@ -108,7 +105,6 @@ const EpubIconButton: React.FC<EpubIconButtonProps> = ({
     var epub = new EpubBuilder(
       {
         title: novel.name,
-        fileName: novel.name.replace(/\s/g, ''),
         language: 'en',
         cover: novel.cover,
         description: novel.summary,
@@ -119,36 +115,21 @@ const EpubIconButton: React.FC<EpubIconButtonProps> = ({
       },
       uri,
     );
-    console.log({
-      title: novel.name,
-      fileName: novel.name.replace(/\s/g, ''),
-      language: 'en',
-      cover: novel.cover,
-      description: novel.summary,
-      author: novel.author,
-      bookId: novel.pluginId.toString(),
-      stylesheet: epubStyle || undefined,
-      js: epubUseCustomJS ? epubJS : undefined,
-    });
+
     try {
       await epub.prepare();
+
       for (let i = 0; i < chapters.length; i++) {
         const chapter = chapters[i];
         const filePath = `${NOVEL_STORAGE}/${novel.pluginId}/${novel.id}/${chapter.id}/index.html`;
         if (await FileManager.exists(filePath)) {
           const downloaded = FileManager.readFile(filePath);
-          console.log({
-            title:
-              chapter.name?.trim() ?? 'Chapter ' + (chapter.chapterNumber || i),
-            fileName: 'Chapter' + i,
-            htmlBody: `<chapter data-novel-id='${novel.pluginId}' data-chapter-id='${chapter.id}'>${downloaded}</chapter>`,
-          });
 
           await epub.addChapter({
             title:
               chapter.name?.trim() ?? 'Chapter ' + (chapter.chapterNumber || i),
             fileName: 'Chapter' + i,
-            htmlBody: `<chapter data-novel-id='${novel.pluginId}' data-chapter-id='${chapter.id}'>${downloaded}</chapter>`,
+            htmlBody: `<div id="chapter" data-plugin-id='${novel.pluginId}' data-novel-id='${chapter.novelId}' data-chapter-id='${chapter.id}'>${downloaded}</div>`,
           });
         }
       }
@@ -160,22 +141,15 @@ const EpubIconButton: React.FC<EpubIconButtonProps> = ({
       await epub.discardChanges();
     }
   };
+
   return (
-    <>
-      <IconButton
-        icon="book-arrow-down-outline"
-        iconColor={theme.onBackground}
-        size={21}
-        onPress={showModal}
+    <Portal>
+      <ChooseEpubLocationModal
+        isVisible={isVisible}
+        hideModal={onClose}
+        onSubmit={createEpub}
       />
-      <Portal>
-        <ChooseEpubLocationModal
-          isVisible={isVisible}
-          hideModal={hideModal}
-          onSubmit={createEpub}
-        />
-      </Portal>
-    </>
+    </Portal>
   );
 };
-export default EpubIconButton;
+export default ExportEpubModal;

@@ -87,13 +87,21 @@ const InfoItem = ({
   title,
   icon = 'information-outline',
   theme,
+  paddingHorizontal = 16,
 }: {
   title: string;
   icon?: string;
   theme: ThemeColors;
+  paddingHorizontal?: number;
 }) => (
-  <View style={styles.infoCtn}>
-    <MaterialIcon size={20} color={theme.onSurfaceVariant} name={icon} />
+  <View style={[styles.infoCtn, { paddingHorizontal }]}>
+    <MaterialIcon
+      size={20}
+      color={theme.onSurfaceVariant}
+      name={icon}
+      style={{ width: 20 }}
+    />
+
     <Text style={[styles.infoMsg, { color: theme.onSurfaceVariant }]}>
       {title}
     </Text>
@@ -159,10 +167,13 @@ const styles = StyleSheet.create({
   },
   infoCtn: {
     paddingVertical: 12,
-    paddingHorizontal: 16,
+    // paddingHorizontal: 16,
+    display: 'flex',
+    flexDirection: 'row',
   },
   infoMsg: {
-    marginTop: 12,
+    marginLeft: 6,
+    verticalAlign: 'middle',
     fontSize: 12,
   },
   iconCtn: {

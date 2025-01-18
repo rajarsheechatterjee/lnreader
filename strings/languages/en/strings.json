@@ -345,6 +345,7 @@
     "continueReading": "Continue reading",
     "convertToEpubModal": {
       "chaptersWarning": "Only downloaded chapters are included in the EPUB",
+      "settingsWarning": "Settings may not apply to your EPUB reader",
       "chooseLocation": "Select EPUB storage directory",
       "pathToFolder": "Path to EPUB save folder",
       "useCustomCSS": "Use custom CSS",

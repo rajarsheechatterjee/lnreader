@@ -9,13 +9,14 @@
     "start": "react-native start",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "prettier": "prettier --write \"./src/**/*.{js,jsx,ts,tsx}\" ./scripts",
-    "buildRelease": "node scripts/setEnvFile.cjs Release && cd android && ./gradlew clean && ./gradlew assembleRelease",
+    "buildRelease": "node scripts/convertCssToJs.cjs && node scripts/setEnvFile.cjs Release && cd android && ./gradlew clean && ./gradlew assembleRelease",
     "open": "open ./android/app/build/outputs/apk/release/",
     "strings": "node scripts/stringTypes.cjs",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "cssToJs": "node scripts/convertCssToJs.cjs"
   },
   "dependencies": {
-    "@cd-z/react-native-epub-creator": "^2.0.4",
+    "@cd-z/react-native-epub-creator": "^3.0.0",
     "@gorhom/bottom-sheet": "^4.4.5",
     "@react-native-community/slider": "^4.4.2",
     "@react-native-cookies/cookies": "^6.2.1",
@@ -50,6 +51,7 @@
     "react-native-device-info": "^8.4.7",
     "react-native-drawer-layout": "^3.2.2",
     "react-native-error-boundary": "^1.1.16",
+    "react-native-file-access": "^3.1.0",
     "react-native-gesture-handler": "~2.12.0",
     "react-native-lottie-splash-screen": "^1.0.1",
     "react-native-mmkv": "^2.11.0",
