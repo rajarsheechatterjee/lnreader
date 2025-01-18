@@ -21,6 +21,7 @@ import { getBatteryLevelSync } from 'react-native-device-info';
 import * as Speech from 'expo-speech';
 import { PLUGIN_STORAGE } from '@utils/Storages';
 import { useChapterContext } from '../ChapterContext';
+import { usePluginInfo } from '@hooks/persisted/usePlugins';
 
 type WebViewPostEvent = {
   type: string;
@@ -79,6 +80,7 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
   );
   const batteryLevel = useMemo(getBatteryLevelSync, []);
   const plugin = getPlugin(novel?.pluginId);
+  const pluginInfo = usePluginInfo(novel?.pluginId);
   const pluginCustomJS = `file://${PLUGIN_STORAGE}/${plugin?.id}/custom.js`;
   const pluginCustomCSS = `file://${PLUGIN_STORAGE}/${plugin?.id}/custom.css`;
 
@@ -175,6 +177,16 @@ const WebViewReader: React.FC<WebViewReaderProps> = ({
               <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
               <link rel="stylesheet" href="${assetsUriPrefix}/css/index.css">
               <style>
+              ${
+                pluginInfo?.lang === '‎العربية'
+                  ? `
+                body {
+                  direction: rtl;
+                  text-align: right; 
+                }
+              `
+                  : ''
+              }
               :root {
                 --StatusBar-currentHeight: ${StatusBar.currentHeight}px;
                 --readerSettings-theme: ${readerSettings.theme};
