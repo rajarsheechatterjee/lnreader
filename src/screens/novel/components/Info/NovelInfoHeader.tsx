@@ -16,6 +16,7 @@ import {
   NovelThumbnail,
   NovelTitle,
   NovelGenres,
+  NovelRating,
 } from './NovelInfoComponents';
 import { Row } from '@components/Common';
 import ReadButton from './ReadButton';
@@ -86,7 +87,7 @@ const NovelInfoHeader = ({
       (getMMKVObject<PluginItem[]>(AVAILABLE_PLUGINS) || []).find(
         plugin => plugin.id === novel.pluginId,
       )?.name || novel.pluginId,
-    [],
+    [novel.pluginId],
   );
 
   return (
@@ -130,7 +131,7 @@ const NovelInfoHeader = ({
                   name="fountain-pen-tip"
                   size={14}
                   color={theme.onSurfaceVariant}
-                  style={{ marginRight: 4 }}
+                  style={styles.icon}
                 />
                 <NovelInfo theme={theme}>{novel.author}</NovelInfo>
               </Row>
@@ -141,7 +142,7 @@ const NovelInfoHeader = ({
                   name="palette-outline"
                   size={14}
                   color={theme.onSurfaceVariant}
-                  style={{ marginRight: 4 }}
+                  style={styles.icon}
                 />
                 <NovelInfo theme={theme}>{novel.artist}</NovelInfo>
               </Row>
@@ -151,7 +152,7 @@ const NovelInfoHeader = ({
                 name={getStatusIcon(novel.status)}
                 size={14}
                 color={theme.onSurfaceVariant}
-                style={{ marginRight: 4 }}
+                style={styles.icon}
               />
               <NovelInfo theme={theme}>
                 {(translateNovelStatus(novel.status) ||
@@ -160,6 +161,12 @@ const NovelInfoHeader = ({
                   pluginName}
               </NovelInfo>
             </Row>
+            {novel.rating ? (
+              <Row>
+                <NovelRating theme={theme} rating={novel.rating} />
+                <NovelInfo theme={theme}>({novel.rating.toFixed(1)})</NovelInfo>
+              </Row>
+            ) : null}
           </View>
         </NovelInfoContainer>
       </CoverImage>
@@ -260,5 +267,9 @@ const styles = StyleSheet.create({
   },
   infoItem: {
     marginVertical: 2,
+  },
+  icon: {
+    marginRight: 4,
+    marginBottom: 4,
   },
 });

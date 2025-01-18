@@ -263,6 +263,41 @@ const NovelGenres = ({
   );
 };
 
+const NovelRating = ({
+  theme,
+  rating,
+}: {
+  theme: ThemeColors;
+  rating: number;
+}) => {
+  const totalStars = 5;
+  const starSize = 18;
+
+  const getStarIcon = (index: number) => {
+    if (rating >= index + 1) {
+      return 'star';
+    }
+    if (rating >= index + 0.5) {
+      return 'star-half-full';
+    }
+    return 'star-outline';
+  };
+
+  return (
+    <View style={styles.starsContainer}>
+      {Array.from({ length: totalStars }, (_, index) => (
+        <IconButton
+          key={index}
+          icon={getStarIcon(index)}
+          size={starSize}
+          iconColor={theme.primary}
+          style={styles.star}
+        />
+      ))}
+    </View>
+  );
+};
+
 export {
   NovelInfoContainer,
   CoverImage,
@@ -272,6 +307,7 @@ export {
   FollowButton,
   TrackerButton,
   NovelGenres,
+  NovelRating,
 };
 
 const styles = StyleSheet.create({
@@ -295,6 +331,7 @@ const styles = StyleSheet.create({
   },
   novelTitle: {
     fontSize: 20,
+    marginBottom: 4,
   },
   novelInfo: {
     fontSize: 14,
@@ -322,5 +359,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     borderRadius: 50,
     textTransform: 'capitalize',
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  star: {
+    margin: -8,
+    marginRight: -7,
   },
 });
