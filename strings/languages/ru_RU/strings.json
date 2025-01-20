@@ -66,7 +66,7 @@
       "backupInterruped": "Резервное копирование прервано",
       "googleDriveBackup": "Бэкап Google Drive",
       "restore": "Drive Restore",
-      "restoreInterruped": "Drive Restore Interruped"
+      "restoreInterruped": "Восстановление прервано"
     },
     "googeDrive": "Google Drive",
     "googeDriveDesc": "Резервное копирование на Google Drive",
@@ -81,8 +81,8 @@
     "noBackupFound": "Резервные копии не найдены",
     "preparingData": "Подготовка данных",
     "remote": {
-      "backup": "Self Host Backup",
-      "host": "Host",
+      "backup": "Резервное копирование",
+      "host": "Сервер",
       "unknownHost": "Неизвестный хост"
     },
     "remoteBackup": "Удалённое резервное копирование",
@@ -130,7 +130,7 @@
   "browseSettings": "Настройки обзора",
   "browseSettingsScreen": {
     "concurrentSearches": "Параллельный поиск источников",
-    "multi": "Многоязыковое",
+    "multi": "Multi",
     "languages": "Языки"
   },
   "categories": {
@@ -216,7 +216,7 @@
   "downloadScreen": {
     "cancelDownloads": "Отменить загрузки",
     "cancelled": "Загрузки отменены.",
-    "chapterEmptyOrScrapeError": "Either chapter is empty or the app couldn't scrape it",
+    "chapterEmptyOrScrapeError": "Либо глава пуста, либо приложению не удалось ее обработать",
     "chapterName": "Глава: %{name}",
     "completed": "Загрузка завершена",
     "dbInfo": "Загрузки сохраняются в базе данных SQLite.",
@@ -352,7 +352,7 @@
       "useCustomJSWarning": "Может поддерживаться не всеми читателями EPUB",
       "useReaderTheme": "Использовать тему для чтения"
     },
-    "deleteChapterError": "Cant delete chapter chapter folder",
+    "deleteChapterError": "Не могу удалить папку с главами",
     "deleteMessage": "Удалить загруженные главы?",
     "deletedAllDownloads": "Удалить все загрузки",
     "download": {
@@ -387,7 +387,7 @@
     "migrate": "Перенос",
     "noSummary": "Нет сводки",
     "progress": "Прогресс %{progress}%",
-    "readChaptersDeleted": "Read chapters deleted",
+    "readChaptersDeleted": "Прочитанные главы удалены",
     "startReadingChapters": "Начать чтение %{name}",
     "status": {
       "cancelled": "Отменено",
@@ -432,7 +432,7 @@
       "scrollToCurrentChapter": "Прокрутка к текущей главе",
       "scrollToTop": "Прокрутить вверх"
     },
-    "emptyChapterMessage": "<p>Chapter is empty.</p><p>Report on <a href='https://github.com/LNReader/lnreader-sources/issues/new/choose'>GitHub</a> if it's available in WebView.</p><p>Plugin: %{pluginId}</p><p>Novel: %{novelName}</p><p>Chapter: %{chapterName}</p>",
+    "emptyChapterMessage": "<p>Глава пуста.</p><p>Сообщите на GitHub, <a href='https://github.com/LNReader/lnreader-sources/issues/new/choose'>GitHub</a> если он доступен в WebView.</p><p>Плагин: %{pluginId}</p><p>Новелла: %{novelName}</p><p>Глава: %{chapterName}</p>",
     "finished": "Завершено",
     "nextChapter": "Следующий: %{name}",
     "noNextChapter": "Следующей главы нет",
@@ -478,7 +478,7 @@
   "tracking": "Отслеживание",
   "trackingScreen": {
     "logOutMessage": "Выйти из %{name}?",
-    "revalidate": "Revalidate",
+    "revalidate": "Подтвердите еще раз",
     "services": "Сервисы отслеживания"
   },
   "updates": "Обновления",
